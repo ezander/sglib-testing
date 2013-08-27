@@ -1,0 +1,13 @@
+sglib.settings
+.cache
+*.mat
+*~
+*.log
+.*
+*.eps
+*.png
+*.pdf
+*.tex
+*.ps
+*.zip
+testing/xiu_book/html
