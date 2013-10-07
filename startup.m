@@ -26,5 +26,9 @@ function startup
 % We do the real startup in a file with a special name (SGLIB_STARTUP) so
 % the user can run it individually without any startup on the path
 % interfering with this one
-run( fullfile( 'sglib', 'sglib_startup' ) );
+basepath=fileparts( mfilename('fullpath') );
+run( fullfile( basepath, 'sglib', 'sglib_startup' ) );
 
+% need to get the basepath again, since sglib_startup resets it
+basepath=fileparts( mfilename('fullpath') );
+addpath( fullfile(basepath, 'data') );
