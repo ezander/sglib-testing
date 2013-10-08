@@ -1,3 +1,7 @@
+% Computes some L-moments and L-ratios according to the Wikipedia article
+% http://en.wikipedia.org/wiki/L-moment 
+
+% Set some parameters (formatting and number of random samples used)
 format_str = '%s: l1 =% 6.4f, l2 =% 6.4f, tau3 =% 6.4f, tau4 =% 6.4f\n';
 N = 10000;
 
