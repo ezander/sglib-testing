@@ -33,7 +33,8 @@ wcan=wc(mins);
 for i=1:length(wcan)
     w0=wcan(i);
     opts=optimset( 'display', 'off', 'TolFun', 1e-10 );
-    [x,fval,flag]=fsolve( fun, w0, opts );
+    %[x,fval,flag]=fsolve( fun, w0, opts ); % defined in optim toolbox
+    [x,fval,flag]=fzero( fun, w0, opts ); % doesn't work so well with fzero, however
     w(i)=x;
 end
 %%
