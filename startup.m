@@ -32,3 +32,4 @@ run( fullfile( basepath, 'sglib', 'sglib_startup' ) );
 % need to get the basepath again, since sglib_startup resets it
 basepath=fileparts( mfilename('fullpath') );
 addpath( fullfile(basepath, 'data') );
+addpath( genpath(fullfile(basepath, 'proposed')) );
