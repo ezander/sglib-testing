@@ -37,8 +37,13 @@ func=@(x)( ((x-z).^2+1) .* (x-2*z) .* (x-4*z) ./ (x-3*z) );
 r=fzeros_mult( func, 0, 10 );
 assert_equals(r, [2*z, 4*z], 'min_and_inf');
 
-% a special function (there should be N zeros in [0,N*pi]
+% a special function (there should be N zeros in [0,N*pi])
 fun1=@(x)(1-x.*tan(x));
 r=fzeros_mult( fun1, 0, 7*pi, 'N', 100 );
 assert_equals(size(r), [1,7], 'num');
-assert_equals(fun1(r), zeros(size(r)), 'zero');
+assert_equals(fun1(r), zeros(size(r)), 'zero_tan');
+
+% same special function (compare to approximation)
+r=fzeros_mult( fun1, 90*pi-0.1, 100*pi );
+N=90:99;
+assert_equals(r, pi*(0.0011 + N), 'tan_approx', 'reltol', 1e-6);
