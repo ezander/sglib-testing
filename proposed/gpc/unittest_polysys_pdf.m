@@ -26,3 +26,7 @@ assert_equals( polysys_pdf('p', x), 0.5*(abs(x)<=1), 'p');
 assert_equals( polysys_pdf('l', x), (x>=0).*exp(-x), 'l');
 assert_equals( polysys_pdf('t', x), 2*(abs(x)<1)./(pi*sqrt(1000*(abs(x)>=1)+(x+1).*(1-x))), 't');
 assert_equals( polysys_pdf('u', x), (abs(x)<=1).*(sqrt(1-x.^2))/(pi/4), 'u');
+
+% test the error checking
+assert_error( funcreate(@polysys_pdf, 'm',[1,2,3]), 'sglib:gpc', 'no_mono');
+assert_error( funcreate(@polysys_pdf, '?',[1,2,3]), 'sglib:gpc', 'unknown');
