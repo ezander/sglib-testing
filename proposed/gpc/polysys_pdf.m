@@ -1,16 +1,19 @@
 function p=polysys_pdf(sys, xi)
-% POLYSYS_PDF Short description of polysys_pdf.
-%   POLYSYS_PDF Long description of polysys_pdf.
-%
-% Options
-%
-% References
-%
-% Notes
+% POLYSYS_PDF Evaluates the PDF for an associated probability measure.
+%   P=POLYSYS_PDF(SYS, XI) evaluates the probability distribution function
+%   (PDF) of the probability measure associated with the polynomial system
+%   SYS at the points given in XI. E.g. POLYSYS_PDF('H', 3) would evaluate
+%   the normal distribution at X=3, since the normal distribution is
+%   associated with the Hermite polynomials (H).
 %
 % Example (<a href="matlab:run_example polysys_pdf">run</a>)
-%
-% See also GPC
+%   x=linspace(-3,3,400);
+%   plot(x, polysys_pdf('h',x), x, polysys_pdf('p',x), ...
+%     x, polysys_pdf('l',x), x, polysys_pdf('t',x), x, polysys_pdf('u',x));
+%   legend('Gauss/Hermite (h)', 'Uniform/Legendre (p)', ...
+%          'Exponential/Laguerre (l)', 'Arcsine/ChebyshevT (t)', ...
+%          'Semicircle/ChebyshevU (u)');
+% See also GPC, GPCGERM_PDF
 
 %   Elmar Zander
 %   Copyright 2013, Inst. of Scientific Computing, TU Braunschweig
