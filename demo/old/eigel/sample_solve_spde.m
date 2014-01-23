@@ -6,9 +6,10 @@ clear
 % funcall(stiffness_func, k) die Steifigkeitsmatrix zurueckliefert, wobei k
 % die Werte des Koeffizientenfeldes an den Knoten enthaelt (Faelle mit
 % mehreren oder anisotropen Koeffizientenfeldern sind noch nicht moeglich)
-[pos,els,G_N,ptdata]=load_pdetool_geom( 'lshape', 'numrefine', 1 );
+[pos,els]=load_pdetool_geom( 'lshape', 'numrefine', 1 );
+G_N = pdetool_mass_matrix(pos, els);
 bnd_nodes=find_boundary( els, true );
-stiffness_func={@pdetool_stiffness_matrix, {ptdata}, {1}};
+stiffness_func=funcreate(@pdetool_stiffness_matrix, pos, els);
 [d,N]=size(pos);
 
 

@@ -1,8 +1,10 @@
 function demo_tensor_2d
 
 %% load and show mesh
-[pos,els,G_N,ptdata]=load_pdetool_geom( 'cardioid', 'numrefine', 1 );
-pdemesh( ptdata{:} )
+[pos,els]=load_pdetool_geom( 'cardioid', 'numrefine', 1 );
+G_N = mass_matrix(pos, els);
+
+plot_mesh(pos, els);
 N=size(pos,2);
 
 p_f=3;

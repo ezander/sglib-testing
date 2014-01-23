@@ -17,7 +17,9 @@ num_refinements=2;
 
 clf;
 set( gcf, 'Renderer', 'painters' );
-[pos,els,G_N]=load_pdetool_geom( geometries{geom_num}, 'numrefine', num_refinements );
+[pos,els]=load_pdetool_geom( geometries{geom_num}, 'numrefine', num_refinements );
+G_N = mass_matrix(pos, els);
+
 %C=covariance_matrix( pos, cov_func, 'max_dist', 3*lc_r );
 C=covariance_matrix( pos, cov_func );
 

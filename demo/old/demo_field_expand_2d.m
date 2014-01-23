@@ -5,7 +5,8 @@ function demo_field_expand_2d
 %% Initialization stuff
 % We use the pde toolbox to generate the geometry and the mass matrix
 % (gramian)
-[pos,els,G_N]=load_pdetool_geom( 'cardioid', 'numrefine', 1 );
+[pos,els]=load_pdetool_geom( 'cardioid', 'numrefine', 1 );
+G_N = mass_matrix(pos, els);
 
 
 % expansion of the right hand side field (f)
@@ -14,8 +15,9 @@ m_f=22;
 l_f=12;
 lc_f=[0.03 0.2]; %#ok
 lc_f=0.5; %#ok
-h_f={@beta_stdnor,{4,2}}; %#ok
-h_f={@normal_stdnor,{0,1}}; %#ok
+dist_f = gendist_create('beta', {4, 2});
+dist_f = gendist_create('normal', {0, 1});
+h_f = funcreate(@gendist_stdnor, @funarg, dist_f);
 cov_f={@exponential_covariance,{lc_f,1}}; %#ok
 cov_f={@spherical_covariance,{lc_f,1}}; %#ok
 cov_f={@gaussian_covariance,{lc_f,1}}; %#ok

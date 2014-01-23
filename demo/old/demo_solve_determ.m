@@ -1,7 +1,9 @@
 % solving only the deterministic case (for a. litvinenko)
 
-[pos,els,G_N,ptdata]=load_pdetool_geom( 'lshape', 'numrefine', 1 );
-stiffness_func={@pdetool_stiffness_matrix, {ptdata}, {1}};
+[pos,els]=load_pdetool_geom( 'lshape', 'numrefine', 1 );
+G_N = mass_matrix(pos, els);
+
+stiffness_func=funcreate(@pdetool_stiffness_matrix, pos, els);
 bnd_nodes=find_boundary( els, true );
 [P_I,P_B]=boundary_projectors( bnd_nodes, size(pos,2) );
 opts={'view', 3};

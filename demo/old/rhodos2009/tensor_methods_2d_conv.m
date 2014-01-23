@@ -11,7 +11,8 @@ geom_num=2;
 
 clf;
 set( gcf, 'Renderer', 'painters' );
-[pos,els,G_N]=load_pdetool_geom( geometries{geom_num}, 'numrefine', 0, 'showmesh', true );
+[pos,els]=load_pdetool_geom( geometries{geom_num}, 'numrefine', 0, 'showmesh', true );
+G_N = mass_matrix(pos, els);
 userwait;
 N=size(pos,2);
 bnd=find_boundary( els, true );
