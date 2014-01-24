@@ -41,7 +41,8 @@ p=5; %order of pce
 m_u=4; % number of kl terms for underlying field
 l_u=5; % number of kl terms for random field
 
-h_u=@(gamma)(beta_stdnor(gamma,4,2));
+dist_u=gendist_create('beta', {4,2});
+h_u=funcreate(@gendist_stdnor, @funarg, dist_u);
 u_i=pce_expand_1d(h_u,p);
 [mu,sig2]=pce_moments( u_i, [] );
 %cov_u=@(x1,x2)(gaussian_covariance( x1, x2, 0.3, sqrt(sig2) ) );

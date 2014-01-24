@@ -9,7 +9,7 @@ clear
 [pos,els]=load_pdetool_geom( 'lshape', 'numrefine', 1 );
 G_N = pdetool_mass_matrix(pos, els);
 bnd_nodes=find_boundary( els, true );
-stiffness_func=funcreate(@pdetool_stiffness_matrix, pos, els);
+stiffness_func=funcreate(@pdetool_stiffness_matrix, pos, els, @funarg);
 [d,N]=size(pos);
 
 
@@ -22,9 +22,9 @@ l_k=get_base_param( 'l_k', 10 );
 
 
 % define the distribution (name, parameters, shift, scale)
-dist_k=get_base_param( 'dist_k', {'beta', {4,2}, 0.1, 1.0 } );
+dist_k=get_base_param( 'dist_k', gendist_create('beta', {4,2}, 'shift', 0.1) );
 mean_k_func=get_base_param( 'mean_k_func', [] );
-stdnor_k={@gendist_stdnor, dist_k};
+stdnor_k=funcreate(@gendist_stdnor, @funarg, dist_k);
 
 % define the covariance of the field
 lc_k=get_base_param( 'lc_k', 0.3 );

@@ -12,8 +12,10 @@ lc=0.3;
 [pos,els]=create_mesh_1d(0,1,n);
 M=mass_matrix( pos, els );
 
-h=@(gamma)(beta_stdnor(gamma,4,2));
-[mu,sig2]=beta_moments( 4, 2 );
+dist=gendist_create('beta', {4,2});
+h=funcreate(@gendist_stdnor, @funarg, dist);
+[mu,sig2]=gendist_moments(dist);
+
 
 cov_u=@(x1,x2)(gaussian_covariance(x1,x2,lc,sqrt(sig2)));
 cov_gam=[];
@@ -33,11 +35,9 @@ userwait
 clf; %#ok
 n=11;
 lc=0.2*2;
+lc=3;
 [pos,els]=create_mesh_1d(0,1,n);
 M=mass_matrix( pos, els );
-
-h=@(gamma)(beta_stdnor(gamma,4,2));
-[mu,sig2]=beta_moments( 4, 2 );
 
 cov_u=@(x1,x2)(gaussian_covariance(x1,x2,lc,sqrt(sig2)));
 cov_gam=[];
@@ -52,7 +52,7 @@ for m=[1 2 3 4]
         tic;
         [mu_1,var_1]=pce_moments( u_alpha, I_u );
         t2(p,m)=toc; %#ok
-        [mu_2,var_2]=beta_moments( 4, 2 );
+        [mu_2,var_2]=gendist_moments(dist);
         fprintf( 'RF params: p: %1d m:%1d -', p, m );
         % fprintf( 'RF params: p: %1d m:%1d t1:%6.4f  t2:%6.4f', p, m, t1(p,m), t2(p,m) );
         C_u2=pce_covariance( u_alpha, I_u );
@@ -66,7 +66,10 @@ for m=[1 2 3 4]
         y2=C_u2(i);
         y1=C_u1(i);
         subplot(3,4,(p-1)*4+m);
-        plot(dxu,y1,dxu,y2);
+        %plot(dxu,y1,dxu,y2);
+        subplot(2,1,1); surf(X1,X2,C_u1);
+        subplot(2,1,2); surf(X1,X2,C_u2);
+        
         drawnow;
     end
 end
@@ -83,7 +86,7 @@ for m=[1,2,3,4,5]
         tic;
         [mu_1,var_1]=pce_moments( u_alpha, I_u );
         t2(p,m)=toc; %#ok
-        [mu_2,var_2,sk_2]=beta_moments( 4, 2 );
+        [mu_2,var_2,sk_2]=gendist_moments(dist);
         fprintf( 'p: %1d m:%1d - ', p, m );
         fprintf( 'u:[%2d,%3d]  I:[%3d,%d1]', size(u_alpha), size(I_u) );
         fprintf( ' E_mean: %- 10.4e', norm(mu_1-mu_2)/norm(mu_2) );

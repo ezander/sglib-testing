@@ -15,10 +15,14 @@ check_unsupported_options( options, mfilename );
 
 
 % Define the random variables A, B and X.
-%a_func={@exponential_stdnor, {2}};
-a_func={@uniform_stdnor, {2,3}};
-b_func={@lognormal_stdnor, {1.5, 0.5}};
-x_func={@div_func,{b_func, a_func}};
+%dist_a=gendist_create('exponential', {2});
+dist_a=gendist_create('uniform', {2,3});
+a_func=funcreate(@gendist_stdnor, @funarg, dist_a);
+
+dist_b=gendist_create('lognormal', {1.5, 0.5});
+b_func=funcreate(@gendist_stdnor, @funarg, dist_b);
+
+x_func=funcreate(@div_func, @funarg, b_func, a_func);
 
 disp( 'show the pdf''s of the three random vars' );
 p=5;
