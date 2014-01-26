@@ -88,7 +88,14 @@ V1 = gpcbasis_create('u', 'p', 2);
 %
 
 %%
+% $$ F_{a_1}^{-1}(F_S(\cdot))$$ 
+%
+% integrate
+%
+% $$ a1_i = \int_{-1}^1 F_{a_1}^{-1}(F_S(\xi)) U_i(\xi) f_s(\xi) d\xi $$ 
 % 
+% $$ a1_i \approx \sum_k F_{a_1}^{-1}(F_S(x_k)) U_i(x_k) w_k$$ 
+%
 psi_k_alpha = gpcbasis_evaluate(V1,x, 'dual', true);
 fun_k = gendist_invcdf(gpcgerm_cdf(V1, x), dist_a1{:});
 a1_alpha = fun_k*diag(w)*psi_k_alpha;
@@ -129,3 +136,37 @@ plot(x, gendist_pdf(x, dist_a2{:})); hold off;
 legend('gpc approx. (kde)', 'exact density');
 rug_plot(a2_samples(1:300), 3);
 
+
+
+
+
+
+
+%%
+%
+
+%%
+dist_a1 = gendist_create('beta', {1.2, 2});
+dist_a1 = gendist_fix_bounds(dist_a1, 0.5, 5);
+
+format compact
+format short g
+for p=1:10
+    [a1_alpha, V1] = gpc_param_expand(dist_a1, 'u', p);
+    a1_alpha
+    [mu,var] = gendist_moments(dist_a1)
+    [mu,var] = gpc_moments(a1_alpha, V1)
+end
+
+
+%%
+dist_a2 = gendist_create('beta', {0.6, 0.3});
+dist_a2 = gendist_fix_bounds(dist_a2, 50, 150);
+format compact
+format short g
+for p=1:10
+    [a2_alpha, V2] = gpc_param_expand(dist_a2, 'u', p);
+    a2_alpha
+    [mu,var] = gendist_moments(dist_a2)
+    [mu,var] = gpc_moments(a2_alpha, V2)
+end
