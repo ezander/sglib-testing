@@ -27,7 +27,7 @@ p_i_alpha = [[h1_mean; b1_mean; b2_mean],  diag([h1_std, b1_std, b2_std])];
 
 %% Monte Carlo
 N = 10000;
-theta_i = gpc_sample(V_p, N);
+theta_i = gpcgerm_sample(V_p, N);
 p_i = gpc_evaluate(p_i_alpha, V_p, theta_i);
 x_i = beam(p_i);
 

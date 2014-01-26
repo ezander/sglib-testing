@@ -8,7 +8,7 @@ z_i_alpha = randn(d, size(I_z, 1));
 z_i_alpha(:,3:6) = 0;
 z_i_alpha(:,15:26) = 0;
 
-xi = gpc_sample(V_z, 10);
+xi = gpcgerm_sample(V_z, 10);
 z1 = gpc_evaluate(z_i_alpha, V_z, xi);
 
 find(gpc_get_support(z_i_alpha))

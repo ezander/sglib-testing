@@ -4,7 +4,7 @@ V = {'pp', multiindex(2, 0)};
 % gpcspace_create('uniform', 2, 0)
 
 N = 1000;
-xi = gpc_sample(V, N);
+xi = gpcgerm_sample(V, N);
 plot(xi(1,:), xi(2,:), 'x')
 
 n = state.num_vars;

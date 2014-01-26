@@ -34,8 +34,8 @@ function [a_beta, V]=gpc_combine_inputs(a1_alpha, V1, a2_alpha, V2)
 %   [a_beta, V] = gpc_combine_inputs(a1_alpha, V1, a2_alpha, V2);
 % 
 %   
-%   xi1 = gpc_sample(V1, 10);
-%   xi2 = gpc_sample(V2, 10);
+%   xi1 = gpcgerm_sample(V1, 10);
+%   xi2 = gpcgerm_sample(V2, 10);
 %   xi = [xi1; xi2];
 %   s1 = gpc_evaluate(a1_alpha, V1, xi1);
 %   s2 = gpc_evaluate(a2_alpha, V2, xi2);

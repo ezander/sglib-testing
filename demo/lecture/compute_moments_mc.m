@@ -31,7 +31,7 @@ end
 
 state = funcall(init_func);
 V = gpcbasis_create(polysys, 'm', state.num_params);
-x = gpc_sample(V, N, sample_options);
+x = gpcgerm_sample(V, N, sample_options);
 
 u_mean = [];
 u_var = [];

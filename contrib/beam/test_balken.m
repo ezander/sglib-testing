@@ -44,7 +44,7 @@ for k=1:n
             %% Monte Carlo
             
             N = 10000;
-            theta_i = gpc_sample(V_p, N);
+            theta_i = gpcgerm_sample(V_p, N);
             p_i = gpc_evaluate(p_i_alpha, V_p, theta_i);
             %x_i= beam(p_i);
             x_i(k,i,j,:)= beam(p_i);

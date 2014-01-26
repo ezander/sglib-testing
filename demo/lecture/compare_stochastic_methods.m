@@ -6,7 +6,7 @@ state = electrical_network_init();
 V = {'p', multiindex(state.num_params, 1)};
 u = zeros(state.num_vars, N);
 for i = 1:N
-    p = gpc_sample(V, 1); % same as rand(2,1)
+    p = gpcgerm_sample(V, 1); % same as rand(2,1)
     u_p = electrical_network_solve(state, p);
     
     u(:, i) = u_p;
@@ -89,7 +89,7 @@ I = multiindex(2, order);
 %  u,U - Chebyshev 2. kind
 V = {'p', I}; 
 for ind = 1:size(I,1)
-    %xi = gpc_sample(V, 10000);
+    %xi = gpcgerm_sample(V, 10000);
     [X,Y]=meshgrid(linspace(-1,1,40));
     e = zeros(1,size(I,1));
     e(ind)=1;

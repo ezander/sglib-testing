@@ -23,7 +23,7 @@ function [y_relerr, xi] = compute_mc_error(y_j_beta, V_y, x_i_alpha, V_x, phi_j_
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
-xi = gpc_sample(V_x, N, 'mode', 'lhs');
+xi = gpcgerm_sample(V_x, N, 'mode', 'lhs');
 
 x = gpc_evaluate(x_i_alpha, V_x, xi);
 y = gpc_evaluate(y_j_beta, V_y, xi);

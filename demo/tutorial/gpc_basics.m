@@ -32,19 +32,19 @@ end
 %%
 % We can do the same with Monte Carlo
 N=100000;
-xi = gpc_sample(V, N);
+xi = gpcgerm_sample(V, N);
 Imc = mean(funcall(func, xi));
 fprintf('I_mc=% +6.2f \n', Imc);
 
 %%
 % or Latin hypercube
-xi = gpc_sample(V, N, 'mode', 'lhs');
+xi = gpcgerm_sample(V, N, 'mode', 'lhs');
 Ilhs = mean(funcall(func, xi));
 fprintf('I_lhs=% +6.2f \n', Ilhs);
 
 %%
 % or with quasi Monte Carlo (Halton)
-xi = gpc_sample(V, N, 'mode', 'qmc');
+xi = gpcgerm_sample(V, N, 'mode', 'qmc');
 Iqmc = mean(funcall(func, xi));
 fprintf('I_qmc=% +6.2f \n', Iqmc);
 
@@ -57,7 +57,7 @@ I=V{2}
 %%
 % Sampling from this basis (you see that its Gaussian in x-direction
 % uniform in y-direction)
-xi = gpc_sample(V, 100000);
+xi = gpcgerm_sample(V, 100000);
 plot(xi(1,:), xi(2,:), '.');
 
 %%

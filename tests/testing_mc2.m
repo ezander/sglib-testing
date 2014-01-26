@@ -7,8 +7,8 @@ n = state.num_vars;
 u_mean = [];
 u_var = [];
 for i=1:N
-    % p = gpc_sample(V, 'rand', @rand);
-    p = gpc_sample(V);
+    % p = gpcgerm_sample(V, 'rand', @rand);
+    p = gpcgerm_sample(V);
     u = electrical_network_solve(state, p);
     [u_mean, u_var] = mean_var_update(i, u, u_mean, u_var);
 end

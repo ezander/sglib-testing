@@ -15,7 +15,7 @@ p_int = 6;
 
 %% show difference between approximations
 
-xi = gpc_sample(V_x);
+xi = gpcgerm_sample(V_x);
 x = gpc_evaluate(x_i_alpha, V_x, xi);
 y = gpc_evaluate(y_j_beta, V_y, xi);
 

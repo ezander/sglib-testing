@@ -60,7 +60,7 @@ end
 
 % compute the grid of parameter values
 [UX, UY] = meshgrid(linspace(delta, 1-delta, N));
-xi = gpc_sample(V_u, N*N, 'rand_func', @(m,n)([UX(:),UY(:)]));
+xi = gpcgerm_sample(V_u, N*N, 'rand_func', @(m,n)([UX(:),UY(:)]));
 
 % compute gpc values
 u = gpc_evaluate(u_i_alpha, V_u, xi);

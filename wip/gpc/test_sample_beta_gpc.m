@@ -5,7 +5,7 @@ dist_func={@beta_stdnor, {4, 2}, {2, 3}};
 V = {'H', I}
 
 N=100000;
-xi=gpc_sample(V, N);
+xi=gpcgerm_sample(V, N);
 y=gpc_evaluate(a_i_alpha, V, xi);
 kde(y)
 
@@ -27,7 +27,7 @@ for p=1:6
     V = {'H', I}
 
     N=100000;
-    xi=gpc_sample(V, N);
+    xi=gpcgerm_sample(V, N);
     y=gpc_evaluate(a_i_alpha, V, xi);
     %kde(y,100)
     empirical_density(y);
