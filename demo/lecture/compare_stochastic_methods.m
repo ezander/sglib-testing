@@ -122,7 +122,7 @@ for k = 1:N
     u = u + w(k) * u_k * P_jk';
 end
 
-u_normed = u * diag(1./gpc_norm(V));
+u_normed = u * diag(1./gpcbasis_norm(V));
 mu = u_normed(:,1);
 sig2 = sum(u_normed(:,2:end).^2, 2);
 sig = sqrt(sig2);
