@@ -119,7 +119,7 @@ rug_plot(a1_samples(1:300));
 % distribution for which we can use the combination Arcsine/ChebyshevT,
 % specified in sglib by the letter 't'.
 p2 = 4;
-V2 = gpcbasis_create('u', 'p', p2);
+V2 = gpcbasis_create('t', 'p', p2);
 [x,w]=gpc_integrate([], V2, 10);
 
 psi_k_alpha = gpcbasis_evaluate(V2,x, 'dual', true);
@@ -165,8 +165,17 @@ dist_a2 = gendist_fix_bounds(dist_a2, 50, 150);
 format compact
 format short g
 for p=1:10
-    [a2_alpha, V2] = gpc_param_expand(dist_a2, 'u', p);
+    [a2_alpha, V2] = gpc_param_expand(dist_a2, 't', p);
     a2_alpha
     [mu,var] = gendist_moments(dist_a2)
     [mu,var] = gpc_moments(a2_alpha, V2)
 end
+
+
+%% Deeper parameter expansion studies
+% Study the dependence on the polynomial base
+dist_a1 = gendist_create('beta', {1.2, 2});
+dist_a1 = gendist_fix_bounds(dist_a1, 0.5, 5);
+[a1_alpha, V1] = gpc_param_expand(dist_a1, 'p', 'varerr', 0.001)
+[m1,m2,m3,m4]=gpc_moments(a1_alpha, V1); [m1,m2,m3,m4]
+[m1,m2,m3,m4]=gendist_moments(dist_a1); [m1,m2,m3,m4]
