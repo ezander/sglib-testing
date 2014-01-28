@@ -41,3 +41,7 @@ else
         p = p.* polysys_pdf(sys(j), xi(j, :));
     end
 end
+
+function y=polysys_pdf(sys, x)
+dist = polysys_dist(sys);
+y = gendist_pdf(x, dist);

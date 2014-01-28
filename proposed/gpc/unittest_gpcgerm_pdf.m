@@ -23,11 +23,11 @@ x = linspace(-3,3);
 y = rand(size(x));
 
 V=gpcbasis_create('h');
-assert_equals(gpcgerm_pdf(V,x), polysys_pdf('h', x), 'h');
+assert_equals(gpcgerm_pdf(V,x), normal_pdf(x), 'h');
 
-V=gpcbasis_create('ul');
-assert_equals(gpcgerm_pdf(V,[x;y]), polysys_pdf('u', x).*polysys_pdf('l', y), 'ul');
+V=gpcbasis_create('pl');
+assert_equals(gpcgerm_pdf(V,[x;y]), uniform_pdf(x,-1,1).*exponential_pdf(y,1), 'pl');
 
 V=gpcbasis_create('h', 'm', 2);
-assert_equals(gpcgerm_pdf(V,[x;y]), polysys_pdf('h', x).*polysys_pdf('h', y), 'h2');
+assert_equals(gpcgerm_pdf(V,[x;y]), normal_pdf(x).*normal_pdf(y), 'h2');
 

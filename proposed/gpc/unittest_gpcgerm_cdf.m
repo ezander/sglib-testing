@@ -23,11 +23,11 @@ x = linspace(-3,3);
 y = rand(size(x));
 
 V=gpcbasis_create('h');
-assert_equals(gpcgerm_cdf(V,x), polysys_cdf('h', x), 'h');
+assert_equals(gpcgerm_cdf(V,x), normal_cdf(x), 'h');
 
-V=gpcbasis_create('ul');
-assert_equals(gpcgerm_cdf(V,[x;y]), polysys_cdf('u', x).*polysys_cdf('l', y), 'ul');
+V=gpcbasis_create('pl');
+assert_equals(gpcgerm_cdf(V,[x;y]), uniform_cdf(x, -1, 1).*exponential_cdf(y, 1), 'pl');
 
 V=gpcbasis_create('h', 'm', 2);
-assert_equals(gpcgerm_cdf(V,[x;y]), polysys_cdf('h', x).*polysys_cdf('h', y), 'h2');
+assert_equals(gpcgerm_cdf(V,[x;y]), normal_cdf(x).*normal_cdf(y), 'h2');
 

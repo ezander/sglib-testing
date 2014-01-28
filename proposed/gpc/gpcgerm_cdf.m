@@ -41,3 +41,7 @@ else
         p = p.* polysys_cdf(sys(j), xi(j, :));
     end
 end
+
+function y=polysys_cdf(sys, x)
+dist = polysys_dist(sys);
+y = gendist_cdf(x, dist);
