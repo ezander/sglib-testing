@@ -5,8 +5,7 @@
 % field described by infinitely many stochastic variable, which has to be
 % (stochastically) discretised beforehand.
 
-
-
+publishing_defaults
 
 %% The deterministic problem
 % Lets look at the following boundary value problem 
@@ -46,9 +45,9 @@ a1_dist = gendist_fix_bounds(a1_dist, 0.5, 5);
 %%
 % The probability distribution function (pdf) and the cumulative
 % distribution function (cdf) can be computed with |gendist_cdf| and
-% |gendist_pdf| function 
-x = linspace(0, 7);
-plot(x, gendist_pdf(x, a1_dist), x, gendist_cdf(x, a1_dist));
+% |gendist_pdf| function (ok, it's now all in the plot function)
+
+density_plot(a1_dist, 'type', 'pdf')
 legend( 'pdf a1', 'cdf a1');
 
 %%
@@ -59,11 +58,8 @@ legend( 'pdf a1', 'cdf a1');
 a2_dist = gendist_create('beta', {0.6, 0.3});
 a2_dist = gendist_fix_bounds(a2_dist, 50, 150);
 
-x = linspace(0, 200, 1000);
-plot(x, gendist_pdf(x, a2_dist), x, gendist_cdf(x, a2_dist));
+density_plot(a2_dist, 'type', 'both')
 legend( 'pdf a2', 'cdf a2');
-
-
 
 
 
@@ -81,6 +77,7 @@ legend( 'pdf a2', 'cdf a2');
 % the variance is fully matched (possibly incurring a worse match in higher
 % moments).
 % 
+
 [a1_alpha, V1, err] = gpc_param_expand(a1_dist, 'u', 'varerr', 0.001, 'fixvar', true);
 
 %%
@@ -88,47 +85,90 @@ legend( 'pdf a2', 'cdf a2');
 % approximation
 
 [mean,var,skew,kurt]=gendist_moments(a1_dist);
-fprintf('Moments (true):\nmean=%g, var=%g, skew=%g, kurt=%g\n', mean, var, skew, kurt)
+fprintf('Moments (a1,true):\nmean=%g, var=%g, skew=%g, kurt=%g\n', mean, var, skew, kurt)
 [mean,var,skew,kurt]=gpc_moments(a1_alpha, V1);
-fprintf('Moments (gpc): \nmean=%g, var=%g, skew=%g, kurt=%g\n', mean, var, skew, kurt)
+fprintf('Moments (a1,gpc): \nmean=%g, var=%g, skew=%g, kurt=%g\n', mean, var, skew, kurt)
 
-%
-% Plot a kernel density estimate of the gpc approximation of a1 and compare
-% to the true distribution
-% (there should be a method for distribution plotting) 
+%%
+% Draw some samples from the underlying distribution, then plot a kernel
+% density estimate of the gpc approximation of a1 and compare to the true
+% distribution.
 a1_samples = gpc_evaluate(a1_alpha, V1, gpcgerm_sample(V1, 100000)); 
-kernel_density(a1_samples, 100); hold all;
-x=linspace(0,7);
-plot(x, gendist_pdf(x, a1_dist{:})); hold off;
-legend('gpc approx. (kde)', 'exact density');
-rug_plot(a1_samples(1:300), 'color', [0.7,0,0]);
 
-% It can be seen in the plot 
+density_plot(a1_samples, 'type', 'kernel', 'rug', true, 'max_rug', inf);
+density_plot(a1_dist, 'hold', true);
+legend('gpc approx. (kde)', 'samples', 'exact density');
+
+%%
+% It can be seen in the plot, that ... (somehow a bit contradictory with
+% the kurtosis...hmmm)
 
 %% 
-%For $a_2$ the distribution looks quite a bit like an arcsine
+% For the $a_2$ the distribution looks quite a bit like an arcsine
 % distribution for which we can use the combination Arcsine/ChebyshevT,
 % specified in sglib by the letter 't'.
 
 [a2_alpha, V2] = gpc_param_expand(a2_dist, 't', 'varerr', 0.001, 'fixvar', true);
 
 
+%%
+% Compare the first four moments of the true distribution of a1 and its GPC
+% approximation
 [mean,var,skew,kurt]=gendist_moments(a2_dist);
-fprintf('Moments (true):\nmean=%g, var=%g, skew=%g, kurt=%g\n', mean, var, skew, kurt)
+fprintf('Moments (a2,true):\nmean=%g, var=%g, skew=%g, kurt=%g\n', mean, var, skew, kurt)
 [mean,var,skew,kurt]=gpc_moments(a2_alpha, V2);
-fprintf('Moments (gpc): \nmean=%g, var=%g, skew=%g, kurt=%g\n', mean, var, skew, kurt)
+fprintf('Moments (a2,gpc): \nmean=%g, var=%g, skew=%g, kurt=%g\n', mean, var, skew, kurt)
 
-% 
+%%
 % Plot a kernel density estimate of the gpc approximation of a2 and compare
 % to the true distribution
 a2_samples = gpc_evaluate(a2_alpha, V2, gpcgerm_sample(V2, 100000));
-kernel_density(a2_samples, 100, 0.01); hold all;
-x=linspace(30,180);
-plot(x, gendist_pdf(x, a2_dist{:})); hold off;
-legend('gpc approx. (kde)', 'exact density');
-rug_plot(a2_samples(1:300));
+
+density_plot(a2_samples, 'type', 'kernel', 'kde_sig', 0.025, 'rug', true, 'max_rug', 300);
+density_plot(a2_dist, 'hold', true);
+legend('gpc approx. (kde)', 'samples', 'exact density');
 
 
 
 
+%% Combining the GPC spaces
+% The gpc spaces V1 anv V2 constructed for the parameters a1 and a2 are
+% currently disjoined spaces. To use them in any of the further algorithms
+% (except maybe Monte Carlo), we need to combine them into larger space,
+% i.e. take the product space). This can be achieved by the
+% |gpc_combine_inputs| function (which can be used much more generally than
+% the name implies.). This will not only form the product space, but also
+% map the coefficients to the right places in the new combined coefficient
+% field.
+
+[a_alpha, V_a] = gpc_combine_inputs(a1_alpha, V1, a2_alpha, V2);
+
+%%
+% If we sample from the germ distribution, we can see that it's indeed now
+% two-dimensional and has a Semicircle x Arcsine distribution
+xi = gpcgerm_sample(V_a, 100000);
+plot(xi(1,:), xi(2,:), '.', 'MarkerSize', 1); axis equal;
+
+%%
+% Sampling from the parameters (now with quasi Monte Carlo) gives the
+% following (note that the arcsine distribution goes vertically with the
+% larger spike on top, and the semicircle distribtion goes horizontally
+% with the bump more to the left).
+a_samples = gpc_sample(a_alpha, V_a, 100000, 'mode', 'qmc');
+plot(a_samples(1,:), a_samples(2,:), '.', 'MarkerSize', 1);
+
+%% Monte Carlo
+% Now, as a first step, we can do a Monte-Carlo simulation of our model.
+% Instead of making statistics, we'll just plot a bunch of samples.
+
+N = 30;
+a_samples = gpc_sample(a_alpha, V_a, N, 'mode', 'qmc');
+u_samples = zeros(N, size(pos,2));
+for i=1:N
+    [u, a, pos]=diffusion_1d_solve(a_samples(1,i), a_samples(2,i));
+    u_samples(i,:) = u;
+end
+plot(pos, u_samples)
+
+%% And now for collocation and Galerkin...
 
