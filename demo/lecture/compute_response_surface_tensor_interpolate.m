@@ -24,7 +24,7 @@ function [u_i_alpha, x] = compute_response_surface_tensor_interpolate(init_func,
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-state = funcall(init_func);
+[state, info] = funcall(init_func);
 
 % compute interpolation points (need one level more than order)
 [x,w] = gpc_integrate([], V_u, p_u+1, 'grid', 'full_tensor');
@@ -34,10 +34,10 @@ A=gpcbasis_evaluate(V_u, x);
 
 
 Q = length(w);
-u = zeros(state.num_vars, Q);
+u = zeros(info.num_vars, Q);
 for j = 1:Q
     x_j = x(:,j);
-    u(:,j) = funcall(solve_func, state, x_j);
+    [u(:,j), solve_info, state] = funcall(solve_func, state, x_j);
 end
 
 u_i_alpha = u/A;

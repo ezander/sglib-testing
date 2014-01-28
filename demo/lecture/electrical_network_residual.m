@@ -1,4 +1,4 @@
-function res = electrical_network_residual(state, u, p)
+function [res, state] = electrical_network_residual(state, u, p)
 % ELECTRICAL_NETWORK_RESIDUAL function to compute the residuum
 % (preconditioned).
 %

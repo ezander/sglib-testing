@@ -67,7 +67,7 @@ u = gpc_evaluate(u_i_alpha, V_u, xi);
 c_u = normalize(u);
 
 % compute gpc pdf
-p = gpc_pdf(V_u, xi);
+p = gpcgerm_pdf(V_u, xi);
 c_p = normalize(p);
 
 % plot the response

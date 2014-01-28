@@ -27,16 +27,16 @@ options=varargin2options(varargin);
 [grid,options]=get_option(options, 'grid', 'smolyak');
 check_unsupported_options(options, mfilename);
 
-state = funcall(init_func);
+[state, info] = funcall(init_func);
 
 [x,w] = gpc_integrate([], V_u, p_int, 'grid', grid);
 M = gpcbasis_size(V_u, 1);
 Q = length(w);
-u_i_alpha = zeros(state.num_vars, M);
+u_i_alpha = zeros(info.num_vars, M);
 
 for j = 1:Q
     p_j = x(:, j);
-    u_i_j = funcall(solve_func, state, p_j);
+    [u_i_j, solve_info, state] = funcall(solve_func, state, p_j);
     psi_j_alpha_dual = gpcbasis_evaluate(V_u, p_j, 'dual', true);
     u_i_alpha = u_i_alpha + w(j) * u_i_j * psi_j_alpha_dual;
 end

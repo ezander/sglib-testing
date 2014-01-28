@@ -1,4 +1,4 @@
-function u = electrical_network_solve(state, p, varargin)
+function [u, solve_info, state] = electrical_network_solve(state, p, varargin)
 % ELECTRICAL_NETWORK_SOLVE Short description of electrical_network_solve.
 %   ELECTRICAL_NETWORK_SOLVE Long description of electrical_network_solve.
 %
@@ -30,4 +30,6 @@ switch(step_method)
 end
 
 residual_func = @electrical_network_residual;
-u = general_iterative_solver(step_func, residual_func, state, p, 'u0', u0, 'verbose', false);
+[u, iter, res, state] = general_iterative_solver(step_func, residual_func, state, p, 'u0', u0, 'verbose', false);
+solve_info.iter = iter;
+solve_info.res = res;

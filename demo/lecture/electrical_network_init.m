@@ -1,4 +1,4 @@
-function state = electrical_network_init( varargin )
+function [state, info] = electrical_network_init( varargin )
 % ELECTRICAL_NETWORK_INIT Initialises the structure that keeps the internal
 % state of the electrical network example.
 %
@@ -10,6 +10,11 @@ options = varargin2options(varargin);
 [fg, options] = get_option(options, 'fg', 25);
 [f0, options] = get_option(options, 'f0', [1; zeros(4,1)]);
 check_unsupported_options(options, mfilename);
+
+
+
+
+
 
 % edge - node incidence matrix
 B=[0  1  0 -1  0  0;
@@ -36,12 +41,18 @@ A = As(1:end-1, 1:end-1);
 assert(rank(A)==min(size(A)));
 
 % store everything in the state variable
-state = struct();
+info = struct();
+info.num_params = 2;
+info.num_vars = size(A,1);
+
+if nargout==2
+    state = struct();
+else
+    state = info;
+end
 state.A = A;
 state.Pr = inv(A);
 state.R = R;
 state.f0 = f0;
 state.fg = fg;
-state.num_params = 2;
-state.num_vars = size(A,1);
-state.u0 = zeros(state.num_vars, 1);
+state.u0 = zeros(info.num_vars, 1);

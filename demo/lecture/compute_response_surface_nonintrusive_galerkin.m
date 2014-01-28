@@ -32,7 +32,7 @@ options=varargin2options(varargin);
 [grid, options]=get_option(options, 'grid', 'smolyak');
 check_unsupported_options(options, mfilename);
 
-state = funcall(init_func);
+[state, info] = funcall(init_func);
 
 if ~isempty(u0_i_alpha)
     u_i_alpha = u0_i_alpha;
@@ -57,7 +57,7 @@ for k=1:max_iter
         % compute u_i_p = sum u_i_alpha Psi_alpha(p)
         u_i_p = gpc_evaluate(u_i_alpha, V_u, p);
         % evaluate S at p, u_i_p
-        S_p = funcall(step_func, state, u_i_p, p);
+        [S_p, state] = funcall(step_func, state, u_i_p, p);
         % update unext
         unext_i_alpha = unext_i_alpha + w(j) * S_p * gpcbasis_evaluate(V_u, p, 'dual', true);
     end
