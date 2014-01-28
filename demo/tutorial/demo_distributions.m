@@ -37,6 +37,7 @@ fprintf('N(2,3): x_min(%g)=%g, x_max(%g)=%g\n', a/2, xm(1), 1-a/2, xm(2));
 x = linspace(xm(1), xm(2));
 plot(x, normal_pdf(x,0,1));
 
+
 %% General distributions 
 % 
 % In general it is awkward if you want to work with a certain distribution,
@@ -54,6 +55,9 @@ dist = gendist_create('lognormal', {1, 0.7}, 'shift', 1.3);
 % that we can plot the probability density function and the cumulative
 % distribution function:
 
+%%
+density_plot(dist, 'type', 'both')
+%%
 x=linspace(0,10);
 plot(x, gendist_pdf(x, dist), x, gendist_cdf(x, dist));
 legend('pdf', 'cdf');
