@@ -1,4 +1,4 @@
-function [a_alpha, V] = gpc_param_expand(a_dist, sys, varargin)
+function [a_alpha, V, varerr] = gpc_param_expand(a_dist, sys, varargin)
 % GPC_PARAM_EXPAND Short description of gpc_param_expand.
 %   GPC_PARAM_EXPAND Long description of gpc_param_expand.
 %
@@ -27,13 +27,14 @@ options=varargin2options(varargin);
 [p,options]=get_option(options,'p', default);
 [p_int,options]=get_option(options,'p_int', default);
 [varerr,options]=get_option(options,'varerr', 0.01);
+[fixvar,options]=get_option(options,'fixvar', false);
 check_unsupported_options(options,mfilename);
 
 check_type(sys, 'char', false, 'sys', mfilename);
 check_range(length(sys), 1, 1, 'length(sys)', mfilename); 
 
+[a_mean, a_var] = gendist_moments(a_dist);
 if isequal(p,default)
-    [a_mean, a_var] = gendist_moments(a_dist);
     for p=0:50
         V = gpcbasis_create(sys, 'p', p);
         p_int = max(10,2*p);
@@ -50,7 +51,19 @@ else
     V = gpcbasis_create(sys, 'p', p);
     a_alpha = do_param_expand(a_dist, V, p_int);
 end
-        
+
+% Replace the first gpc coefficient with the true mean
+a_alpha(1) = a_mean;
+
+% Compute the variance error or rescale the coefficients to fit the true
+% variance if requested (in which case the varerror is of course zero)
+[ag_mean, ag_var] = gpc_moments(a_alpha, V);
+if fixvar
+    a_alpha(2:end) = a_alpha(2:end) * sqrt(a_var/ag_var);
+    varerr = 0;
+else
+    varerr = abs(a_var - ag_var);
+end
 
 function d=default
 d=@default;
