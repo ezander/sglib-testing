@@ -14,7 +14,7 @@ time = read_data('light');
 subplot(2,2,1)
 plot(x,p);
 hold all;
-rug_plot(time, max(p(:)));
+rug_plot(time);
 hold off;
 
 
