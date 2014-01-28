@@ -24,7 +24,7 @@ publishing_defaults
 % example solving the problem for a_1=2 and a_2=100.
 
 a1 = 2; a2 = 100;
-[u, a, pos]=diffusion_1d_solve(a1, a2);
+[u, a, pos]=diffusion_1d_complete_solve(a1, a2);
 plot(pos, u); 
 
 
@@ -47,7 +47,7 @@ a1_dist = gendist_fix_bounds(a1_dist, 0.5, 5);
 % distribution function (cdf) can be computed with |gendist_cdf| and
 % |gendist_pdf| function (ok, it's now all in the plot function)
 
-density_plot(a1_dist, 'type', 'pdf')
+density_plot(a1_dist, 'type', 'both')
 legend( 'pdf a1', 'cdf a1');
 
 %%
@@ -141,7 +141,7 @@ legend('gpc approx. (kde)', 'samples', 'exact density');
 % map the coefficients to the right places in the new combined coefficient
 % field.
 
-[a_alpha, V_a] = gpc_combine_inputs(a1_alpha, V1, a2_alpha, V2);
+[a_i_alpha, V_a] = gpc_combine_inputs(a1_alpha, V1, a2_alpha, V2);
 
 %%
 % If we sample from the germ distribution, we can see that it's indeed now
@@ -154,21 +154,27 @@ plot(xi(1,:), xi(2,:), '.', 'MarkerSize', 1); axis equal;
 % following (note that the arcsine distribution goes vertically with the
 % larger spike on top, and the semicircle distribtion goes horizontally
 % with the bump more to the left).
-a_samples = gpc_sample(a_alpha, V_a, 100000, 'mode', 'qmc');
-plot(a_samples(1,:), a_samples(2,:), '.', 'MarkerSize', 1);
+a_i_samples = gpc_sample(a_i_alpha, V_a, 100000, 'mode', 'qmc');
+plot(a_i_samples(1,:), a_i_samples(2,:), '.', 'MarkerSize', 1);
 
 %% Monte Carlo
 % Now, as a first step, we can do a Monte-Carlo simulation of our model.
 % Instead of making statistics, we'll just plot a bunch of samples.
 
 N = 30;
-a_samples = gpc_sample(a_alpha, V_a, N, 'mode', 'qmc');
+a_i_samples = gpc_sample(a_i_alpha, V_a, N, 'mode', 'qmc');
 u_samples = zeros(N, size(pos,2));
+[state, info] = diffusion_1d_init();
 for i=1:N
-    [u, a, pos]=diffusion_1d_solve(a_samples(1,i), a_samples(2,i));
+    u=diffusion_1d_solve(state, a_i_samples(:,i));
     u_samples(i,:) = u;
 end
 plot(pos, u_samples)
 
-%% And now for collocation and Galerkin...
+%% And now for Galerkin...
+V_u = gpcbasis_create(V_a, 'p', 5);
+
+A_i = gpc_multiplication_matrices(a_i_alpha, V_a, V_u);
+subplot(1,2,1); spy(A_i{1})
+subplot(1,2,2); spy(A_i{2})
 

@@ -9,3 +9,5 @@ rand('state',1234)
 randn('state',2345)
 format compact, format long
 
+addpath('models');
+addpath('methods');
