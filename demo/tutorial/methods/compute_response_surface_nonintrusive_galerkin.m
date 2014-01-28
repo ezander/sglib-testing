@@ -1,4 +1,4 @@
-function [u_i_alpha,x,w]=compute_response_surface_nonintrusive_galerkin(init_func, step_func, V_u, p_int, varargin)
+function [u_i_alpha,x_j,w]=compute_response_surface_nonintrusive_galerkin(init_func, step_func, a_alpha, V_a, V_u, p_int, varargin)
 % COMPUTE_RESPONSE_SURFACE_NONINTRUSIVE_GALERKIN Short description of compute_response_surface_nonintrusive_galerkin.
 %   COMPUTE_RESPONSE_SURFACE_NONINTRUSIVE_GALERKIN Long description of compute_response_surface_nonintrusive_galerkin.
 %
@@ -44,6 +44,7 @@ end
 
 
 [x,w] = gpc_integrate([], V_u, p_int, 'grid', grid);
+a=gpc_evaluate(a_alpha, V_a, x);
 Q = length(w);
 
 converged=false;
@@ -53,13 +54,14 @@ for k=1:max_iter
     
     % that's the z-sum here, i.e. z=x(:,j)
     for j=1:Q
-        p = x(:, j);
+        x_j = x(:, j);
+        a_j = a(:, j);
         % compute u_i_p = sum u_i_alpha Psi_alpha(p)
-        u_i_p = gpc_evaluate(u_i_alpha, V_u, p);
+        u_i_p = gpc_evaluate(u_i_alpha, V_u, x_j);
         % evaluate S at p, u_i_p
-        [S_p, state] = funcall(step_func, state, u_i_p, p);
+        [S_p, state] = funcall(step_func, state, u_i_p, a_j);
         % update unext
-        unext_i_alpha = unext_i_alpha + w(j) * S_p * gpcbasis_evaluate(V_u, p, 'dual', true);
+        unext_i_alpha = unext_i_alpha + w(j) * S_p * gpcbasis_evaluate(V_u, x_j, 'dual', true);
     end
     
     % compute the size of the update step in the Frobenius norm, maybe not

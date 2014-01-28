@@ -1,4 +1,4 @@
-function [u_i_alpha, x] = compute_response_surface_tensor_interpolate(init_func, solve_func, V_u, p_u)
+function [u_i_alpha, x] = compute_response_surface_tensor_interpolate(init_func, solve_func, a_alpha, V_a, V_u, p_u)
 % COMPUTE_RESPONSE_SURFACE_TENSOR_INTERPOLATE Short description of compute_response_surface_tensor_interpolate.
 %   COMPUTE_RESPONSE_SURFACE_TENSOR_INTERPOLATE Long description of compute_response_surface_tensor_interpolate.
 %
@@ -28,16 +28,16 @@ function [u_i_alpha, x] = compute_response_surface_tensor_interpolate(init_func,
 
 % compute interpolation points (need one level more than order)
 [x,w] = gpc_integrate([], V_u, p_u+1, 'grid', 'full_tensor');
+a = gpc_evaluate(a_alpha, V_a, x);
 
 % compute the (generalised) Vandermonde matrix
 A=gpcbasis_evaluate(V_u, x);
 
-
 Q = length(w);
 u = zeros(info.num_vars, Q);
 for j = 1:Q
-    x_j = x(:,j);
-    [u(:,j), solve_info, state] = funcall(solve_func, state, x_j);
+    a_j = a(:,j);
+    [u(:,j), solve_info, state] = funcall(solve_func, state, a_j);
 end
 
 u_i_alpha = u/A;

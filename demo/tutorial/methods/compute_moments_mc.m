@@ -1,4 +1,4 @@
-function [u_mean, u_var] = compute_moments_mc(init_func, solve_func, polysys, N, varargin)
+function [u_mean, u_var] = compute_moments_mc(init_func, solve_func, a_alpha, V_a, N, varargin)
 % COMPUTE_MOMENTS_MC Compute mean and variance by Monte-Carlo.
 %   [U_MEAN, U_VAR] = COMPUTE_MOMENTS_MC(INIT_FUNC, SOLVE_FUNC, N) computes
 %   the mean and variance of a system described by INIT_FUNC and SOLVE_FUNC
@@ -30,14 +30,13 @@ if ~isempty(mode)
 end
 
 state = funcall(init_func);
-V = gpcbasis_create(polysys, 'm', state.num_params);
-x = gpcgerm_sample(V, N, sample_options);
+a = gpc_sample(a_alpha, V_a, N, sample_options);
 
 u_mean = [];
 u_var = [];
 for j = 1:N
-    x_j = x(:,j);
-    u_j = funcall(solve_func, state, x_j);
+    a_j = a(:,j);
+    u_j = funcall(solve_func, state, a_j);
     [u_mean, u_var] = mean_var_update(j, u_j, u_mean, u_var);
 end
 

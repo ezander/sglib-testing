@@ -1,4 +1,4 @@
-function [u_i_alpha, x, w] = compute_response_surface_projection(init_func, solve_func, V_u, p_int, varargin)
+function [u_i_alpha, x, w] = compute_response_surface_projection(init_func, solve_func, a_alpha, V_a, V_u, p_int, varargin)
 % COMPUTE_RESPONSE_SURFACE_PROJECTION Compute a gpc response surface representation.
 %   COMPUTE_RESPONSE_SURFACE_PROJECTION Long description of compute_response_surf_projection.
 %
@@ -33,10 +33,12 @@ check_unsupported_options(options, mfilename);
 M = gpcbasis_size(V_u, 1);
 Q = length(w);
 u_i_alpha = zeros(info.num_vars, M);
+a = gpc_evaluate(a_alpha, V_a, x);
 
 for j = 1:Q
-    p_j = x(:, j);
-    [u_i_j, solve_info, state] = funcall(solve_func, state, p_j);
-    psi_j_alpha_dual = gpcbasis_evaluate(V_u, p_j, 'dual', true);
+    a_j = a(:, j);
+    [u_i_j, solve_info, state] = funcall(solve_func, state, a_j);
+    x_j = x(:, j);
+    psi_j_alpha_dual = gpcbasis_evaluate(V_u, x_j, 'dual', true);
     u_i_alpha = u_i_alpha + w(j) * u_i_j * psi_j_alpha_dual;
 end
