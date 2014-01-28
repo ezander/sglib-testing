@@ -76,3 +76,42 @@ legend('pdf', 'cdf');
 
 
 
+
+
+%%
+%
+
+%%
+a1_dist = gendist_create('beta', {1.2, 2});
+a1_dist = gendist_fix_bounds(a1_dist, 0.5, 5);
+
+format compact
+format short g
+for p=1:10
+    [a1_alpha, V1] = gpc_param_expand(a1_dist, 'u', p);
+    a1_alpha
+    [mu,var] = gendist_moments(a1_dist)
+    [mu,var] = gpc_moments(a1_alpha, V1)
+end
+
+
+%%
+a2_dist = gendist_create('beta', {0.6, 0.3});
+a2_dist = gendist_fix_bounds(a2_dist, 50, 150);
+format compact
+format short g
+for p=1:10
+    [a2_alpha, V2] = gpc_param_expand(a2_dist, 't', p);
+    a2_alpha
+    [mu,var] = gendist_moments(a2_dist)
+    [mu,var] = gpc_moments(a2_alpha, V2)
+end
+
+
+%% Deeper parameter expansion studies
+% Study the dependence on the polynomial base
+a1_dist = gendist_create('beta', {1.2, 2});
+a1_dist = gendist_fix_bounds(a1_dist, 0.5, 5);
+[a1_alpha, V1] = gpc_param_expand(a1_dist, 'p', 'varerr', 0.001)
+[m1,m2,m3,m4]=gpc_moments(a1_alpha, V1); [m1,m2,m3,m4]
+[m1,m2,m3,m4]=gendist_moments(a1_dist); [m1,m2,m3,m4]
