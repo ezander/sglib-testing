@@ -5,6 +5,11 @@
 % field described by infinitely many stochastic variable, which has to be
 % (stochastically) discretised beforehand.
 
+% <latex>
+% \usepackage[margin=7ex]{geometry}
+% </latex>
+
+
 publishing_defaults
 
 %% The deterministic problem
@@ -176,47 +181,49 @@ plot(pos, u_samples)
 %% Canned functions for computing moments
 % We have that also canned as a function. Showing mean and variance
 % computed by MC and QMC.
-[u_mean, u_var] = compute_moments_mc(@diffusion_1d_init, @diffusion_1d_solve, a_alpha, V_a, 100);
+[u_mean, u_var] = compute_moments_mc(@diffusion_1d_init, @diffusion_1d_solve, a_i_alpha, V_a, 100);
 subplot(1,2,1); plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 title('mc'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
 
-[u_mean, u_var] = compute_moments_mc(@diffusion_1d_init, @diffusion_1d_solve, a_alpha, V_a, 100, 'mode', 'qmc');
+[u_mean, u_var] = compute_moments_mc(@diffusion_1d_init, @diffusion_1d_solve, a_i_alpha, V_a, 100, 'mode', 'qmc');
 subplot(1,2,2); plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 title('qmc'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
 
 %%
 % Or we can compute that by projection/integration. With smolyak or tensor
 % grid.
-[u_mean, u_var] = compute_moments_quad(@diffusion_1d_init, @diffusion_1d_solve, a_alpha, V_a, 5, 'grid', 'smolyak');
+[u_mean, u_var] = compute_moments_quad(@diffusion_1d_init, @diffusion_1d_solve, a_i_alpha, V_a, 5, 'grid', 'smolyak');
 subplot(1,2,1); plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 title('smolyak'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
 
-[u_mean, u_var] = compute_moments_quad(@diffusion_1d_init, @diffusion_1d_solve, a_alpha, V_a, 5, 'grid', 'tensor');
+[u_mean, u_var] = compute_moments_quad(@diffusion_1d_init, @diffusion_1d_solve, a_i_alpha, V_a, 5, 'grid', 'tensor');
 subplot(1,2,2); plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 title('tensor'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
 
 %% Canned functions for computing response surfaces
 % First by projection
+V_u = gpcbasis_create(V_a, 'p', 5);
+
 init_func=@diffusion_1d_init;
 solve_func=@diffusion_1d_solve;
-[u_i_alpha] = compute_response_surface_projection(init_func, solve_func, a_alpha, V_a, V_u, 5);
+[u_i_alpha] = compute_response_surface_projection(init_func, solve_func, a_i_alpha, V_a, V_u, 5);
 
 [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
 subplot(1,2,1); plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 title('resp. surf. proj.'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
 
-subplot(1,2,2); plot_response_surface(u_i_alpha([10,30,60,90],:), V_u)
+subplot(1,2,2); plot_response_surface(u_i_alpha([10,30,60,90],:), V_u); zlim([0, 5]);
 title('response surfaces at 0.1, 0.3, 0.6 and 0.9');
 
 %%
 % Then by tensor grid interpolation
-u_i_alpha = compute_response_surface_tensor_interpolate(init_func, solve_func, a_alpha, V_a, V_u, 5);
+u_i_alpha = compute_response_surface_tensor_interpolate(init_func, solve_func, a_i_alpha, V_a, V_u, 5);
 
 [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
 subplot(1,2,1); plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 title('resp. surf. proj.'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
 
-subplot(1,2,2); plot_response_surface(u_i_alpha([10,30,60,90],:), V_u)
+subplot(1,2,2); plot_response_surface(u_i_alpha([10,30,60,90],:), V_u); zlim([0, 5]);
 title('response surfaces at 0.1, 0.3, 0.6 and 0.9');
 
 %% 
@@ -234,8 +241,6 @@ title('response surfaces at 0.1, 0.3, 0.6 and 0.9');
 
 %% 
 % And now intrusive Stochastic Galerkin (just for the fun of it)
-V_u = gpcbasis_create(V_a, 'p', 5);
-
 A_i = gpc_multiplication_matrices(a_i_alpha, V_a, V_u);
 subplot(1,2,1); spy(A_i{1})
 subplot(1,2,2); spy(A_i{2})
