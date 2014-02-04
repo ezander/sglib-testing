@@ -5,13 +5,6 @@
 % field described by infinitely many stochastic variable, which has to be
 % (stochastically) discretised beforehand.
 
-% <latex>
-% \usepackage[margin=7ex]{geometry}
-% </latex>
-
-
-publishing_defaults
-
 %% The deterministic problem
 % Lets look at the following boundary value problem 
 %
@@ -31,10 +24,6 @@ publishing_defaults
 a1 = 2; a2 = 100;
 [u, a, pos]=diffusion_1d_complete_solve(a1, a2);
 plot(pos, u); 
-
-
-
-
 
 %% Stochastic description of the parameters
 % Now suppose the parameters a_1 and a_2 are uncertain and described by
@@ -152,16 +141,16 @@ legend('gpc approx. (kde)', 'samples', 'exact density');
 % If we sample from the germ distribution, we can see that it's indeed now
 % two-dimensional and has a Semicircle x Arcsine distribution
 xi = gpcgerm_sample(V_a, 30000);
-plot(xi(1,:), xi(2,:), '.', 'MarkerSize', 0.3); 
-axis equal; axis square;
+plot_samples(xi); 
+axis square;
 
 %%
 % Sampling from the parameters (now with quasi Monte Carlo) gives the
 % following (note that the arcsine distribution goes vertically with the
 % larger spike on top, and the semicircle distribtion goes horizontally
 % with the bump more to the left).
-a_i_samples = gpc_sample(a_i_alpha, V_a, 100000, 'mode', 'qmc');
-plot(a_i_samples(1,:), a_i_samples(2,:), '.', 'MarkerSize', 0.3);
+a_i_samples = gpc_sample(a_i_alpha, V_a, 30000, 'mode', 'qmc');
+plot_samples(a_i_samples);
 
 %% Monte Carlo
 % Now, as a first step, we can do a Monte-Carlo simulation of our model.
