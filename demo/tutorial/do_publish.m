@@ -1,6 +1,5 @@
 function do_publish
 
-clear
 publishing_defaults
 
 stylesheet = make_stylesheet;

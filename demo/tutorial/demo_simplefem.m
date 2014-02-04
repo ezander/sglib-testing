@@ -55,8 +55,6 @@ a2_dist = gendist_fix_bounds(a2_dist, 50, 150);
 density_plot(a2_dist, 'type', 'both')
 legend( 'pdf a2', 'cdf a2');
 
-
-
 %% GPC approximation of the parameters
 % For some methods we could directly use the distributions given above but
 % here we want to use their gpc approximation.
@@ -87,7 +85,7 @@ fprintf('Moments (a1,gpc): \nmean=%g, var=%g, skew=%g, kurt=%g\n', mean, var, sk
 % Draw some samples from the underlying distribution, then plot a kernel
 % density estimate of the gpc approximation of a1 and compare to the true
 % distribution.
-a1_samples = gpc_evaluate(a1_alpha, V1, gpcgerm_sample(V1, 100000)); 
+a1_samples = gpc_sample(a1_alpha, V1, 100000);
 
 density_plot(a1_samples, 'type', 'kernel', 'rug', true, 'max_rug', inf);
 density_plot(a1_dist, 'hold', true);
@@ -104,7 +102,6 @@ legend('gpc approx. (kde)', 'samples', 'exact density');
 
 [a2_alpha, V2] = gpc_param_expand(a2_dist, 't', 'varerr', 0.001, 'fixvar', true);
 
-
 %%
 % Compare the first four moments of the true distribution of a1 and its GPC
 % approximation
@@ -116,12 +113,11 @@ fprintf('Moments (a2,gpc): \nmean=%g, var=%g, skew=%g, kurt=%g\n', mean, var, sk
 %%
 % Plot a kernel density estimate of the gpc approximation of a2 and compare
 % to the true distribution
-a2_samples = gpc_evaluate(a2_alpha, V2, gpcgerm_sample(V2, 100000));
+a2_samples = gpc_sample(a2_alpha, V2, 100000);
 
 density_plot(a2_samples, 'type', 'kernel', 'kde_sig', 0.025, 'rug', true, 'max_rug', 300);
 density_plot(a2_dist, 'hold', true);
 legend('gpc approx. (kde)', 'samples', 'exact density');
-
 
 
 
@@ -152,7 +148,7 @@ axis square;
 a_i_samples = gpc_sample(a_i_alpha, V_a, 30000, 'mode', 'qmc');
 plot_samples(a_i_samples);
 
-%% Monte Carlo
+%% Direct Monte Carlo sampling
 % Now, as a first step, we can do a Monte-Carlo simulation of our model.
 % Instead of making statistics, we'll just plot a bunch of samples.
 
@@ -167,7 +163,7 @@ end
 plot(pos, u_samples)
 
 
-%% Canned functions for computing moments
+%% Computing moments by sampling
 % We have that also canned as a function. Showing mean and variance
 % computed by MC and QMC.
 [u_mean, u_var] = compute_moments_mc(@diffusion_1d_init, @diffusion_1d_solve, a_i_alpha, V_a, 100);
@@ -178,18 +174,22 @@ title('mc'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
 subplot(1,2,2); plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 title('qmc'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
 
-%%
+%% Computing moments by quadrature
 % Or we can compute that by projection/integration. With smolyak or tensor
 % grid.
 [u_mean, u_var] = compute_moments_quad(@diffusion_1d_init, @diffusion_1d_solve, a_i_alpha, V_a, 5, 'grid', 'smolyak');
-subplot(1,2,1); plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
-title('smolyak'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
+subplot(1,2,1); 
+plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
+legend('mean-std', 'mean', 'mean+std'); 
+title('smolyak'); ylim([0,3.5]); grid on;
 
 [u_mean, u_var] = compute_moments_quad(@diffusion_1d_init, @diffusion_1d_solve, a_i_alpha, V_a, 5, 'grid', 'tensor');
-subplot(1,2,2); plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
-title('tensor'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
+subplot(1,2,2); 
+plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
+legend('mean-std', 'mean', 'mean+std'); 
+title('tensor'); ylim([0,3.5]); grid on;
 
-%% Canned functions for computing response surfaces
+%% Response surfaces by projection
 % First by projection
 V_u = gpcbasis_create(V_a, 'p', 5);
 
@@ -198,24 +198,30 @@ solve_func=@diffusion_1d_solve;
 [u_i_alpha] = compute_response_surface_projection(init_func, solve_func, a_i_alpha, V_a, V_u, 5);
 
 [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
-subplot(1,2,1); plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
-title('resp. surf. proj.'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
+subplot(1,2,1); 
+plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
+legend('mean-std', 'mean', 'mean+std'); 
+title('resp. surf. proj.'); ylim([0,3.5]); grid on;
 
-subplot(1,2,2); plot_response_surface(u_i_alpha([10,30,60,90],:), V_u); zlim([0, 5]);
-title('response surfaces at 0.1, 0.3, 0.6 and 0.9');
+subplot(1,2,2); 
+plot_response_surface(u_i_alpha([10,30,60,90],:), V_u);
+title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]);
 
-%%
+%% Response surface by tensor grid interpolation
 % Then by tensor grid interpolation
 u_i_alpha = compute_response_surface_tensor_interpolate(init_func, solve_func, a_i_alpha, V_a, V_u, 5);
 
 [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
-subplot(1,2,1); plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
-title('resp. surf. proj.'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
+subplot(1,2,1); 
+plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
+legend('mean-std', 'mean', 'mean+std'); 
+title('resp. surf. proj.'); ylim([0,3.5]); grid on;
 
-subplot(1,2,2); plot_response_surface(u_i_alpha([10,30,60,90],:), V_u); zlim([0, 5]);
-title('response surfaces at 0.1, 0.3, 0.6 and 0.9');
+subplot(1,2,2); 
+plot_response_surface(u_i_alpha([10,30,60,90],:), V_u); 
+title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]);
 
-%% 
+%% Response surface by non-intrusive Galerkin
 % Then by non-intrusive Galerkin (doesn't work)
 
 init_func=@diffusion_1d_init;
@@ -229,9 +235,61 @@ step_func=@diffusion_1d_step;
 % subplot(1,2,2); plot_response_surface(u_i_alpha([10,30,60,90],:), V_u)
 % title('response surfaces at 0.1, 0.3, 0.6 and 0.9');
 
-%% 
+%% Response surface by intrusive Galerkin
 % And now intrusive Stochastic Galerkin (just for the fun of it)
+%
+% First we need the stochastic Galerkin matrices for the two parameters
 A_i = gpc_multiplication_matrices(a_i_alpha, V_a, V_u);
 subplot(1,2,1); spy(A_i{1})
 subplot(1,2,2); spy(A_i{2})
 
+%%
+% Then we can construct the full tensor product operator out of it.
+K = {state.K{1}, A_i{1};
+    state.K{2}, A_i{2}};
+subplot(1,1,1)
+spy(tensor_operator_to_matrix(K))
+
+%% 
+% For applying stochastic Galerkin we need to apply the boundary conditions
+% to the operator and right hand side. In sglib this is implemented such
+% that the matrices (or tensor operators or whatever) are projected onto
+% the inner (i.e. non-Dirichlet) nodes and the solution is later extended
+% again by putting the values on the Dirichlet boundary back in.
+P_I = state.P_I;
+P_B = state.P_B;
+N = size(state.K{1},1);
+M = size(A_i{1},1);
+Ki=apply_boundary_conditions_operator( K, P_I );
+
+
+%%
+% apply to the right hand side
+G = zeros(N, M);
+G(:,1) = state.g;
+F = zeros(N, M);
+F(:,1) = state.f;
+Fi=apply_boundary_conditions_rhs( K, F, G, P_I, P_B );
+
+%% 
+% Here we transform the tensor operator to a matrix and solve with the
+% standard matlab solve thing for sparse matrices
+Ki_mat = tensor_operator_to_matrix(Ki);
+Fi_vec = Fi(:);
+Ui_vec = Ki_mat\Fi_vec;
+Ui = reshape(Ui_vec, size(Fi));
+
+%%
+% Apply the boundary conditions and show the solution (and guess what? we
+% get the same results as in the other cases)
+u_i_alpha=apply_boundary_conditions_solution(Ui, G, P_I, P_B);
+
+[u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
+subplot(1,2,1); 
+plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
+legend('mean-std', 'mean', 'mean+std'); 
+title('resp. surf. proj.'); ylim([0,3.5]); grid on;
+
+subplot(1,2,2); 
+plot_response_surface(u_i_alpha([10,30,60,90],:), V_u); 
+title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]);
