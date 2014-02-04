@@ -4,43 +4,57 @@
 \usepackage{listings}
 
 \sloppy
-\definecolor{lightgray}{gray}{0.5}
+\definecolor{mcodeoutput}{named}{black}
 \setlength{\parindent}{0pt}
 
 
 
 \usepackage{listings}
-\def\prebreaksym{...}
-\def\postbreaksym{\ensuremath{\hookrightarrow}}
-\def\postbreaksym{}
-\lstset{%
-  language=Matlab,%
-  commentstyle=\color{green!30!black!100},%
-%  basicstyle=\tiny\ttfamily,%
-%  basicstyle=\scriptsize\ttfamily,%
-  basicstyle=\ttfamily,%
-  columns=flexible,
-  %numberstyle=\color{gray}\tiny,
-  numberstyle=\tiny,
-  %keywordstyle=\color{blue},
-  numbers=left,
-  %emph={isempty,tic,toc,diag,min,svd,eps,nargin},
-  %emphstyle=\color{black},
-  emph={gpc_sample, gendist_create, gendist_fix_bounds, density_plot,
-  gpc_param_expand, gendist_moments, gpc_moments, gpc_evaluate,
-  gpc_combine_inputs, gpcgerm_sample, plot_samples,
-  compute_moments_mc, compute_moments_quad, gpcbasis_create,
-  compute_response_surface_projection, plot_response_surface,
-  compute_response_surface_tensor_interpolate,
-  compute_response_surface_nonintrusive_galerkin, gpc_multiplication_matrices},
-  emphstyle=\color{Maroon},
-  breaklines=true,
-  prebreak={\hbox{\prebreaksym}},
-  postbreak={\hbox{\postbreaksym}},
-  breakindent=10ex,
-  breakautoindent=true,
+
+\lstdefinestyle{all}{
+  basicstyle=\ttfamily,
   captionpos=b,
-%  xleftmargin=7ex,
   xleftmargin=4ex,
   xrightmargin=0ex,
+  frame=lrtb, framerule=1pt, framexleftmargin=1pt,
+  showstringspaces=false,
+}
+\lstdefinestyle{mcodeoutput}{
+  basicstyle={\ttfamily\color{black!80}},
+  xleftmargin=4ex,
+}
+\lstdefinestyle{mcode}{
+  language=Matlab,
+  columns=flexible,
+  commentstyle=\color{green!30!black!100},
+  keywordstyle=\color{black},
+  numberstyle=\scriptsize,
+  %numbers=left,
+  %
+  emph={[1]gpc_sample, gpc_param_expand, gpc_moments, gpc_evaluate, 
+  gpc_combine_inputs, gpcgerm_sample, gpcbasis_create, 
+  gpc_multiplication_matrices}, 
+  emphstyle={[1]\color{Maroon}},
+  %
+  emph={[2]compute_moments_mc, compute_moments_quad, 
+  compute_response_surface_projection,
+  compute_response_surface_tensor_interpolate,
+  compute_response_surface_nonintrusive_galerkin},
+  emphstyle={[2]\color{Navy}},
+  %
+  emph={[3]gendist_create, gendist_fix_bounds, density_plot,
+  gendist_moments, plot_samples, plot_response_surface,
+  },
+  emphstyle={[3]\color{Maroon}},
+  %
+  emph={[4]diffusion_1d_complete_solve, diffusion_1d_solve,
+  diffusion_1d_init, diffusion_1d_step
+  },
+  emphstyle={[4]\color{green!30!black!100}},
+  %
+  breaklines=true,
+  prebreak={\hbox{...}},
+  postbreak={\hbox{}},
+  breakindent=10ex,
+  breakautoindent=true,
 }

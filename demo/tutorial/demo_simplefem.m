@@ -217,8 +217,9 @@ title('response surfaces at 0.1, 0.3, 0.6 and 0.9');
 
 %% 
 % Then by non-intrusive Galerkin (doesn't work)
-% init_func=@diffusion_1d_init;
-% step_func=@diffusion_1d_step; % linear (trivial step function)
+
+init_func=@diffusion_1d_init;
+step_func=@diffusion_1d_step;
 % [u_i_alpha,x,w]=compute_response_surface_nonintrusive_galerkin(init_func, step_func, a_alpha, V_a, V_u, 5);
 % 
 % [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);

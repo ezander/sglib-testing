@@ -22,24 +22,27 @@ modify_stylesheet(ml_stylesheet, stylesheet);
 function tex_modify(filename)
 endl = sprintf('\n');
 str=readtextfile(filename);
+
+% replace preamble until begin{document}
 str = regexprep(str, '.*\\begin{document}[\n ]*', '');
-str = regexprep(str, '[\n ]*\\end{document}.*', '');
-
-
-str = regexprep(str, '\\section\*', '\\section');
-str = regexprep(str, '\\section\*', '\\section');
-str = regexprep(str, '\\subsection\*', '\\subsection');
-
 str = ['\begin{document}' endl str];
 str = ['\input{preamble}' endl str];
 str = ['\documentclass[12pt,a4paper]{scrartcl}' endl str];
 
-str = [str endl '\end{document}' endl];
-
+% replace contents section with latex table of contents
 str = regexprep(str, '\\subsection.*{Contents}.*?\\end{itemize}', '\\tableofcontents');
 
-% clc
-% [str(1:1000) str(end-200:end)]
+% replace footer section
+str = regexprep(str, '[\n ]*\\end{document}.*', '');
+str = [str endl '\end{document}' endl];
+
+% replace starred sectioning commands with unstarred ones
+str = regexprep(str, '\\section\*', '\\section');
+str = regexprep(str, '\\section\*', '\\section');
+str = regexprep(str, '\\subsection\*', '\\subsection');
+
+% make graphics centered
+str = regexprep(str, '(\\includegraphics.*?})', '\\begin{center}$1\\end{center}');
 
 
 writetextfile(filename, str);
@@ -47,12 +50,10 @@ writetextfile(filename, str);
 
 function modify_stylesheet(ml_stylesheet, stylesheet);
 str=readtextfile(ml_stylesheet);
-% <xsl:template match="mcode">\begin{verbatim}
-% <xsl:value-of select="."/>
-% \end{verbatim}
-% </xsl:template>
-str = regexprep(str, '(match="mcode".*?){verbatim}(.*?){verbatim}', '$1{lstlisting}$2{lstlisting}');
-
+str = regexprep(str, '(match="mcode".*?){verbatim}(.*?){verbatim}', '$1{lstlisting}[style=all,style=mcode]$2{lstlisting}');
+str = regexprep(str, '(match="mcodeoutput".*?){verbatim}(.*?){verbatim}', '$1{lstlisting}[style=all,style=mcodeoutput]$2{lstlisting}');
+str = regexprep(str, '({lstlisting}\[.*?\])(<)', sprintf('$1\n$2'));
+str = regexprep(str, '{lightgray}', '{mcodeoutput}');
 writetextfile(stylesheet, str);
 
 function str=readtextfile(filename)
