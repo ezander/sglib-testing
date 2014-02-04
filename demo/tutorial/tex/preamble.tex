@@ -1,0 +1,46 @@
+\usepackage{graphicx}
+\usepackage[svgnames]{xcolor}
+\usepackage[margin=10ex]{geometry}
+\usepackage{listings}
+
+\sloppy
+\definecolor{lightgray}{gray}{0.5}
+\setlength{\parindent}{0pt}
+
+
+
+\usepackage{listings}
+\def\prebreaksym{...}
+\def\postbreaksym{\ensuremath{\hookrightarrow}}
+\def\postbreaksym{}
+\lstset{%
+  language=Matlab,%
+  commentstyle=\color{green!30!black!100},%
+%  basicstyle=\tiny\ttfamily,%
+%  basicstyle=\scriptsize\ttfamily,%
+  basicstyle=\ttfamily,%
+  columns=flexible,
+  %numberstyle=\color{gray}\tiny,
+  numberstyle=\tiny,
+  %keywordstyle=\color{blue},
+  numbers=left,
+  %emph={isempty,tic,toc,diag,min,svd,eps,nargin},
+  %emphstyle=\color{black},
+  emph={gpc_sample, gendist_create, gendist_fix_bounds, density_plot,
+  gpc_param_expand, gendist_moments, gpc_moments, gpc_evaluate,
+  gpc_combine_inputs, gpcgerm_sample, plot_samples,
+  compute_moments_mc, compute_moments_quad, gpcbasis_create,
+  compute_response_surface_projection, plot_response_surface,
+  compute_response_surface_tensor_interpolate,
+  compute_response_surface_nonintrusive_galerkin, gpc_multiplication_matrices},
+  emphstyle=\color{Maroon},
+  breaklines=true,
+  prebreak={\hbox{\prebreaksym}},
+  postbreak={\hbox{\postbreaksym}},
+  breakindent=10ex,
+  breakautoindent=true,
+  captionpos=b,
+%  xleftmargin=7ex,
+  xleftmargin=4ex,
+  xrightmargin=0ex,
+}
