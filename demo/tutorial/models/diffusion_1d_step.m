@@ -1,4 +1,4 @@
-function [du, state] = diffusion_1d_step(state, u, a)
+function [un, step_info, state] = diffusion_1d_step(state, u, a)
 
-[u_sol, solve_info, state] = diffusion_1d_solve(state, a);
-du = 0.20 * (u_sol - u);
+[un, step_info, state] = diffusion_1d_solve(state, a);
+un = u + state.step_relax * (un - u);

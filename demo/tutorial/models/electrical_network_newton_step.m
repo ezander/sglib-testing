@@ -1,4 +1,4 @@
-function [du, state] = electrical_network_newton_step(state, u, p)
+function [un, state] = electrical_network_newton_step(state, u, p)
 % ELECTRICAL_NETWORK_NEWTON_STEP Computes one Newton step for the electrical network.
 
 % Compute residual at u
@@ -15,3 +15,5 @@ J = -(A + (p(1)+2) * (2*(u*u') + (u'*u)*I));
 
 % Compute Newton step
 du = -J \ res;
+
+un = u + du;

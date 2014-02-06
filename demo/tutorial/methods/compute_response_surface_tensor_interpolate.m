@@ -1,4 +1,4 @@
-function [u_i_alpha, x] = compute_response_surface_tensor_interpolate(init_func, solve_func, a_alpha, V_a, V_u, p_u)
+function [u_i_alpha, x] = compute_response_surface_tensor_interpolate(state, a_alpha, V_a, V_u, p_u)
 % COMPUTE_RESPONSE_SURFACE_TENSOR_INTERPOLATE Short description of compute_response_surface_tensor_interpolate.
 %   COMPUTE_RESPONSE_SURFACE_TENSOR_INTERPOLATE Long description of compute_response_surface_tensor_interpolate.
 %
@@ -24,8 +24,6 @@ function [u_i_alpha, x] = compute_response_surface_tensor_interpolate(init_func,
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-[state, info] = funcall(init_func);
-
 % compute interpolation points (need one level more than order)
 [x,w] = gpc_integrate([], V_u, p_u+1, 'grid', 'full_tensor');
 a = gpc_evaluate(a_alpha, V_a, x);
@@ -34,10 +32,10 @@ a = gpc_evaluate(a_alpha, V_a, x);
 A=gpcbasis_evaluate(V_u, x);
 
 Q = length(w);
-u = zeros(info.num_vars, Q);
+u = zeros(state.model_info.num_vars, Q);
 for j = 1:Q
     a_j = a(:,j);
-    [u(:,j), solve_info, state] = funcall(solve_func, state, a_j);
+    [u(:,j), state] = model_solve(state, a_j);
 end
 
 u_i_alpha = u/A;

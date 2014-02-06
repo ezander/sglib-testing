@@ -1,4 +1,4 @@
-function [u_i_alpha, x, w] = compute_response_surface_projection(init_func, solve_func, a_alpha, V_a, V_u, p_int, varargin)
+function [u_i_alpha, x, w] = compute_response_surface_projection(state, a_alpha, V_a, V_u, p_int, varargin)
 % COMPUTE_RESPONSE_SURFACE_PROJECTION Compute a gpc response surface representation.
 %   COMPUTE_RESPONSE_SURFACE_PROJECTION Long description of compute_response_surf_projection.
 %
@@ -27,17 +27,15 @@ options=varargin2options(varargin);
 [grid,options]=get_option(options, 'grid', 'smolyak');
 check_unsupported_options(options, mfilename);
 
-[state, info] = funcall(init_func);
-
 [x,w] = gpc_integrate([], V_u, p_int, 'grid', grid);
 M = gpcbasis_size(V_u, 1);
 Q = length(w);
-u_i_alpha = zeros(info.num_vars, M);
+u_i_alpha = zeros(state.model_info.num_vars, M);
 a = gpc_evaluate(a_alpha, V_a, x);
 
 for j = 1:Q
     a_j = a(:, j);
-    [u_i_j, solve_info, state] = funcall(solve_func, state, a_j);
+    [u_i_j, state] = model_solve(state, a_j);
     x_j = x(:, j);
     psi_j_alpha_dual = gpcbasis_evaluate(V_u, x_j, 'dual', true);
     u_i_alpha = u_i_alpha + w(j) * u_i_j * psi_j_alpha_dual;

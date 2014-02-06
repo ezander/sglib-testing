@@ -8,3 +8,5 @@ function [du, state] = electrical_network_picard_iter_step(state, u, p)
 
 % Compute one Picard iteration step
 du = state.A \ res;
+
+un = u + du;
