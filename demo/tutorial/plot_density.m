@@ -1,6 +1,6 @@
-function density_plot(dist_or_samples, varargin)
-% DENSITY_PLOT Short description of density_plot.
-%   DENSITY_PLOT Long description of density_plot.
+function plot_density(dist_or_samples, varargin)
+% PLOT_DENSITY Short description of plot_density.
+%   PLOT_DENSITY Long description of plot_density.
 %
 % Options
 %
@@ -8,7 +8,7 @@ function density_plot(dist_or_samples, varargin)
 %
 % Notes
 %
-% Example (<a href="matlab:run_example density_plot">run</a>)
+% Example (<a href="matlab:run_example plot_density">run</a>)
 %
 % See also
 
@@ -35,21 +35,23 @@ if do_hold
 end
 
 if iscell(dist_or_samples)
-    dist_density_plot(dist_or_samples, options);
+    plot_dist_density(dist_or_samples, options);
 else
-    sample_density_plot(dist_or_samples, options);
+    plot_sample_density(dist_or_samples, options);
 end
 
 if do_hold && ~was_hold
     hold('off');
 end
 
-function dist_density_plot(dist, options)
+function plot_dist_density(dist, options)
 [q0,options] = get_option(options, 'q0', 0);
 [q1,options] = get_option(options, 'q1', 1);
 [dq,options] = get_option(options, 'dq', 0.02);
 [N,options] = get_option(options, 'N', 100);
 [ext,options] = get_option(options, 'ext', 0.04);
+[extra_x,options] = get_option(options, 'extra_x', []);
+[extra_q,options] = get_option(options, 'extra_q', []);
 [type,options] = get_option(options, 'type', 'pdf');
 check_unsupported_options(options, [mfilename, '/dist'])
 
@@ -67,7 +69,14 @@ if ext~=0
     x0 = x0 - dx;
     x1 = x1 + dx;
 end
-x = unique([x, linspace(x0, x1, N)]);
+x = [x, linspace(x0, x1, N)];
+if ~isempty(extra_q)
+    x = [x, gendist_invcdf(extra_q)];
+end
+if ~isempty(extra_x)
+    x = [x, extra_x];
+end
+x = unique(x);
 switch(type)
     case 'pdf'
         plot(x, gendist_pdf(x, dist));
@@ -78,7 +87,7 @@ switch(type)
 end        
 
 
-function sample_density_plot(x, options)
+function plot_sample_density(x, options)
 [type, options]=get_option(options, 'type', 'hist');
 [n, options]=get_option(options, 'n', 100);
 [kde_sig, options]=get_option(options, 'kde_sig', []);
@@ -88,7 +97,7 @@ check_unsupported_options(options, [mfilename, '/sample']);
 
 switch(type)
     case 'hist'
-        kernel_density(x, n, kde_sig);
+        histogram(x, n);
         %error('foo');
     case 'empirical'
         error('foo');
@@ -104,4 +113,15 @@ if rug
     end
     rug_plot(x);
 end
+
+function histogram(x, n)
+[nbin,xc]=hist(x, n);
+if n>1
+    dx = (xc(2) - xc(1));
+else
+    dx = (max(x) - min(x));
+end
+y = nbin / sum(nbin) / dx;
+bar(xc, y, 'BarWidth', 1, 'FaceColor', [0.9, 0.9, 0.9] );
+
 
