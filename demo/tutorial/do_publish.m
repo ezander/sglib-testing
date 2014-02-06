@@ -4,8 +4,12 @@ publishing_defaults
 
 stylesheet = make_stylesheet;
 
-publish_to_latex('demo_simplefem', true, 'imageFormat', 'png', ...
-    'stylesheet', stylesheet, 'latex_filter', @tex_modify);
+latexmk = strvarexpand('$pwd$/latexmk -pdf');
+
+open_pdf = false;
+publish_to_latex('demo_simplefem', open_pdf, 'imageFormat', 'png', ...
+    'stylesheet', stylesheet, 'latex_filter', @tex_modify, ...
+    'pdflatex_cmd', latexmk);
 
 
 
