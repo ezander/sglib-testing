@@ -18,18 +18,9 @@ function [u, solve_info, state] = electrical_network_solve(state, p, varargin)
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
 options = varargin2options(varargin);
-[step_method, options] = get_option(options, 'step_method', 'newton');
-[u0, options] = get_option(options, 'u0', state.u0);
+[u0, options] = get_option(options, 'u0', zeros(state.model_info.num_vars,1));
 check_unsupported_options(options, mfilename);
 
-switch(step_method)
-    case 'newton'
-        step_func = @electrical_network_newton_step;
-    case 'picard'
-        step_func = @electrical_network_picard_iter_step;
-end
-
-residual_func = @electrical_network_residual;
-[u, iter, res, state] = general_iterative_solver(step_func, residual_func, state, p, 'u0', u0, 'verbose', false);
+[u, iter, res, state] = general_iterative_solver(state, p, 'u0', u0, 'verbose', false);
 solve_info.iter = iter;
 solve_info.res = res;

@@ -1,4 +1,4 @@
-function [u, iter, res, state] = general_iterative_solver(step_func, residual_func, state, p, varargin)
+function [u, iter, res, state] = general_iterative_solver(state, p, varargin)
 % GENERAL_ITERATIVE_SOLVER Solves a nonlinear system iteratively by using a given step function.
 %   GENERAL_ITERATIVE_SOLVER solves a nonlinear system of equations
 %   iteratively. The parameter STEP_FUNC specifies a function handle
@@ -32,16 +32,22 @@ function [u, iter, res, state] = general_iterative_solver(step_func, residual_fu
 
 
 options = varargin2options(varargin);
-[u0, options] = get_option(options, 'u0', state.u0);
+[u0, options] = get_option(options, 'u0', []);
 [max_iter, options] = get_option(options, 'max_iter', 100);
 [abstol, options] = get_option(options, 'abstol', 1e-5);
 [verbose, options] = get_option(options, 'verbose', false);
 check_unsupported_options(options, mfilename);
 
+step_func = state.model_info.step_func;
+res_func = state.model_info.res_func;
 
-u = u0;
+if isempty(u0)
+    u = funcall(state.model_info.sol_init_func, p);
+else
+    u = u0;
+end
 for iter = 1:max_iter
-    [res, state] = funcall(residual_func, state, u, p);
+    [res, state] = funcall(res_func, state, u, p);
     res_norm = norm(res);
     if verbose
         fprintf( 'nonlin_solve: iter %d, norm=%g\n', iter, res_norm);
@@ -54,6 +60,5 @@ for iter = 1:max_iter
             abstol, max_iter);
     end
     
-    [du, state] = funcall(step_func, state, u, p);
-    u = u + du;
+    [u, state] = funcall(step_func, state, u, p);
 end

@@ -305,7 +305,7 @@ title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]);
 %% Response surface by non-intrusive Galerkin
 % Then by non-intrusive Galerkin (doesn't work)
 
-[u_i_alpha,x,w]=compute_response_surface_nonintrusive_galerkin(state, a_i_alpha, V_a, V_u, 5, 'max_iter', 5);
+[u_i_alpha,x,w]=compute_response_surface_nonintrusive_galerkin(state, a_i_alpha, V_a, V_u, 5, 'max_iter', 10);
 
 [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
 subplot(1,2,1); plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));

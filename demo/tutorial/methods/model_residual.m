@@ -1,6 +1,6 @@
-function [sol, state] = model_step(state, old_sol, params, varargin)
-% MODEL_STEP Short description of model_step.
-%   MODEL_STEP Long description of model_step.
+function [res, state] = model_residual(state, curr_sol, params, varargin)
+% MODEL_RESIDUAL Short description of model_residual.
+%   MODEL_RESIDUAL Long description of model_residual.
 %
 % Options
 %
@@ -8,7 +8,7 @@ function [sol, state] = model_step(state, old_sol, params, varargin)
 %
 % Notes
 %
-% Example (<a href="matlab:run_example model_step">run</a>)
+% Example (<a href="matlab:run_example model_residual">run</a>)
 %
 % See also
 
@@ -23,10 +23,10 @@ function [sol, state] = model_step(state, old_sol, params, varargin)
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-step_func = state.model_info.step_func;
-start = tic;
-[sol, state]=funcall(step_func, state, old_sol, params, varargin{:});
-t = toc(start);
-state.model_stats.num_step_calls = state.model_stats.num_step_calls + 1;
-state.model_stats.time_step_calls = state.model_stats.time_step_calls + t;
+res_func = state.model_info.res_func;
+%start = tic;
+[res, state]=funcall(res_func, state, curr_sol, params, varargin{:});
+%t = toc(start);
+% state.model_stats.num_res_calls = state.model_stats.num_res_calls + 1;
+% state.model_stats.time_res_calls = state.model_stats.time_res_calls + t;
+%state.res_info = res_info;

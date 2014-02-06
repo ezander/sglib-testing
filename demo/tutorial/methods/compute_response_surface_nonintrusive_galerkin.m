@@ -36,7 +36,9 @@ if ~isempty(u0_i_alpha)
 elseif ~isempty(p_int_proj)
     [u_i_alpha, state] = compute_response_surface_projection(state, V_u, p_int_proj, 'grid', 'smolyak');
 else
-    u_i_alpha = repmat(state.u0, 1, gpcbasis_size(V_u,1));
+    u_i_alpha = zeros(state.model_info.num_vars, gpcbasis_size(V_u, 1));
+    % TODO correct this
+    % u_i_alpha = repmat(state.u0, 1, gpcbasis_size(V_u,1));
 end
 
 
@@ -57,6 +59,7 @@ for k=1:max_iter
         u_i_p = gpc_evaluate(u_i_alpha, V_u, x_j);
         % evaluate S at p, u_i_p
         [S_p, state] = model_step(state, u_i_p, a_j);
+        S_p = S_p - u_i_p;
         % update unext
         unext_i_alpha = unext_i_alpha + w(j) * S_p * gpcbasis_evaluate(V_u, x_j, 'dual', true);
     end
@@ -82,6 +85,6 @@ for k=1:max_iter
 end
 
 if ~converged
-    warning('sglib:non_intr_galerkin', 'The Galerkin iteration did not converge');
+    warning('sglib:non_intr_galerkin', 'The Galerkin iteration did not converge after %d iterations.', max_iter);
 end
 

@@ -9,7 +9,11 @@ num_params = 2;
 num_vars = N;
 
 % initialise the state object
-state = model_init(num_params, num_vars, @diffusion_1d_solve, @diffusion_1d_step);
+state = model_init(num_params, num_vars, ...
+    'solve_func', @diffusion_1d_solve, ...
+    'step_func', @diffusion_1d_step, ...
+    'res_func', @diffusion_1d_residual, ...
+    'sol_init_func', @(a)(zeros(N,1)));
 
 state.step_relax = step_relax;
 
@@ -24,7 +28,7 @@ state.a{1}=double(pos<0.5)';
 state.a{2}=double(pos>=0.5)';
 
 % store some more FEM stuff in state
-state.u0=zeros(size(pos))';
+%state.u0=zeros(size(pos))';
 state.f=ones(size(pos))';
 state.g=zeros(size(pos))';
 state.K{1}=stiffness_matrix(pos, els, state.a{1});

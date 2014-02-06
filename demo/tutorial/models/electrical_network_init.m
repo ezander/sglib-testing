@@ -1,4 +1,4 @@
-function [state, info] = electrical_network_init( varargin )
+function state = electrical_network_init( varargin )
 % ELECTRICAL_NETWORK_INIT Initialises the structure that keeps the internal
 % state of the electrical network example.
 %
@@ -9,12 +9,36 @@ options = varargin2options(varargin);
 [R, options] = get_option(options, 'R', 0.01);
 [fg, options] = get_option(options, 'fg', 25);
 [f0, options] = get_option(options, 'f0', [1; zeros(4,1)]);
+[newton, options] = get_option(options, 'newton', true);
 check_unsupported_options(options, mfilename);
 
 
+A=create_network_matrix(R);
+num_params = 2;
+num_vars = size(A,1);
+
+% initialise the state object
+if newton
+    step_func = @electrical_network_newton_step;
+else
+    step_func = @electrical_network_picard_iter_step;
+end
+
+state = model_init(num_params, num_vars, ...
+    'solve_func', @electrical_network_solve, ...
+    'step_func', step_func, ...
+    'res_func', @electrical_network_residual, ...
+    'sol_init_func', @(a)(zeros(num_vars,1)));
+
+% store electrical network info in state object
+state.A = A;
+state.f0 = f0;
+state.fg = fg;
+%state.u0 = zeros(num_vars, 1);
 
 
 
+function A=create_network_matrix(R)
 
 % edge - node incidence matrix
 B=[0  1  0 -1  0  0;
@@ -39,20 +63,3 @@ assert(rank(As)<min(size(As)));
 % column of the matrix
 A = As(1:end-1, 1:end-1);
 assert(rank(A)==min(size(A)));
-
-% store everything in the state variable
-info = struct();
-info.num_params = 2;
-info.num_vars = size(A,1);
-
-if nargout==2
-    state = struct();
-else
-    state = info;
-end
-state.A = A;
-state.Pr = inv(A);
-state.R = R;
-state.f0 = f0;
-state.fg = fg;
-state.u0 = zeros(info.num_vars, 1);

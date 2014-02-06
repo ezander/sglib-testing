@@ -15,5 +15,4 @@ J = -(A + (p(1)+2) * (2*(u*u') + (u'*u)*I));
 
 % Compute Newton step
 du = -J \ res;
-
 un = u + du;
