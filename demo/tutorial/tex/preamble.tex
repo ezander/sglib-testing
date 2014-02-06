@@ -1,12 +1,11 @@
 \usepackage{graphicx}
 \usepackage[svgnames]{xcolor}
 \usepackage[margin=10ex]{geometry}
-\usepackage{listings}
+
 
 \sloppy
 \definecolor{mcodeoutput}{named}{black}
 \setlength{\parindent}{0pt}
-
 
 
 \usepackage{listings}
@@ -42,8 +41,8 @@
   compute_response_surface_nonintrusive_galerkin},
   emphstyle={[2]\color{Navy}},
   %
-  emph={[3]gendist_create, gendist_fix_bounds, density_plot,
-  gendist_moments, plot_samples, plot_response_surface,
+  emph={[3]gendist_create, gendist_fix_bounds, gendist_moments,
+  plot_density, plot_samples, plot_response_surface,
   },
   emphstyle={[3]\color{Maroon}},
   %
@@ -58,3 +57,12 @@
   breakindent=10ex,
   breakautoindent=true,
 }
+
+
+
+\usepackage{hyperref}
+\hypersetup{
+        colorlinks=false,
+        linkcolor=Navy,
+        hidelinks=true
+        }

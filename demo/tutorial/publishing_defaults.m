@@ -8,7 +8,7 @@ set(0,...
 'defaultlinemarkersize',16)
 rand('state',1234)
 randn('state',2345)
-format compact, format long
+format compact, format short g
 
 addpath('models');
 addpath('methods');

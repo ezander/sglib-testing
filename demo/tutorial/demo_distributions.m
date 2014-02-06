@@ -56,7 +56,7 @@ dist = gendist_create('lognormal', {1, 0.7}, 'shift', 1.3);
 % distribution function:
 
 %%
-density_plot(dist, 'type', 'both')
+plot_density(dist, 'type', 'both')
 %%
 x=linspace(0,10);
 plot(x, gendist_pdf(x, dist), x, gendist_cdf(x, dist));
