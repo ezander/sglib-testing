@@ -1,4 +1,4 @@
-function [u_i_alpha,x_j,w]=compute_response_surface_nonintrusive_galerkin(state, a_alpha, V_a, V_u, p_int, varargin)
+function [u_i_alpha, state, x, w]=compute_response_surface_nonintrusive_galerkin(state, a_alpha, V_a, V_u, p_int, varargin)
 % COMPUTE_RESPONSE_SURFACE_NONINTRUSIVE_GALERKIN Short description of compute_response_surface_nonintrusive_galerkin.
 %   COMPUTE_RESPONSE_SURFACE_NONINTRUSIVE_GALERKIN Long description of compute_response_surface_nonintrusive_galerkin.
 %
@@ -24,8 +24,7 @@ function [u_i_alpha,x_j,w]=compute_response_surface_nonintrusive_galerkin(state,
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
 options=varargin2options(varargin);
-[p_int_proj, options]=get_option(options, 'p_int_proj', []);
-[u0_i_alpha, options]=get_option(options, 'u0_i_alpha', []);
+[u0_i_alpha, options]=get_option(options, 'initial_sol', []);
 [max_iter, options]=get_option(options, 'max_iter', 50);
 [threshold, options]=get_option(options, 'threshold', 1e-5);
 [grid, options]=get_option(options, 'grid', 'smolyak');
@@ -33,8 +32,6 @@ check_unsupported_options(options, mfilename);
 
 if ~isempty(u0_i_alpha)
     u_i_alpha = u0_i_alpha;
-elseif ~isempty(p_int_proj)
-    [u_i_alpha, state] = compute_response_surface_projection(state, V_u, p_int_proj, 'grid', 'smolyak');
 else
     u_i_alpha = zeros(state.model_info.num_vars, gpcbasis_size(V_u, 1));
     % TODO correct this

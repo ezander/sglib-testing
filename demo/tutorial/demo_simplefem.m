@@ -292,6 +292,7 @@ title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]);
 % Then by tensor grid interpolation
 u_i_alpha = compute_response_surface_tensor_interpolate(state, a_i_alpha, V_a, V_u, 5);
 
+
 [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
 subplot(1,2,1); 
 plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
@@ -299,20 +300,27 @@ legend('mean-std', 'mean', 'mean+std');
 title('resp. surf. proj.'); ylim([0,3.5]); grid on;
 
 subplot(1,2,2); 
-plot_response_surface(u_i_alpha([10,30,60,90],:), V_u); 
+plot_response_surface(u_i_alpha([10,30,60,90],:), V_u);
 title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]);
 
 %% Response surface by non-intrusive Galerkin
 % Then by non-intrusive Galerkin (doesn't work)
 
-[u_i_alpha,x,w]=compute_response_surface_nonintrusive_galerkin(state, a_i_alpha, V_a, V_u, 5, 'max_iter', 10);
+max_iter = 20;
+p_int = max(V_u{2}(:));
+int_grid = 'full_tensor';
+state.step_relax = 0.98;
+[u_i_alpha, state, x, w]=compute_response_surface_nonintrusive_galerkin(state, a_i_alpha, V_a, V_u, p_int, 'max_iter', max_iter, 'grid', int_grid);
 
 [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
-subplot(1,2,1); plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
-title('resp. surf. proj.'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
+subplot(1,2,1); 
+plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
+legend('mean-std', 'mean', 'mean+std'); 
+title('resp. surf. proj.'); ylim([0,3.5]); grid on;
 
-subplot(1,2,2); plot_response_surface(u_i_alpha([10,30,60,90],:), V_u)
-title('response surfaces at 0.1, 0.3, 0.6 and 0.9');
+subplot(1,2,2); 
+plot_response_surface(u_i_alpha([10,30,60,90],:), V_u);
+title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]);
 
 %% Response surface by intrusive Galerkin
 % And now intrusive Stochastic Galerkin (just for the fun of it)

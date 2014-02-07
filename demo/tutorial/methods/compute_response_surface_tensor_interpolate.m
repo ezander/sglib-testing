@@ -1,4 +1,4 @@
-function [u_i_alpha, x] = compute_response_surface_tensor_interpolate(state, a_alpha, V_a, V_u, p_u)
+function [u_i_alpha, state, x] = compute_response_surface_tensor_interpolate(state, a_alpha, V_a, V_u, p_u)
 % COMPUTE_RESPONSE_SURFACE_TENSOR_INTERPOLATE Short description of compute_response_surface_tensor_interpolate.
 %   COMPUTE_RESPONSE_SURFACE_TENSOR_INTERPOLATE Long description of compute_response_surface_tensor_interpolate.
 %

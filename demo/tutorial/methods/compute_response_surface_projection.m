@@ -1,4 +1,4 @@
-function [u_i_alpha, x, w] = compute_response_surface_projection(state, a_alpha, V_a, V_u, p_int, varargin)
+function [u_i_alpha, state, x, w] = compute_response_surface_projection(state, a_alpha, V_a, V_u, p_int, varargin)
 % COMPUTE_RESPONSE_SURFACE_PROJECTION Compute a gpc response surface representation.
 %   COMPUTE_RESPONSE_SURFACE_PROJECTION Long description of compute_response_surf_projection.
 %

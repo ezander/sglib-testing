@@ -1,4 +1,4 @@
-function [u_mean, u_var] = compute_moments_quad(state, a_alpha, V_a, p_int, varargin)
+function [u_mean, u_var, state] = compute_moments_quad(state, a_alpha, V_a, p_int, varargin)
 % COMPUTE_MOMENTS_QUAD Compute mean and variance by high-dimensional quadrature.
 %   [U_MEAN, U_VAR] = COMPUTE_MOMENTS_QUAD(INIT_FUNC, SOLVE_FUNC, P) computes
 %   the mean and variance of a system described by INIT_FUNC and SOLVE_FUNC
