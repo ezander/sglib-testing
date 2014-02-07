@@ -1,4 +1,4 @@
-function state=diffusion_1d_init(varargin)
+function minfo=diffusion_1d_init(varargin)
 
 options=varargin2options(varargin);
 [N,options]=get_option(options,'N', 101);
@@ -8,30 +8,30 @@ check_unsupported_options(options, mfilename);
 num_params = 2;
 num_vars = N;
 
-% initialise the state object
-state = model_init(num_params, num_vars, ...
+% initialise the minfo object
+minfo = model_init(num_params, num_vars, ...
     'solve_func', @diffusion_1d_solve, ...
     'step_func', @diffusion_1d_step, ...
     'res_func', @diffusion_1d_residual, ...
     'sol_init_func', @(a)(zeros(N,1)));
 
-state.step_relax = step_relax;
+minfo.step_relax = step_relax;
 
-% create mesh and store information in state
+% create mesh and store information in minfo
 [pos,els,bnd]=create_mesh_1d(0, 1, N);
-state.pos = pos;
-state.els = els;
-state.bnd = bnd;
+minfo.pos = pos;
+minfo.els = els;
+minfo.bnd = bnd;
 
-% store the discretised coefficient functions in state
-state.a{1}=double(pos<0.5)';
-state.a{2}=double(pos>=0.5)';
+% store the discretised coefficient functions in minfo
+minfo.a{1}=double(pos<0.5)';
+minfo.a{2}=double(pos>=0.5)';
 
-% store some more FEM stuff in state
-%state.u0=zeros(size(pos))';
-state.f=ones(size(pos))';
-state.g=zeros(size(pos))';
-state.K{1}=stiffness_matrix(pos, els, state.a{1});
-state.K{2}=stiffness_matrix(pos, els, state.a{2});
-[state.P_I,state.P_B]=boundary_projectors( bnd, N );
+% store some more FEM stuff in minfo
+%minfo.u0=zeros(size(pos))';
+minfo.f=ones(size(pos))';
+minfo.g=zeros(size(pos))';
+minfo.K{1}=stiffness_matrix(pos, els, minfo.a{1});
+minfo.K{2}=stiffness_matrix(pos, els, minfo.a{2});
+[minfo.P_I,minfo.P_B]=boundary_projectors( bnd, N );
 

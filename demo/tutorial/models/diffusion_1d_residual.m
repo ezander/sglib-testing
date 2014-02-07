@@ -1,15 +1,15 @@
-function [r, state]=diffusion_1d_residual(state, a, varargin)
+function [r, minfo]=diffusion_1d_residual(minfo, a, varargin)
 
-f=state.f;
-% g=state.g;
-K=a(1) * state.K{1};
+f=minfo.f;
+% g=minfo.g;
+K=a(1) * minfo.K{1};
 for i=2:length(a)
-    K = K + a(i) * state.K{i};
+    K = K + a(i) * minfo.K{i};
 end
 r = f - K*u;
     
-% P_I = state.P_I;
-% P_B = state.P_B;
+% P_I = minfo.P_I;
+% P_B = minfo.P_B;
 % 
 % Ki=apply_boundary_conditions_operator( K, P_I );
 % fi=apply_boundary_conditions_rhs( K, f, g, P_I, P_B );

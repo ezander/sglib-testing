@@ -1,4 +1,4 @@
-function [sol, state] = model_solve(state, params, varargin)
+function [sol, minfo] = model_solve(minfo, params, varargin)
 % MODEL_SOLVE Short description of model_solve.
 %   MODEL_SOLVE Long description of model_solve.
 %
@@ -23,10 +23,14 @@ function [sol, state] = model_solve(state, params, varargin)
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
-solve_func = state.model_info.solve_func;
+solve_func = minfo.model_info.solve_func;
 start = tic;
-[sol, solve_info, state]=funcall(solve_func, state, params, varargin);
+[sol, solve_info, minfo]=funcall(solve_func, minfo, params, varargin);
 t = toc(start);
-state.model_stats.num_solve_calls = state.model_stats.num_solve_calls + 1;
-state.model_stats.time_solve_calls = state.model_stats.time_solve_calls + t;
-state.solve_info = solve_info;
+minfo.model_stats.num_solve_calls = minfo.model_stats.num_solve_calls + 1;
+minfo.model_stats.time_solve_calls = minfo.model_stats.time_solve_calls + t;
+minfo.solve_info = solve_info;
+
+if nargout<2
+    warning('sglib:model_solve', 'Not updating model info, stats will possibly be wrong');
+end

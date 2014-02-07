@@ -238,9 +238,9 @@ clf; plot_samples(a_i_samples);
 N = 30;
 a_i_samples = gpc_sample(a_i_alpha, V_a, N, 'mode', 'lhs');
 u_samples = zeros(N, size(pos,2));
-state = diffusion_1d_init();
+minfo = diffusion_1d_init();
 for i=1:N
-    [u, state]=model_solve(state, a_i_samples(:,i));
+    [u, minfo]=model_solve(minfo, a_i_samples(:,i));
     u_samples(i,:) = u;
 end
 plot(pos, u_samples)
@@ -249,24 +249,30 @@ plot(pos, u_samples)
 %% Computing moments by sampling
 % We have that also canned as a function. Showing mean and variance
 % computed by MC and QMC.
-[u_mean, u_var] = compute_moments_mc(state, a_i_alpha, V_a, 100);
+[u_mean, u_var, minfo] = compute_moments_mc(minfo, a_i_alpha, V_a, 100);
 subplot(1,2,1); plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 title('mc'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
 
-[u_mean, u_var] = compute_moments_mc(state, a_i_alpha, V_a, 100, 'mode', 'qmc');
+[u_mean, u_var, minfo] = compute_moments_mc(minfo, a_i_alpha, V_a, 100, 'mode', 'qmc');
 subplot(1,2,2); plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 title('qmc'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
 
 %% Computing moments by quadrature
 % Or we can compute that by projection/integration. With smolyak or tensor
 % grid.
-[u_mean, u_var] = compute_moments_quad(state, a_i_alpha, V_a, 5, 'grid', 'smolyak');
+minfo = model_stats(minfo, 'reset');
+[u_mean, u_var, minfo] = compute_moments_quad(minfo, a_i_alpha, V_a, 5, 'grid', 'smolyak');
+model_stats(minfo, 'print');
+
 subplot(1,2,1); 
 plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 legend('mean-std', 'mean', 'mean+std'); 
 title('smolyak'); ylim([0,3.5]); grid on;
 
-[u_mean, u_var] = compute_moments_quad(state, a_i_alpha, V_a, 5, 'grid', 'tensor');
+minfo = model_stats(minfo, 'reset');
+[u_mean, u_var, minfo] = compute_moments_quad(minfo, a_i_alpha, V_a, 5, 'grid', 'tensor');
+model_stats(minfo, 'print');
+
 subplot(1,2,2); 
 plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 legend('mean-std', 'mean', 'mean+std'); 
@@ -276,7 +282,9 @@ title('tensor'); ylim([0,3.5]); grid on;
 % First by projection
 V_u = gpcbasis_create(V_a, 'p', 5);
 
-[u_i_alpha] = compute_response_surface_projection(state, a_i_alpha, V_a, V_u, 5);
+minfo = model_stats(minfo, 'reset');
+[u_i_alpha, minfo] = compute_response_surface_projection(minfo, a_i_alpha, V_a, V_u, 5, 'grid', 'full_tensor');
+model_stats(minfo, 'print');
 
 [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
 subplot(1,2,1); 
@@ -290,8 +298,9 @@ title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]);
 
 %% Response surface by tensor grid interpolation
 % Then by tensor grid interpolation
-u_i_alpha = compute_response_surface_tensor_interpolate(state, a_i_alpha, V_a, V_u, 5);
-
+minfo = model_stats(minfo, 'reset');
+[u_i_alpha, minfo] = compute_response_surface_tensor_interpolate(minfo, a_i_alpha, V_a, V_u, 5);
+model_stats(minfo, 'print');
 
 [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
 subplot(1,2,1); 
@@ -309,8 +318,10 @@ title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]);
 max_iter = 20;
 p_int = max(V_u{2}(:));
 int_grid = 'full_tensor';
-state.step_relax = 0.98;
-[u_i_alpha, state, x, w]=compute_response_surface_nonintrusive_galerkin(state, a_i_alpha, V_a, V_u, p_int, 'max_iter', max_iter, 'grid', int_grid);
+minfo.step_relax = 0.98;
+minfo = model_stats(minfo, 'reset');
+[u_i_alpha, minfo, x, w]=compute_response_surface_nonintrusive_galerkin(minfo, a_i_alpha, V_a, V_u, p_int, 'max_iter', max_iter, 'grid', int_grid);
+model_stats(minfo, 'print_step_info');
 
 [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
 subplot(1,2,1); 
@@ -332,8 +343,8 @@ subplot(1,2,2); spy(A_i{2})
 
 %%
 % Then we can construct the full tensor product operator out of it.
-K = {state.K{1}, A_i{1};
-    state.K{2}, A_i{2}};
+K = {minfo.K{1}, A_i{1};
+    minfo.K{2}, A_i{2}};
 subplot(1,1,1)
 spy(tensor_operator_to_matrix(K))
 
@@ -343,9 +354,9 @@ spy(tensor_operator_to_matrix(K))
 % that the matrices (or tensor operators or whatever) are projected onto
 % the inner (i.e. non-Dirichlet) nodes and the solution is later extended
 % again by putting the values on the Dirichlet boundary back in.
-P_I = state.P_I;
-P_B = state.P_B;
-N = size(state.K{1},1);
+P_I = minfo.P_I;
+P_B = minfo.P_B;
+N = size(minfo.K{1},1);
 M = size(A_i{1},1);
 Ki=apply_boundary_conditions_operator( K, P_I );
 
@@ -353,9 +364,9 @@ Ki=apply_boundary_conditions_operator( K, P_I );
 %%
 % apply to the right hand side
 G = zeros(N, M);
-G(:,1) = state.g;
+G(:,1) = minfo.g;
 F = zeros(N, M);
-F(:,1) = state.f;
+F(:,1) = minfo.f;
 Fi=apply_boundary_conditions_rhs( K, F, G, P_I, P_B );
 
 %% 
@@ -389,3 +400,6 @@ title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]);
 % Explain interpolation and/or projection shortly and show the code
 % the explain that that's been put into a function
 % compare some samples computed directly and per surrogate model
+% create model_stats(cmd) func (reset, print, ...)
+% compare to dishis results
+% create gpcbasis_info function (maybe remove gpcbasis_size)

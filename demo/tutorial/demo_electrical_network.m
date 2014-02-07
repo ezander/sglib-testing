@@ -1,6 +1,6 @@
 %% Init stuff
 
-state = electrical_network_init;
+minfo = electrical_network_init;
 
 a1_dist = gendist_create('uniform', {-1, 1});
 [a1_alpha, V_a1] = gpc_param_expand(a1_dist, 'p');
@@ -13,29 +13,29 @@ a2_dist = gendist_create('uniform', {-1, 1});
 %% Monte Carlo
 
 N = 100;
-[u_mean, u_var] = compute_moments_mc(state, a_alpha, V_a, N);
+[u_mean, u_var] = compute_moments_mc(minfo, a_alpha, V_a, N);
 show_mean_var('Monte-Carlo', u_mean, u_var)
 
 %% Quasi Monte Carlo
 
-[u_mean, u_var] = compute_moments_mc(state, a_alpha, V_a, N, 'mode', 'qmc');
+[u_mean, u_var] = compute_moments_mc(minfo, a_alpha, V_a, N, 'mode', 'qmc');
 show_mean_var('Quasi Monte-Carlo', u_mean, u_var)
 
 %% Latin hypercube
 
-[u_mean, u_var] = compute_moments_mc(state, a_alpha, V_a, N, 'mode', 'lhs');
+[u_mean, u_var] = compute_moments_mc(minfo, a_alpha, V_a, N, 'mode', 'lhs');
 show_mean_var('Latin hypercube', u_mean, u_var)
 
 %% Direct integration full tensor grid
 
 p = 5;
-[u_mean, u_var] = compute_moments_quad(state, a_alpha, V_a, p, 'grid', 'full_tensor');
+[u_mean, u_var] = compute_moments_quad(minfo, a_alpha, V_a, p, 'grid', 'full_tensor');
 show_mean_var('Full tensor grid integration', u_mean, u_var);
 
 %% Direct integration sparse grid
 
 p = 5;
-[u_mean, u_var] = compute_moments_quad(state, a_alpha, V_a, p, 'grid', 'smolyak');
+[u_mean, u_var] = compute_moments_quad(minfo, a_alpha, V_a, p, 'grid', 'smolyak');
 show_mean_var('Sparse grid (Smolyak) integration', u_mean, u_var);
 
 
@@ -46,7 +46,7 @@ p_u = 3;
 p_int = [7, 16];
 
 V_u = gpcbasis_create(V_a, 'p', p_u);
-[u_i_alpha, x, w] = compute_response_surface_projection(state, a_alpha, V_a, V_u, p_int, 'grid', 'full_tensor');
+[u_i_alpha, x, w] = compute_response_surface_projection(minfo, a_alpha, V_a, V_u, p_int, 'grid', 'full_tensor');
 
 [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
 show_mean_var('Projection (L_2, response surface, tensor)', u_mean, u_var);
@@ -65,7 +65,7 @@ p_int = 6;
 p_int = 3;
 
 V_u = gpcbasis_create(V_a, 'p', p_u);
-[u_i_alpha, x, w] = compute_response_surface_projection(state, a_alpha, V_a, V_u, p_int, 'grid', 'smolyak');
+[u_i_alpha, x, w] = compute_response_surface_projection(minfo, a_alpha, V_a, V_u, p_int, 'grid', 'smolyak');
 
 [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
 show_mean_var('Projection (L_2, response surface, sparse)', u_mean, u_var);
@@ -91,7 +91,7 @@ u_proj_i_alpha = u_i_alpha;
 p_u = 3;
 
 V_u = gpcbasis_create(V_a, 'p', p_u, 'full_tensor', true);
-[u_i_alpha, x] = compute_response_surface_tensor_interpolate(state, a_alpha, V_a, V_u, p_u);
+[u_i_alpha, x] = compute_response_surface_tensor_interpolate(minfo, a_alpha, V_a, V_u, p_u);
 
 %ind=(multiindex_order(V_u{2})>=3);
 %u_i_alpha(:,ind)=0;
@@ -111,12 +111,12 @@ u_tensorcoll_i_alpha = u_i_alpha;
 %% Sparse grid collocation (regression)
 
 %% Non-intrusive Galerkin
-state = electrical_network_init('newton', false);
+minfo = electrical_network_init('newton', false);
 
 p_u = 3;
 p_int = 4;
 V_u = gpcbasis_create(V_a, 'p', p_u, 'full_tensor', false);
-[u_i_alpha,x,w]=compute_response_surface_nonintrusive_galerkin(state, a_alpha, V_a, V_u, p_int, 'grid', 'full_tensor');
+[u_i_alpha,x,w]=compute_response_surface_nonintrusive_galerkin(minfo, a_alpha, V_a, V_u, p_int, 'grid', 'full_tensor');
 
 % Plot the response surface
 hold off;

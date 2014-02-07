@@ -1,15 +1,15 @@
-function [u, iter, res, state] = general_iterative_solver(state, p, varargin)
+function [u, iter, res, minfo] = general_iterative_solver(minfo, p, varargin)
 % GENERAL_ITERATIVE_SOLVER Solves a nonlinear system iteratively by using a given step function.
 %   GENERAL_ITERATIVE_SOLVER solves a nonlinear system of equations
 %   iteratively. The parameter STEP_FUNC specifies a function handle
 %   that computes the a solver step and the residual for a given approximate
-%   solution U. Internal state that is needed by RESIDUAL_FUNC can be
-%   stored in STATE. STATE should also contain a start value U0, i.e. the
-%   starting value for U will be STATE.U0 is not specified otherwise. P
+%   solution U. Internal minfo that is needed by RESIDUAL_FUNC can be
+%   stored in MINFO. MINFO should also contain a start value U0, i.e. the
+%   starting value for U will be MINFO.U0 is not specified otherwise. P
 %   specifies a parameter vector that is also passed to RESIDUAL_FUNC.
 %  
 %   Options:
-%       u0: start vector [state.u0]
+%       u0: start vector [minfo.u0]
 %       max_iter: maximum number of iterations [100]
 %       abstol: absolute stopping tolerance for the residual norm [1e-5]
 %       verbose: display convergence information [false]
@@ -38,16 +38,16 @@ options = varargin2options(varargin);
 [verbose, options] = get_option(options, 'verbose', false);
 check_unsupported_options(options, mfilename);
 
-step_func = state.model_info.step_func;
-res_func = state.model_info.res_func;
+step_func = minfo.model_info.step_func;
+res_func = minfo.model_info.res_func;
 
 if isempty(u0)
-    u = funcall(state.model_info.sol_init_func, p);
+    u = funcall(minfo.model_info.sol_init_func, p);
 else
     u = u0;
 end
 for iter = 1:max_iter
-    [res, state] = funcall(res_func, state, u, p);
+    [res, minfo] = funcall(res_func, minfo, u, p);
     res_norm = norm(res);
     if verbose
         fprintf( 'nonlin_solve: iter %d, norm=%g\n', iter, res_norm);
@@ -60,5 +60,5 @@ for iter = 1:max_iter
             abstol, max_iter);
     end
     
-    [u, state] = funcall(step_func, state, u, p);
+    [u, minfo] = funcall(step_func, minfo, u, p);
 end

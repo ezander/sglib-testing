@@ -1,4 +1,4 @@
-function [u_mean, u_var, state] = compute_moments_quad(state, a_alpha, V_a, p_int, varargin)
+function [u_mean, u_var, minfo] = compute_moments_quad(minfo, a_alpha, V_a, p_int, varargin)
 % COMPUTE_MOMENTS_QUAD Compute mean and variance by high-dimensional quadrature.
 %   [U_MEAN, U_VAR] = COMPUTE_MOMENTS_QUAD(INIT_FUNC, SOLVE_FUNC, P) computes
 %   the mean and variance of a system described by INIT_FUNC and SOLVE_FUNC
@@ -32,10 +32,10 @@ check_unsupported_options(options, mfilename);
 Q = length(w);
 
 a = gpc_evaluate(a_alpha, V_a, x);
-u = zeros(state.model_info.num_vars, Q);
+u = zeros(minfo.model_info.num_vars, Q);
 for j = 1:Q
     a_j = a(:, j);
-    u(:, j) = model_solve(state, a_j);
+    [u(:, j), minfo] = model_solve(minfo, a_j);
 end
 
 u_mean = u * w;

@@ -1,9 +1,9 @@
-function state = electrical_network_init( varargin )
+function minfo = electrical_network_init( varargin )
 % ELECTRICAL_NETWORK_INIT Initialises the structure that keeps the internal
-% state of the electrical network example.
+% minfo of the electrical network example.
 %
 % Example:
-%    state = electrical_network_init('R', 200, 'f0', 5);
+%    minfo = electrical_network_init('R', 200, 'f0', 5);
 
 options = varargin2options(varargin);
 [R, options] = get_option(options, 'R', 0.01);
@@ -17,24 +17,24 @@ A=create_network_matrix(R);
 num_params = 2;
 num_vars = size(A,1);
 
-% initialise the state object
+% initialise the minfo object
 if newton
     step_func = @electrical_network_newton_step;
 else
     step_func = @electrical_network_picard_iter_step;
 end
 
-state = model_init(num_params, num_vars, ...
+minfo = model_init(num_params, num_vars, ...
     'solve_func', @electrical_network_solve, ...
     'step_func', step_func, ...
     'res_func', @electrical_network_residual, ...
     'sol_init_func', @(a)(zeros(num_vars,1)));
 
-% store electrical network info in state object
-state.A = A;
-state.f0 = f0;
-state.fg = fg;
-%state.u0 = zeros(num_vars, 1);
+% store electrical network info in minfo object
+minfo.A = A;
+minfo.f0 = f0;
+minfo.fg = fg;
+%minfo.u0 = zeros(num_vars, 1);
 
 
 
