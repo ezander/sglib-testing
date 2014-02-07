@@ -1,9 +1,35 @@
 %TODO Contains my personal TODO
 
+% write help for gpcbasis_create (important!!)
+
+% check halton_sequence for n==0
+
+% implement arcine and semicircle as beta in gendist_create
+
+
+% check results from smolyak in the new demo
+
+
+% There seem to be some problems with the generation of the random fields,
+% as can be seen in demo_rf_expand_pce_sg, need to write unittests for that
+% definitely now.
+
+% Sfem functions should be changed to work with gendists instead of functions
+% handles. Also cov_models should be introduced and used.
+
+% statistics distributions: remove stdnor stuff, keep only in normal, lognormal, and
+% gendist (otherwise compose dynamically), create density_plot,
+% gendist_from_stat_toolbox, after removal of stdnor: change demos and sfem
+% methods to use dists instead of stdnor stuff
+%
+% introduce similar concept for covariances: gencov (or something), from
+% kernel, flags (isotropic, homogeneous), spectral density, ...
+% 
+% make the rug plot determine the length of the rugs things in relation to
+% the total plot size (maybe in points or something), further include in
+% the density plot as option (with symm(etric), up and down, off or something)
 
 %% 25 Nov 2013
-% comutation of dual basis in ???
-
 % move polysys_pdf to gpc, create cdfinv and cdf
 % move mean_var_update to stats
 % move plot_resp to plot_gpc_resp...
@@ -11,7 +37,6 @@
 % gpcbasis_create should also work with an rvtype, 
 % need function to map polynomials system char's to names
 % insert @default stuff into get_option
-% cleanup the main sglib directory/maybe make some randfield dir?
 % better heuristics for ranges in plot_resp_surface
 
 %% 19 Jun 2013
@@ -21,9 +46,6 @@
 
 %% Todos as of 12 Jun 2013
 
-% implement polysys_invcdf  (extract from gpc_sample...)
-% implement all polysys distributions also in statistics (could reuse their
-%    cdf then) (nearly, arcsine and semicircle??? or keep beta???)
 % put kde into stats/private and use in kernel_estimate_fast or something
 % import stiffness matrix functions from fileexchange
 % remove thesis from here and organise as submodule thing
@@ -65,6 +87,6 @@
 % l2 norm diff with smolyak
 
 % parameter stuff
-% get_param % whick workspace? separate functions? integration with autoloader; cache_script
+% get_param: which workspace? separate functions? integration with autoloader; cache_script
 
 

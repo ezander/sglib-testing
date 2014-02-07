@@ -58,8 +58,8 @@ function test_mult(sys,m)
         bbb = tensor_multiply( x_i_alpha(i,:), aaa, 2, 1 );
         z_k_gamma(i,:)=bbb;
     end
-    z_k_gamma=row_col_mult( z_k_gamma, (1./gpc_norm(V_z)').^2 );
+    z_k_gamma=row_col_mult( z_k_gamma, (1./gpcbasis_norm(V_z)').^2 );
     
-    xi = gpc_sample(V_x, k);
+    xi = gpcgerm_sample(V_x, k);
     assert_equals(gpc_evaluate(z_k_gamma, V_z, xi), ...
         gpc_evaluate(x_i_alpha, V_x, xi) .* gpc_evaluate(y_i_alpha, V_y, xi), ['mult_', sys]);

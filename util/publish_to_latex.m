@@ -43,7 +43,10 @@ options=varargin2options( varargin );
 [puboptions.catchError,options]=get_option( options, 'catchError', true );
 [puboptions.stopOnError,options]=get_option( options, 'stopOnError', true );
 [puboptions.createThumbnail,options]=get_option( options, 'createThumbnail', true );
+[pdflatex_cmd,options]=get_option( options, 'pdflatex_cmd', 'pdflatex' );
+[latex_filter,options]=get_option(options, 'latex_filter', []);
 check_unsupported_options( options, mfilename );
+
 
 % store userwait mode and set it to 'continue' (publish shouldn't wait for
 % the user to press any key)
@@ -56,9 +59,15 @@ setuserwaitmode(mode,msg,func);
 
 % make system call to 'tex' the generated file and copy ps/pdf to current
 % directory
-system( sprintf( 'cd tex && latex %s && dvips %s && ps2pdf %s.ps && cp %s.ps %s.pdf ..', file, file, file, file, file ) );
+dir = puboptions.outputDir;
+if ~isempty(latex_filter)
+    funcall(latex_filter, fullfile(dir, [file, '.tex'] ));
+end
+
+cmd = strvarexpand('cd $dir$ && $pdflatex_cmd$ $file$ && cp $file$.pdf ..');
+system( cmd );
 
 % show the file
-if nargin>=2 && read_now
+if nargin>=2 && (isequal(read_now,'true') || isequal(read_now, true))
     open( [file, '.pdf'] );
 end
