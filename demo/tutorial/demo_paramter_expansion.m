@@ -88,7 +88,7 @@ a1_dist = gendist_fix_bounds(a1_dist, 0.5, 5);
 format compact
 format short g
 for p=1:10
-    [a1_alpha, V1] = gpc_param_expand(a1_dist, 'u', p);
+    [a1_alpha, V1] = gpc_param_expand(a1_dist, 'u', 'p', p);
     a1_alpha
     [mu,var] = gendist_moments(a1_dist)
     [mu,var] = gpc_moments(a1_alpha, V1)
@@ -101,7 +101,7 @@ a2_dist = gendist_fix_bounds(a2_dist, 50, 150);
 format compact
 format short g
 for p=1:10
-    [a2_alpha, V2] = gpc_param_expand(a2_dist, 't', p);
+    [a2_alpha, V2] = gpc_param_expand(a2_dist, 't', 'p', p);
     a2_alpha
     [mu,var] = gendist_moments(a2_dist)
     [mu,var] = gpc_moments(a2_alpha, V2)
