@@ -4,7 +4,7 @@ function unittest_gpc_func_helper
 % Example (<a href="matlab:run_example unittest_gpc_func_helper">run</a>)
 %   unittest_gpc_func_helper
 %
-% See also GPC_FUNC_HELPER, TESTSUITE 
+% See also GPC_FUNC_HELPER, MUNIT_RUN_TESTSUITE 
 
 %   Elmar Zander
 %   Copyright 2012, Institute of Scientific Computing, TU Braunschweig.

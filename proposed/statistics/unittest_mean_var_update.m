@@ -4,7 +4,7 @@ function unittest_mean_var_update
 % Example (<a href="matlab:run_example unittest_mean_var_update">run</a>)
 %   unittest_mean_var_update
 %
-% See also MEAN_VAR_UPDATE, TESTSUITE 
+% See also MEAN_VAR_UPDATE, MUNIT_RUN_TESTSUITE 
 
 %   Elmar Zander
 %   Copyright 2013, Inst. of Scientific Computing, TU Braunschweig

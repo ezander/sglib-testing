@@ -4,7 +4,7 @@ function unittest_fzeros_mult
 % Example (<a href="matlab:run_example unittest_fzeros_mult">run</a>)
 %   unittest_fzeros_mult
 %
-% See also FZEROS_MULT, TESTSUITE 
+% See also FZEROS_MULT, MUNIT_RUN_TESTSUITE 
 
 %   Elmar Zander
 %   Copyright 2013, Inst. of Scientific Computing, TU Braunschweig

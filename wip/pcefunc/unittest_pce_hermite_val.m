@@ -4,7 +4,7 @@ function unittest_pce_hermite_val
 % Example (<a href="matlab:run_example unittest_pce_hermite_val">run</a>)
 %   unittest_pce_hermite_val
 %
-% See also PCE_HERMITE_VAL, TESTSUITE 
+% See also PCE_HERMITE_VAL, MUNIT_RUN_TESTSUITE 
 
 %   Elmar Zander
 %   Copyright 2011, Inst. of Scientific Computing

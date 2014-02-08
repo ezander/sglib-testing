@@ -4,7 +4,7 @@ function unittest_gpc_combine_inputs
 % Example (<a href="matlab:run_example unittest_gpc_combine_inputs">run</a>)
 %   unittest_gpc_combine_inputs
 %
-% See also GPC_COMBINE_INPUTS, TESTSUITE 
+% See also GPC_COMBINE_INPUTS, MUNIT_RUN_TESTSUITE 
 
 %   Elmar Zander
 %   Copyright 2014, Inst. of Scientific Computing, TU Braunschweig

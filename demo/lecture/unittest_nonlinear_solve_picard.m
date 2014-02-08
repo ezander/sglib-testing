@@ -4,7 +4,7 @@ function unittest_nonlinear_solve_picard
 % Example (<a href="matlab:run_example unittest_nonlinear_solve_picard">run</a>)
 %   unittest_nonlinear_solve_picard
 %
-% See also NONLINEAR_SOLVE_PICARD, TESTSUITE 
+% See also NONLINEAR_SOLVE_PICARD, MUNIT_RUN_TESTSUITE 
 
 %   Elmar Zander
 %   Copyright 2013, Inst. of Scientific Computing, TU Braunschweig

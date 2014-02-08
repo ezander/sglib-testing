@@ -4,7 +4,7 @@ function unittest_gpcindex_combine
 % Example (<a href="matlab:run_example unittest_gpcindex_combine">run</a>)
 %   unittest_gpcindex_combine
 %
-% See also GPCINDEX_COMBINE, TESTSUITE 
+% See also GPCINDEX_COMBINE, MUNIT_RUN_TESTSUITE 
 
 %   Elmar Zander
 %   Copyright 2012, Inst. of Scientific Computing, TU Braunschweig
