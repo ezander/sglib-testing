@@ -51,4 +51,3 @@ assert_equals(interpolatory_weights(x), w, 'cc5');
 assert_equals(interpolatory_weights(x, 'algorithm', 'lagrange'), w, 'cc7_lag');
 assert_equals(interpolatory_weights(x, 'algorithm', 'vandermonde'), w, 'cc7_van');
 assert_equals(interpolatory_weights(2*x+3, 'interval', [1, 5]), 2*w, 'cc7_shift');
-    
