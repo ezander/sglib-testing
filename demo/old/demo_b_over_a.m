@@ -98,25 +98,3 @@ for alpha=0:p
     end
 end
 x_iota=(K\B)';
-
-function x_iota=solve_sg_eq_update( a_func, p, b_beta ) %#ok
-[x,w]=gauss_hermite_rule( 3 );
-a_alpha=zeros(size(b_beta));
-for i=0:p
-    h=hermite(i);
-    y=w*(funcall( a_func, x).*polyval(h,x));
-    a_alpha(i+1)=y/factorial(i);
-end
-
-D=diag(factorial(0:p));
-B=D*b_beta;
-K=zeros(p+1,p+1);
-for alpha=0:p
-    for delta=0:p
-        for iota=0:p
-            K(delta+1,iota+1)=K(delta+1,iota+1)+...
-                    a_alpha(alpha+1)*hermite_triple_product(alpha,delta,iota);
-        end
-    end
-end
-x_iota=(K\B)';
