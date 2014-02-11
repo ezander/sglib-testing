@@ -36,7 +36,7 @@ end
 
 if ischar(symbols)
     if any(symbols==',')
-        symbols = strsplit(symbols, ',');
+        symbols = strsplit2(symbols, ',');
     else
         symbols = mat2cell(symbols, 1, ones(1,length(symbols)));
     end
@@ -78,5 +78,16 @@ for k=1:size(I,1)
 end
 
 
-
-    
+function C=strsplit2(str, sym)
+C={};
+while ~isempty(str)
+    pos=find(str==sym);
+    if isempty(pos)
+        C{end+1} = str; %#ok<AGROW>
+        break;
+    else
+        p = pos(1);
+        C{end+1} = str(1:p-1); %#ok<AGROW>
+        str = str(p+1:end);
+    end
+end
