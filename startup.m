@@ -33,3 +33,6 @@ run( fullfile( basepath, 'sglib', 'sglib_startup' ) );
 basepath=fileparts( mfilename('fullpath') );
 addpath( fullfile(basepath, 'data') );
 addpath( genpath(fullfile(basepath, 'proposed')) );
+
+addpath(fullfile(basepath, 'demo', 'tutorial', 'models'));
+addpath(fullfile(basepath, 'demo', 'tutorial', 'methods'));
