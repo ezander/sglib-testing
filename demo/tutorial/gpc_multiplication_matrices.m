@@ -1,4 +1,4 @@
-function A_i = gpc_multiplication_matrices(a_i_alpha, V_a, V_u)
+function A_i = gpc_multiplication_matrices(a_i_alpha, V_a, V_u, V_v, varargin)
 % GPC_MULTIPLICATION_MATRICES Short description of gpc_multiplication_matrices.
 %   GPC_MULTIPLICATION_MATRICES Long description of gpc_multiplication_matrices.
 %
@@ -23,14 +23,31 @@ function A_i = gpc_multiplication_matrices(a_i_alpha, V_a, V_u)
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
+if ~exist('V_v', 'var') || isempty(V_v)
+    V_v = V_u;
+elseif ischar(V_v)
+    varargin = {V_v, varargin{:}};
+    V_v = V_u;
+end
+options = varargin2options(varargin, mfilename);
+[normalise, options]=get_option(options, 'normalise', true);
+check_unsupported_options(options);
+
 M_a = gpcbasis_size(V_a, 1);
 M_u = gpcbasis_size(V_u, 1);
+M_v = gpcbasis_size(V_v, 1);
 
-M = reshape(gpc_triples(V_a, V_u, V_u), M_a, []);
+M = gpc_triples(V_a, V_u, V_v);
+if normalise
+    inv_norm = 1./gpcbasis_norm(V_v, 'sqrt', false);
+    inv_norm = reshape(inv_norm, 1, 1, []);
+    M = binfun(@times, M, inv_norm);
+end
+M = reshape(M, M_a, []);
+
 A = a_i_alpha * M;
 R = size(a_i_alpha,1);
 A_i = cell(1,R);
 for i=1:R
-    A_i{i} = reshape(A(i,:), M_u, M_u);
+    A_i{i} = reshape(A(i,:), M_u, M_v);
 end
-

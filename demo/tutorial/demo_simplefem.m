@@ -182,9 +182,9 @@ legend('GPC kernel density', 'GPC samples', 'Exact pdf');
 % array, whose first entry contains the germ of the space (in this case
 % 'ut') and the second entry contains the multiindices of the orthogonal
 % polynomials corresponding to the germ.
-format short g; format compact;
-germ = V_a{1}
-multiindices = V_a{2}
+
+underline('germ'); disp(V_a{1});
+underline('multiindices', 'newlines', 1); disp(V_a{2});
 
 %%
 % So here e.g. the fourth basis function is given by the multiindex (0,3)
@@ -343,10 +343,8 @@ subplot(1,2,2); spy(A_i{2})
 
 %%
 % Then we can construct the full tensor product operator out of it.
-K = {minfo.K{1}, A_i{1};
-    minfo.K{2}, A_i{2}};
-subplot(1,1,1)
-spy(tensor_operator_to_matrix(K))
+K = tensor_operator_create({minfo.K, A_i});
+clf; spy(tensor_operator_to_matrix(K))
 
 %% 
 % For applying stochastic Galerkin we need to apply the boundary conditions
@@ -394,12 +392,11 @@ title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]);
 
 
 %%
-% Compare response surface with true response
-% Show grids for interpolation and projection
-% Make plotting stuff into a function and explain
-% Explain interpolation and/or projection shortly and show the code
-% the explain that that's been put into a function
-% compare some samples computed directly and per surrogate model
-% create model_stats(cmd) func (reset, print, ...)
-% compare to dishis results
-% create gpcbasis_info function (maybe remove gpcbasis_size)
+% TODO: Compare response surface with true response
+% TODO: Show grids for interpolation and projection
+% TODO: Make plotting stuff into a function and explain
+% TODO: Explain interpolation and/or projection shortly and show the code, then explain that that's been put into a function
+% TODO: compare some samples computed directly and per surrogate model
+% TODO: create model_stats(cmd) func (reset, print, ...)
+% TODO: compare to dishis results
+% TODO: create gpcbasis_info function (maybe remove gpcbasis_size)
