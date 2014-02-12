@@ -25,6 +25,10 @@ function sparse_grids_p156(varargin)
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
+options=varargin2options(varargin,mfilename);
+[fejer,options]=get_option(options, 'fejer', false);
+check_unsupported_options(options);
+
 multiplot_init(3,4);
 
 rule_func = @gauss_legendre_rule;
@@ -39,21 +43,27 @@ show_quad_grid(2, 3, rule_func, rule_name)
 show_quad_grid(2, 5, rule_func, rule_name)
 show_quad_grid(2, 6, rule_func, rule_name)
 
-rule_func = @clenshaw_curtis_nested;
-rule_name = 'Clenshaw-Curtis';
-show_quad_grid(2, 4, rule_func, rule_name)
-show_quad_grid(2, 7, rule_func, rule_name)
-show_quad_grid(2, 9, rule_func, rule_name)
+if ~fejer
+    rule_func = @clenshaw_curtis_nested;
+    rule_name = 'Clenshaw-Curtis';
+    k = [4,7,9];
+else
+    rule_func = @(n)(clenshaw_curtis_nested( n, 'mode', 'fejer2'));
+    rule_name = 'Fejer 2';
+    k = [4,5,7];
+end
+show_quad_grid(2, k(1), rule_func, rule_name)
+show_quad_grid(2, k(2), rule_func, rule_name)
+show_quad_grid(2, k(3), rule_func, rule_name)
 
-rule_func = @clenshaw_curtis_nested;
-rule_name = 'Clenshaw-Curtis';
-show_quad_grid(3, 4, rule_func, rule_name)
-show_quad_grid(3, 7, rule_func, rule_name)
-show_quad_grid(3, 9, rule_func, rule_name)
+show_quad_grid(3, k(1), rule_func, rule_name)
+show_quad_grid(3, k(2), rule_func, rule_name)
+show_quad_grid(3, k(3), rule_func, rule_name)
 
 function show_quad_grid(d, stages, rule_func, rule_name) %#ok<INUSD>
 multiplot; 
 [x,w] = smolyak_grid(d, stages, rule_func); %#ok<NASGU>
+strvarexpand('$rule_name$, d=$d$, k=$stages$: n=$length(w)$')
 if d==2
     plot(x(1,:), x(2,:), '.');
     axis square;
