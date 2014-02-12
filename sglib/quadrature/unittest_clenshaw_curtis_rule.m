@@ -64,15 +64,15 @@ assert_equals(w, w0/2, 'shifted_w');
 
 munit_set_function( 'clenshaw_curtis_nested' );
 
-assert_equals(clenshaw_curtis_nested(1), [-1, 1], 'nested_1');
-for i = 1:5
+assert_equals(clenshaw_curtis_nested(1), 0, 'nested_1');
+for i = 1:9
     x1 = clenshaw_curtis_nested(i);
     x2 = clenshaw_curtis_nested(i+1);
     assert_true(all(ismember(x1, x2)), [], sprintf('is_nested_%d', i));
 end
 
 assert_equals(clenshaw_curtis_nested(1, 'mode', 2), 0, 'fj2_nested_1');
-for i = 1:5
+for i = 1:9
     x1 = clenshaw_curtis_nested(i, 'mode', 2);
     x2 = clenshaw_curtis_nested(i+1, 'mode', 2);
     assert_true(all(ismember(x1, x2)), [], sprintf('fj2_is_nested_%d', i));
