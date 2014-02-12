@@ -26,3 +26,7 @@
 %   See the GNU General Public License for more details. You should have
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+% TODO: covariance stuff page 30, realisation p42, page 57f?, page 106?, 113f?
+% tables: page 145, page 147, 73?
