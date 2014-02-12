@@ -4,7 +4,7 @@ function unittest_subspace_distance
 % Example (<a href="matlab:run_example unittest_subspace_distance">run</a>)
 %   unittest_subspace_distance
 %
-% See also SUBSPACE_DISTANCE, TESTSUITE 
+% See also SUBSPACE_DISTANCE, MUNIT_RUN_TESTSUITE 
 
 %   Elmar Zander
 %   Copyright 2013, Inst. of Scientific Computing, TU Braunschweig
@@ -45,5 +45,7 @@ B=rand(N,3);
 assert_equals(subspace_distance(A,B,opts), subspace_distance(B,A,opts), 'symm_wwf');
 assert_equals(subspace_distance(A, A, opts), 0, 'zero_wwf');
 
+
+assert_error(funcreate(@subspace_distance,A,B,'type', 'qwerty'), 'sglib:', 'err_type');
 
 

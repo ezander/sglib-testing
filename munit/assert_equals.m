@@ -7,7 +7,9 @@ function assert_equals( actual, expected, assert_id, varargin )
 %   as equal convert to one form.
 %
 % Example (<a href="matlab:run_example assert_equals">run</a>)
+%   % the first one passes, the second one fails
 %   assert_equals( factorial(1:4), [1,2,6,24], 'fact', 'abstol', 0, 'reltol', 0 );
+%   assert_equals( {1,2}, {1,3}, 'cellarr' );
 %
 % See also ASSERT_TRUE, ASSERT_FALSE, ASSERT_ERROR
 
@@ -148,7 +150,7 @@ if any(~comp(:))
         else
             % here comes a bit tricky matlab cell array/matrix
             % manipulation to get the index in the form we want
-            %TODO: write a small tutorial on the stupied cell handling and
+            %TODO: write a small tutorial on the stupid cell handling and
             %conversion stuff in matlab
             ind=cell(1,ndims(comp));
             [ind{:}]=ind2sub(size(comp),linind);
@@ -200,7 +202,7 @@ if any(~comp(:))
         else
             % here comes a bit tricky matlab cell array/matrix
             % manipulation to get the index in the form we want
-            %TODO: write a small tutorial on the stupied cell handling and
+            %TODO: write a small tutorial on the stuped cell handling and
             %conversion stuff in matlab
             ind=cell(1,ndims(comp));
             [ind{:}]=ind2sub(size(comp),linind);

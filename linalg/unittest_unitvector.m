@@ -4,7 +4,7 @@ function unittest_unitvector
 % Example (<a href="matlab:run_example unittest_unitvector">run</a>)
 %   unittest_unitvector
 %
-% See also UNITVECTOR, TESTSUITE 
+% See also UNITVECTOR, MUNIT_RUN_TESTSUITE 
 
 %   Elmar Zander
 %   Copyright 2010, Inst. of Scientific Computing
@@ -26,3 +26,5 @@ assert_false( issparse(unitvector( [1,2,4], 5 ) ), 'result should be a full matr
 
 assert_equals( unitvector( [1,2,4], 5, true ), [1,0,0;0,1,0;0,0,0;0,0,1;0,0,0], 'sparseres' );
 assert_true( issparse(unitvector( [1,2,4], 5, true ) ), 'result should be a sparse matrix', 'sparse' );
+
+assert_equals( unitvector( [1,2,4] ), [1,0,0;0,1,0;0,0,0;0,0,1], 'multi_one_arg' );

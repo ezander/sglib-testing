@@ -4,7 +4,7 @@ function unittest_tensor_error
 % Example (<a href="matlab:run_example unittest_tensor_error">run</a>)
 %   unittest_tensor_error
 %
-% See also TENSOR_ERROR, TESTSUITE 
+% See also TENSOR_ERROR, MUNIT_RUN_TESTSUITE 
 
 %   Elmar Zander
 %   Copyright 2010, Inst. of Scientific Computing, TU Braunschweig
@@ -32,7 +32,7 @@ assert_equals( tensor_error(TA, TE, 'G', G), tensor_norm(DT, G), 'canonG' );
 M=53;
 N=47;
 R=13;
-randn('seed', 1018663534 );
+rand_seed(1018663534 );
 %format short g
 for d=10.^(-3:-1:-10)
     T1=create_test_tensor( M, N, R );
