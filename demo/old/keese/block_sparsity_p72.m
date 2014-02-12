@@ -20,20 +20,20 @@ function block_sparsity_p72(varargin)
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
 options=varargin2options(varargin,mfilename);
-[show_other_ordering,options]=get_option(options, 'show_other_ordering', ~false);
+[show_other_ordering,options]=get_option(options, 'show_other_ordering', false);
 check_unsupported_options(options);
 
-sp_plots('lex', false, 'sparsity plot (lexicographic ordering, A. Keese)');
+sp_plots('lex', false, 'Sparsity plot (lexicographic ordering, A. Keese)');
 
 if show_other_ordering
     userwait;
-    sp_plots('degree', false, 'sparsity plot (degree ordering)');
+    sp_plots('degree', false, 'Sparsity plot (degree ordering)');
 
     userwait;
-    sp_plots('uqtk', false, 'sparsity plot (uq toolkit)');
+    sp_plots('uqtk', false, 'Sparsity plot (uq toolkit)');
 
     userwait;
-    sp_plots('degree', true, 'sparsity plot (degree + reduced bandwidth ordering)');
+    sp_plots('degree', true, 'Sparsity plot (degree + reduced bandwidth ordering)');
 end
 
 
@@ -47,25 +47,21 @@ function sp_plots(ordering, do_rcm, titlestr )
 % true a bandwidth reduction based on the reverse Cuthill-McKee algorithm
 % is used (DO_SORTING is more or less no effect then).
 
+clf;
 m=4;
 p=4;
-p2=[1,2,4,5];
+p2=[1,4,2,5];
 I=multiindex(m,p,'ordering', ordering);
 
-M=size(I,1);
-hermite_triple_fast( 10 );
-for n=1:4
-    J=multiindex(m,p2(n), 'ordering', ordering);
+V1 = gpcbasis_create('H', 'I', I);
+for i=1:4
+    J=multiindex(m, p2(i), 'ordering', ordering);
+    V2 = gpcbasis_create('H', 'I', J);
     
-    M2=size(J,1);
-    S=zeros(M);
-    for i=1:M
-        for j=1:i
-            S(i,j)=any( hermite_triple_fast( I(i,:), I(j,:), J(:,:) ) );
-            S(j,i)=S(i,j);
-        end
-    end
-    subplot(2,2,n);
+    % compute sparsity pattern
+    C = gpc_triples(V1, V1, V2);
+    S = any(C, 3);
+    subplot(2,2,i);
 
     % bandwidth reduction with reverse cuthill-mckee
     if do_rcm
@@ -77,6 +73,11 @@ for n=1:4
     drawnow;
     
     %print bandwidth
-    [i,j]=find(sparse(S));
-    fprintf( 'bandwidth: %d\n', 1+max(abs(i-j)) );
+    [i1,i2]=find(sparse(S));
+    bw = sprintf( 'bandwidth: %d\n', 1+max(abs(i1-i2)) );
+    title(strvarexpand('p: $p2(i)$, $bw$'));
 end
+annotation('textbox', [0 0.89 1 0.1], ...
+    'String', titlestr, ...
+    'EdgeColor', 'none', ...
+    'HorizontalAlignment', 'center');

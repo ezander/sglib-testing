@@ -21,25 +21,29 @@ function hermite_p103
 
 
 % properties 
-pce_ind=[ 1, 1; 2, 2; 2, 3; 3, 3];
-range=2;
-numpoints=50;
+I=[ 1, 1; 2, 2; 2, 3; 3, 3];
+%I=[ 3, 4; 2, 5; 7, 3; 6, 2];
+V=gpcbasis_create('H', 'I', I);
 
+clf
 set( gcf, 'Renderer', 'zbuffer' );
 if ~strcmp( get( gcf, 'WindowStyle' ), 'docked' )
     set( gcf, 'Position', [0, 0, 900, 900])
 end
 colormap( 'jet' );
 
-for i=1:4
-    subplot(2,2,i);
-    R=linspace(-range,range,numpoints);
-    [X,Y]=meshgrid( R );
 
-    Z=hermite_val_multi( 1, pce_ind(i,:), [X(:), Y(:)]);
-    Z=reshape( Z, size(X) );
+range=2;
+numpoints=50;
+R=linspace(-range,range,numpoints);
+[X,Y]=meshgrid( R );
+ZI=gpcbasis_evaluate(V, [X(:), Y(:)]');
+
+for i=1:gpcbasis_size(V,1)
+    subplot(2,2,i);
     colormap('jet');
     shading('faceted');
+    Z=reshape( ZI(i,:), size(X) );
     surf( X, Y, Z );
-    title(sprintf('H_{(%d,%d)}(\\theta_1,\\theta_2)',pce_ind(i,1), pce_ind(i,2)));
+    title(sprintf('H_{(%d,%d)}(\\theta_1,\\theta_2)',I(i,1), I(i,2)));
 end
