@@ -1,5 +1,5 @@
 function hermite_p103
-% HERMITE_P103 Generates the plots of 2D Hermite polynomials from A. Keese's diss.
+%HERMITE_P103 Generates the plots of 2D Hermite polynomials from page 103.
 %   HERMITE_P103 Generates the plots of 2D Hermite polynomials from A.
 %   Keese's diss. (page 103). 
 %

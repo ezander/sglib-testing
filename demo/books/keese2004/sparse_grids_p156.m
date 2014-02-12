@@ -1,5 +1,5 @@
 function sparse_grids_p156(varargin)
-% SPARSE_GRIDS_P156 Generate the sparse grid plots from page 156.
+%SPARSE_GRIDS_P156 Generates the sparse grid plots from page 156.
 %   SPARSE_GRIDS_P156 generates the plots of the sparse grids from [1] page
 %   156.
 %

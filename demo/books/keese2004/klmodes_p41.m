@@ -1,5 +1,5 @@
 function klmodes_p41
-% KLMODES_P41 Generates the plots of some KL-modes on an L-shaped domain from A. Keese's diss.
+%KLMODES_P41 Generates the plots of some KL-modes on an L-shaped domain from page 41.
 %   KLMODES_P41 Generates the plots of some KL-modes on an L-shaped domain
 %   from A. Keese's diss. A. Keese's diss. (page 41). 
 %

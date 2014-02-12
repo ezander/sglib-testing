@@ -1,5 +1,5 @@
 function block_sparsity_p72(varargin)
-% BLOCK_SPARSITY_P72 Generates the sparsity plots from A. Keese's diss.
+%BLOCK_SPARSITY_P72 Generates the sparsity plots from page 72.
 %   BLOCK_SPARSITY_P72 Generates the sparsity plots from A. Keese's diss.
 %   (fig 41. on page 72). 
 %
@@ -74,7 +74,7 @@ for i=1:4
     
     %print bandwidth
     [i1,i2]=find(sparse(S));
-    bw = sprintf( 'bandwidth: %d\n', 1+max(abs(i1-i2)) );
+    bw = sprintf( 'bandwidth: %d\n', 1+max(abs(i1-i2)) ); %#ok<NASGU>
     title(strvarexpand('p: $p2(i)$, $bw$'));
 end
 annotation('textbox', [0 0.89 1 0.1], ...
