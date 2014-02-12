@@ -1,4 +1,4 @@
-function block_sparsity_p72
+function block_sparsity_p72(varargin)
 % BLOCK_SPARSITY_P72 Generates the sparsity plots from A. Keese's diss.
 %   BLOCK_SPARSITY_P72 Generates the sparsity plots from A. Keese's diss.
 %   (fig 41. on page 72). 
@@ -19,26 +19,26 @@ function block_sparsity_p72
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
-clf
+options=varargin2options(varargin,mfilename);
+[show_other_ordering,options]=get_option(options, 'show_other_ordering', ~false);
+check_unsupported_options(options);
 
-disp( 'sparsity plot (lexicographic ordering, A. Keese)' );
-sp_plots( true, false);
+sp_plots('lex', false, 'sparsity plot (lexicographic ordering, A. Keese)');
 
-if true
-userwait;
-
-    disp( 'sparsity plot (degree ordering)' );
-    sp_plots( false, false);
+if show_other_ordering
     userwait;
+    sp_plots('degree', false, 'sparsity plot (degree ordering)');
 
-    disp( 'sparsity plot (reduced bandwidth ordering)' );
-    sp_plots( false, true);
     userwait;
+    sp_plots('uqtk', false, 'sparsity plot (uq toolkit)');
+
+    userwait;
+    sp_plots('degree', true, 'sparsity plot (degree + reduced bandwidth ordering)');
 end
 
 
 
-function sp_plots( do_sorting, do_rcm )
+function sp_plots(ordering, do_rcm, titlestr )
 % SP_PLOTS Show sparsity plots.
 % If DO_SORTING is true then the multiindices are sorted lexicographically
 % like in A. Keese's thesis. Otherwise a (to me more natural) ordering is
@@ -50,18 +50,12 @@ function sp_plots( do_sorting, do_rcm )
 m=4;
 p=4;
 p2=[1,2,4,5];
-I=multiindex(m,p);
-if do_sorting
-    I=sortrows(I,m:-1:1);
-end
+I=multiindex(m,p,'ordering', ordering);
 
 M=size(I,1);
 hermite_triple_fast( 10 );
 for n=1:4
-    J=multiindex(m,p2(n));
-    if do_sorting
-        J=sortrows(J,m:-1:1);
-    end
+    J=multiindex(m,p2(n), 'ordering', ordering);
     
     M2=size(J,1);
     S=zeros(M);
