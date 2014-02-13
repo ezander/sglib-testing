@@ -1,8 +1,31 @@
+%TODO Contains my personal TODO
+
+%% 13 Feb 2014
+
+% demo_simplefem umbennenen demo_gpc_diffusion_1d, eventuell neue
+% demo_simplefem erstellen 
+
+% suppress default creation of pdfs from publish_to_latex
+
+% Move boundary condition functions into the fem directory, make a
+% apply_boundary_conditions_system functions, which make a full system from
+% A, f and g
+
+% Make tensor operator or general operator avaible to use in matlab pcg
+
+% write help for plot_density and move into statistics directory
+
+% Make some data/extras/... directory where data files, tex files, etc can
+% be put
 
 % Smolyak needs to be able to take funcs, which may clash with
 % specification of multiple rule_funcs
 
 % Create model and methods directories in sglib
+
+% Separate the 1d diffusion model into a parametric model and a "functional
+% model" (try to use solve function with mean values for the preconditioner
+% of pcg).
 
 % remove many of the old hermite_ and pce_ functions, move them to obsolete
 % and issue obsoletion_warnings which may be turned off, implement them in
@@ -14,7 +37,6 @@
 
 % Help needed for: sfem functions, ...
 
-%TODO Contains my personal TODO
 
 % check results from smolyak in the new demo
 
