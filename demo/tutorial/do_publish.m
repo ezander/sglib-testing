@@ -6,10 +6,10 @@ stylesheet = make_stylesheet;
 
 latexmk = strvarexpand('$pwd$/latexmk -pdf');
 
-open_pdf = false;
+open_pdf = ~false;
 publish_to_latex('demo_simplefem', open_pdf, 'imageFormat', 'png', ...
     'stylesheet', stylesheet, 'latex_filter', @tex_modify, ...
-    'pdflatex_cmd', latexmk);
+    'pdflatex_cmd', latexmk, 'copy2pwd', false);
 
 
 
