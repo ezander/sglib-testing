@@ -17,8 +17,8 @@ for i=1:length(exponents)
         truncate=sprintf('eps 10^-%d', tolexp);
     end
     [Ui2,flag,relres,iter,info]=tensor_operator_solve_pcg( Ki, Fi, 'M', Mi, 'reltol', reltol, 'truncate_options', {'eps',tol, 'relcutoff', true}, 'true_sol', Ui );
-    relerr=tensor_error( Ui2, Ui, 'relerr', true );
-    k=tensor_rank( Ui2 );
+    relerr=ctensor_error( Ui2, Ui, 'relerr', true );
+    k=ctensor_rank( Ui2 );
     if tol>0
         R=relerr/tol;
     else
@@ -37,5 +37,5 @@ for i=1:length(exponents)
 end
 
 U=apply_boundary_conditions_solution( Ui, G, P_I, P_B );
-[u_i_k, u_k_alpha]=tensor_to_kl( U );
+[u_i_k, u_k_alpha]=ctensor_to_kl( U );
 

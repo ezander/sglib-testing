@@ -149,9 +149,9 @@ for tolexp=1:8
         truncate=sprintf('eps 10^-%d', tolexp);
     end
     [Ui,flag,info]=tensor_operator_solve_pcg( Ki, Fi, 'M', Mi, 'truncate_options', {'eps',tol, 'relcutoff', true} );
-    ui_vec3=tensor_to_vector(Ui);
+    ui_vec3=ctensor_to_vector(Ui);
     relerr=gvector_error(ui_vec3, ui_vec3, 'relerr', true );
-    k=tensor_rank( Ui );
+    k=ctensor_rank( Ui );
     if tol>0
         R=relerr/tol;
     else
@@ -168,7 +168,7 @@ for tolexp=1:8
 end
 
 U=apply_boundary_conditions_solution( Ui, G, P_I, P_B );
-[u_i_k, u_k_alpha]=tensor_to_kl( U );
+[u_i_k, u_k_alpha]=ctensor_to_kl( U );
 
 clf;
 plot(pos,u_i_k); 

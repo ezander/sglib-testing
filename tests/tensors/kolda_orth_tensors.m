@@ -38,7 +38,7 @@ d=sqrt(2/3)*a+sqrt(1/3)*b;
 e=sqrt(2/3)*c+sqrt(1/3)*b;
 V1={a, d, a};
 V2={a, e, b};
-Ab=tensor_scale( tensor_sum( V1, V2), sqrt(3/2));
+Ab=ctensor_scale( tensor_sum( V1, V2), sqrt(3/2));
 
 eval_print( 'is_equal(A,Ab)' );
 
@@ -57,7 +57,7 @@ sigma1=5;
 sigma2=3;
 sigma3=2;
 
-%A=tensor_add( tensor_add( tensor_scale(U1, sigma1), tensor_scale(U2, sigma2)), tensor_scale(U3, sigma3)) 
+%A=ctensor_add( ctensor_add( ctensor_scale(U1, sigma1), ctensor_scale(U2, sigma2)), ctensor_scale(U3, sigma3)) 
 A=tensor_sum( sigma1, U1, sigma2, U2, sigma3, U3);
 eval_print( 'is_strongly_orthogonal(A)' );
 
@@ -76,8 +76,8 @@ eval_print( 'is_equal(A,Ab)' );
 
 function bool=is_equal(T1,T2)
 abstol=1e-8; reltol=1e-8;
-abs=tensor_norm(tensor_add(T1,T2))/2;
-bool=(tensor_error(T1,T2)<abstol+abs*reltol);
+abs=ctensor_norm(ctensor_add(T1,T2))/2;
+bool=(ctensor_error(T1,T2)<abstol+abs*reltol);
 
 
 function bool=is_orthogonal(T)
@@ -134,7 +134,7 @@ A=[];
 while i<=length(varargin)
     x=varargin{i};
     i=i+1;
-    if is_tensor(x)
+    if is_ctensor(x)
         sigma=1;
         B=x;
     else
@@ -143,9 +143,9 @@ while i<=length(varargin)
         i=i+1;
     end
     if isempty(A)
-        A=tensor_scale(B,sigma);
+        A=ctensor_scale(B,sigma);
     else
-        A=tensor_add(A,B,sigma);
+        A=ctensor_add(A,B,sigma);
     end
 end
         

@@ -9,16 +9,16 @@ A2=rand(n2,k);
 A3=rand(n3,k);
 
 
-A=tensor_to_array( {A1,A2,A3} );
+A=ctensor_to_array( {A1,A2,A3} );
 
-B=tensor_to_array( {A1, khatriraorev( A2, A3 )} );
+B=ctensor_to_array( {A1, khatriraorev( A2, A3 )} );
 assert_equals( A(:), B(:) )
 
-B=tensor_to_array( {khatriraorev( A1, A2 ), A3} );
+B=ctensor_to_array( {khatriraorev( A1, A2 ), A3} );
 assert_equals( A(:), B(:) )
 
 A=shiftdim(A,1);
-B=tensor_to_array( {A2,A3,A1} );
+B=ctensor_to_array( {A2,A3,A1} );
 assert_equals( A(:), B(:) );
 
 warning( 'off', 'MATLAB:rankDeficientMatrix' );
@@ -35,7 +35,7 @@ B3=rand(n3,k);
 
 N1=round(N/10);
 for i=1:N
-    B=tensor_to_array( {B1,B2,B3} );
+    B=ctensor_to_array( {B1,B2,B3} );
     if mod(i-1,N1)==0
         fprintf( '%4d: %g\n', i-1, gvector_error(A,B,'relerr',true));
     end
@@ -54,7 +54,7 @@ for i=1:N
     B3=(khatriraorev( B1, B2 )\S3')';
 
 end
-B=tensor_to_array( {B1,B2,B3} );
+B=ctensor_to_array( {B1,B2,B3} );
 
 
 

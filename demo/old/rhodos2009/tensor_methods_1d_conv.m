@@ -75,13 +75,13 @@ M=size(I_u,1); %#ok, full stochastic dimension
 % functions and create tensor, matrix and vector versions out of it
 f_k_beta=compute_pce_rhs( f_k_alpha, I_f, I_u );
 F=kl_to_tensor( f_i_k, f_k_beta );
-F_mat=tensor_to_array(F);
-F_vec=tensor_to_vector(F);
+F_mat=ctensor_to_array(F);
+F_vec=ctensor_to_vector(F);
 
 g_k_beta=compute_pce_rhs( g_k_alpha, I_g, I_u );
 G=kl_to_tensor( g_i_k, g_k_beta );
-G_mat=tensor_to_array( G );
-G_vec=tensor_to_vector( G );
+G_mat=ctensor_to_array( G );
+G_vec=ctensor_to_vector( G );
 
 
 %% load and create the operators 
@@ -124,11 +124,11 @@ all_same=(norm(Fi_vec-Fi_vec2)+norm(Fi_vec-Fi_mat(:))+norm(Fi{1}*Fi{2}'-Fi_mat)<
 underline('apply_boundary_conditions');
 fprintf( 'all_same: %g\n', all_same );
 if ~all_same
-    gvector_error( tensor_to_vector(G), G_vec )
-    gvector_error( tensor_to_vector(F), F_vec )
-    gvector_error( tensor_to_vector(Fi), Fi_vec )
-    gvector_error( tensor_to_vector(Fi), Fi_vec2 )
-    gvector_error( tensor_to_array(Fi), Fi_mat )
+    gvector_error( ctensor_to_vector(G), G_vec )
+    gvector_error( ctensor_to_vector(F), F_vec )
+    gvector_error( ctensor_to_vector(Fi), Fi_vec )
+    gvector_error( ctensor_to_vector(Fi), Fi_vec2 )
+    gvector_error( ctensor_to_array(Fi), Fi_mat )
     keyboard;
 end
 
@@ -156,7 +156,7 @@ for tolexp=1:8
         truncate=sprintf('eps 10^-%d', tolexp);
     end
     [Ui,flag,info,stats]=tensor_operator_solve_pcg( Ki, Fi, 'M', Mi, 'truncate_options', {'eps',tol, 'relcutoff', true} );
-    ui_vec3=tensor_to_vector(Ui);
+    ui_vec3=ctensor_to_vector(Ui);
     relerr=gvector_error( ui_vec3, Ui_vec, 'relerr', true );
     k=size(Ui{1},2);
     if tol>0
@@ -175,7 +175,7 @@ for tolexp=1:8
 end
 
 U=apply_boundary_conditions_solution( Ui, G, P_I, P_B );
-[u_i_k, u_k_alpha]=tensor_to_kl( U );
+[u_i_k, u_k_alpha]=ctensor_to_kl( U );
 
 clf;
 plot(pos,u_i_k); 

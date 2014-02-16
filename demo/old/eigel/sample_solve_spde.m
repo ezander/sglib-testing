@@ -122,7 +122,7 @@ Fi=apply_boundary_conditions_rhs( K, F, G, P_I, P_B );
 
 %% Solve the system 
 % convert fields into matrix form
-Fi_mat=tensor_to_array( Fi );
+Fi_mat=ctensor_to_array( Fi );
 Mi_inv=stochastic_precond_mean_based( Ki );
 
 maxiter=100;
@@ -133,7 +133,7 @@ tic; fprintf( 'Solving (gpcg): ' );
 toc; fprintf( 'Flag: %d, iter: %d, relres: %g \n', flag, info.iter, info.relres );
 
 %% 
-u_i_alpha=apply_boundary_conditions_solution( Ui_mat, tensor_to_array(G), P_I, P_B );
+u_i_alpha=apply_boundary_conditions_solution( Ui_mat, ctensor_to_array(G), P_I, P_B );
 [u,xi]=pce_field_realization( u_i_alpha, I_u );
 
 [k]=kl_pce_field_realization( k_i_k, k_k_alpha, I_k, xi );

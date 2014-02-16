@@ -110,17 +110,17 @@ fprintf( '\n' );
 underline( 'Tensor product PCG: ' );
 
 [Ui,flag,info]=tensor_operator_solve_pcg( Ki, Fi, 'M', Mi );
-ui_vec3=tensor_to_vector( Ui );
+ui_vec3=ctensor_to_vector( Ui );
 truncate='none';
 fprintf( 'truncate: %s:: flag: %d, relres: %g, iter: %d, relerr: %g k: %d\n', truncate, flag, info.relres, info.iter, norm(ui_vec-ui_vec3 )/norm(ui_vec), size(Ui{1},2) );
 
 for tolexp=1:7
     tol=10^-tolexp;
     [Ui,flag,info]=tensor_operator_solve_pcg( Ki, Fi, 'M', Mi, 'truncate_options', {'eps',tol, 'relcutoff', true} );
-    ui_vec3=tensor_to_vector( Ui );
+    ui_vec3=ctensor_to_vector( Ui );
     truncate=sprintf('eps 10^-%d', tolexp);
     relerr=gvector_error( ui_vec3, ui_vec, 'relerr', true );
-    k=tensor_rank( Ui );
+    k=ctensor_rank( Ui );
     R=relerr/tol;
     fprintf( 'truncate: %s:: flag: %d, relres: %g, iter: %d, relerr: %g k: %d, R: %g\n', truncate, flag, info.relres, info.iter, relerr, k, R );
 end

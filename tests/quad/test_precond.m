@@ -84,7 +84,7 @@ eigs( B3, 1)
 
 %%
 if true
-    F=tensor_to_array(Fi);
+    F=ctensor_to_array(Fi);
     [X,flag,info1]=generalised_solve_pcg( A, F(:), 'Minv', Pinv1, 'verbosity', 0 );
     [X,flag,info2]=generalised_solve_pcg( A, F(:), 'Minv', Pinv2, 'verbosity', 0 );
     [X,flag,info3]=generalised_solve_pcg( A, F(:), 'Minv', Pinv3, 'verbosity', 0 );
