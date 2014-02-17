@@ -47,9 +47,9 @@ info.errvec=[];
 info.updvec=[];
 info.updnormvec=[];
 
-Xc=gvector_null(F);
+Xc=tensor_null(F);
 Rc=funcall( truncate_before_func, F );
-initres=gvector_norm( Rc );
+initres=tensor_norm( Rc );
 normres=initres;
 lastnormres=normres;
 info.resvec(1)=initres;
@@ -71,23 +71,23 @@ for iter=1:maxiter
     %if is_ctensor( Xc); fprintf( 'Rank A: %d\n', ctensor_rank(APc) ); end
     APc=funcall( truncate_before_func, APc );
     %if is_ctensor( Xc); fprintf( 'Rank A: %d\n', ctensor_rank(APc) ); end
-    alpha=gvector_scalar_product( Rc, Zc)/...
-        gvector_scalar_product( Pc, APc );
-    Xn=gvector_add( Xc, Pc, alpha);
-    Rn=gvector_add( Rc, APc, -alpha );
+    alpha=tensor_scalar_product( Rc, Zc)/...
+        tensor_scalar_product( Pc, APc );
+    Xn=tensor_add( Xc, Pc, alpha);
+    Rn=tensor_add( Rc, APc, -alpha );
 
     Xn=funcall( truncate_before_func, Xn );
     Rn=funcall( truncate_before_func, Rn );
 
-    normres=gvector_norm( Rn );
+    normres=tensor_norm( Rn );
     relres=normres/initres;
     
     %if true && (normres<abstol || relres<reltol || normres<ltres*sqrt(releps) )
     if true && normres<lastnormres*sqrt(releps)
         AXn=operator_apply(A,Xn, 'pass_on', {'truncate_func', truncate_operator_func} );
-        Rn=gvector_add( F, AXn, -1 );
+        Rn=tensor_add( F, AXn, -1 );
         Rn=funcall( truncate_before_func, Rn );
-        new_normres=gvector_norm( Rn );
+        new_normres=tensor_norm( Rn );
         new_relres=new_normres/initres;
         if true %~((new_normres<abstol || new_relres<reltol))
             if verbosity>0
@@ -114,9 +114,9 @@ for iter=1:maxiter
     % actual update is DX=T(Xn)-Xc;
     % update ratio is (DX,DY)/(DY,DY) should be near one
     % no progress if near 0
-    DY=gvector_scale( Pc, alpha );
-    DX=gvector_add( Xn, Xc, -1 );
-    upratio=gvector_scalar_product( DX, DY )/gvector_scalar_product( DY, DY );
+    DY=tensor_scale( Pc, alpha );
+    DX=tensor_add( Xn, Xc, -1 );
+    upratio=tensor_scalar_product( DX, DY )/tensor_scalar_product( DY, DY );
 
     if memtrace
         memmax=memstats( 'mem', memmax, 'append', false );
@@ -136,9 +136,9 @@ for iter=1:maxiter
     end
 
     Zn=operator_apply(Minv,Rn);
-    beta=gvector_scalar_product(Rn,Zn)/gvector_scalar_product(Rc,Zc);
+    beta=tensor_scalar_product(Rn,Zn)/tensor_scalar_product(Rc,Zc);
     Pc=funcall( truncate_before_func, Pc );
-    Pn=gvector_add(Zn,Pc,beta);
+    Pn=tensor_add(Zn,Pc,beta);
 
     % set all iteration variables to new state
     Xc=funcall( truncate_after_func, Xn );

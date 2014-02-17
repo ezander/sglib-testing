@@ -36,7 +36,7 @@ I_g=multiindex(0,0);
 
 %% combine the multiindices
 [I_k,I_f,I_g,I_u]=multiindex_combine( {I_k, I_f, I_g}, -1 );
-M=size(I_u,1); %#ok
+M=size(I_u,1);
 
 
 %% create the right hand side
@@ -56,10 +56,8 @@ kl_operator_version=9;
 stiffness_func={@stiffness_matrix, {pos,els}, {1,2}};
 opt.verbosity=1;
 opt.show_timings=true;
-K=load_kl_operator( [basename '_op_mu_delta'], kl_operator_version, k_i_k, k_k_alpha, I_k, I_u, stiffness_func, 'mu_delta', opt );
-K_ab=load_kl_operator( [basename '_op_ab'], kl_operator_version, k_i_k, k_k_alpha, I_k, I_u, stiffness_func, 'alpha_beta', opt );
-% create matrix and tensor operators
-K_mat=cell2mat(K_ab);
+K=load_kl_operator( [basename '_op_tensor'], kl_operator_version, k_i_k, k_k_alpha, I_k, I_u, stiffness_func, 'tensor', opt );
+K_mat=load_kl_operator( [basename '_op_matrix'], kl_operator_version, k_i_k, k_k_alpha, I_k, I_u, stiffness_func, 'matrix', opt );
 
 
 %% apply boundary conditions
@@ -82,8 +80,8 @@ fprintf( 'all_same: %g\n', all_same );
 ui_vec=Ki_mat\fi_vec;
 
 underline( 'Residual of direct solver:' );
-fprintf( '(matrix op) %g \n', norm( fi_vec-tensor_operator_apply( Ki, ui_vec ) ) );
-fprintf( '(tensor op) %g \n', norm( fi_vec-tensor_operator_apply( Ki_mat, ui_vec ) ) );
+fprintf( '(matrix op) %g \n', norm( fi_vec-operator_apply( Ki, ui_vec ) ) );
+fprintf( '(tensor op) %g \n', norm( fi_vec-operator_apply( Ki_mat, ui_vec ) ) );
 
 
 
@@ -92,9 +90,9 @@ fprintf( '(tensor op) %g \n', norm( fi_vec-tensor_operator_apply( Ki_mat, ui_vec
 Mi=Ki(1,:);
 Mi_mat=tensor_operator_to_matrix( Mi );
 % solve
-tic; [ui_vec2(:,1),flag]=pcg(Ki_mat,fi_vec,[],[],Mi_mat,[],[]); t(1)=toc;
-tic; [ui_vec2(:,2),flag]=pcg(@funcall_funfun,fi_vec,[],[],Mi_mat,[],[],{@tensor_operator_apply,{Ki_mat},{1}}); t(2)=toc;
-tic; [ui_vec2(:,3),flag]=pcg(@funcall_funfun,fi_vec,[],[],Mi_mat,[],[],{@tensor_operator_apply,{Ki},{1}}); t(3)=toc;
+tic; [ui_vec2(:,1),flag]=pcg(Ki_mat,fi_vec,[],[],Mi_mat,[],[]); t(1)=toc; %#ok<*NASGU>
+tic; [ui_vec2(:,2),flag]=pcg(@funcall_funfun,fi_vec,[],[],Mi_mat,[],[],{@operator_apply,{Ki_mat},{1}}); t(2)=toc;
+tic; [ui_vec2(:,3),flag]=pcg(@funcall_funfun,fi_vec,[],[],Mi_mat,[],[],{@operator_apply,{Ki},{1}}); t(3)=toc;
 tic; [ui_vec2(:,4),flag]=pcg(@(x)(Ki_mat*x),fi_vec,[],[],Mi_mat,[],[]); ta(4)=toc;
 
 underline( 'PCG accuracy: ' );
@@ -109,20 +107,22 @@ fprintf( '\n' );
 
 underline( 'Tensor product PCG: ' );
 
+addpath('../../obsolete/');
 [Ui,flag,info]=tensor_operator_solve_pcg( Ki, Fi, 'M', Mi );
 ui_vec3=ctensor_to_vector( Ui );
 truncate='none';
 fprintf( 'truncate: %s:: flag: %d, relres: %g, iter: %d, relerr: %g k: %d\n', truncate, flag, info.relres, info.iter, norm(ui_vec-ui_vec3 )/norm(ui_vec), size(Ui{1},2) );
 
+clf;
 for tolexp=1:7
     tol=10^-tolexp;
-    [Ui,flag,info]=tensor_operator_solve_pcg( Ki, Fi, 'M', Mi, 'truncate_options', {'eps',tol, 'relcutoff', true} );
+    [Ui,flag,info]=tensor_operator_solve_pcg( Ki, Fi, 'M', Mi, 'eps', tol, 'relcutoff', true );
+    semilogy(1:length(info.resvec), info.resvec, 'x-'); hold all; drawnow;
     ui_vec3=ctensor_to_vector( Ui );
     truncate=sprintf('eps 10^-%d', tolexp);
-    relerr=gvector_error( ui_vec3, ui_vec, 'relerr', true );
+    relerr=tensor_error( ui_vec3, ui_vec, 'relerr', true );
     k=ctensor_rank( Ui );
     R=relerr/tol;
     fprintf( 'truncate: %s:: flag: %d, relres: %g, iter: %d, relerr: %g k: %d, R: %g\n', truncate, flag, info.relres, info.iter, relerr, k, R );
 end
-
 

@@ -1,4 +1,4 @@
-function [X,flag,info,stats]=tensor_operator_solve_pcg( A, F, varargin )
+function [X,flag,info]=tensor_operator_solve_pcg( A, F, varargin )
 
 %% parse options
 options=varargin2options( varargin );
@@ -17,8 +17,6 @@ options=varargin2options( varargin );
 [trunc.vareps_reduce,options]=get_option( options, 'vareps_reduce', 0.1 );
 [trunc.show_reduction,options]=get_option( options, 'show_reduction', false );
 
-[stats,options]=get_option( options, 'stats', struct() );
-[stats_func,options]=get_option( options, 'stats_func', [] );
 check_unsupported_options( options, mfilename );
 
 %% options to just pass on to the solver
@@ -26,12 +24,8 @@ pass_options={...
     'abstol', abstol,...
     'reltol', reltol,...
     'maxiter', maxiter,...
-    'stats', stats,...
+    'trunc', trunc, ...
     };
-
-if ~isempty(stats_func)
-    pass_options=[pass_options {'stats_func', stats_func}];
-end
 
 %% generate tensor prod preconditioner 
 if ~isempty(M)
@@ -60,26 +54,21 @@ truncate_zero={@ctensor_truncate_zero, {trunc}, {2}};
 if is_ctensor(F)
     switch trunc.trunc_mode
         case 1 % after preconditioning
-            truncate_operator_func=truncate_zero;
-            truncate_before_func=truncate_zero;
-            truncate_after_func=truncate_strong;
+            pass_options=[pass_options {'trunc_mode', 'after'}];
         case 2 % before preconditioning
-            truncate_operator_func=truncate_strong;
-            truncate_before_func=truncate_med;
-            truncate_after_func=truncate_med;
+            pass_options=[pass_options {'trunc_mode', 'before'}];
         case 3 % in the operator
-            truncate_operator_func={@ctensor_truncate_variable, {trunc}, {2}};
-            truncate_before_func={@ctensor_truncate_zero, {trunc}, {2}};
-            truncate_after_func={@ctensor_truncate_zero, {trunc}, {2}};
+            pass_options=[pass_options {'trunc_mode', 'operator'}];
     end
+    %pass_options=[pass_options {'truncate_operator_func', truncate_operator_func}];
+    %pass_options=[pass_options {'truncate_before_func', truncate_before_func}];
+    %pass_options=[pass_options {'truncate_after_func', truncate_after_func}];
+
     %pass_options=[pass_options {'truncate_func', truncate_func}]
-    pass_options=[pass_options {'truncate_operator_func', truncate_operator_func}];
-    pass_options=[pass_options {'truncate_before_func', truncate_before_func}];
-    pass_options=[pass_options {'truncate_after_func', truncate_after_func}];
     %pass_options=[pass_options {'truncate_zero_func', truncate_zero_func}];
 end
 
 %% call pcg
-[X,flag,info,stats]=generalised_solve_pcg( A, F, pass_options{:} );
+[X,flag,info]=generalised_solve_pcg( A, F, pass_options{:} );
 
 

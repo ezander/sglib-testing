@@ -150,7 +150,7 @@ for tolexp=1:8
     end
     [Ui,flag,info]=tensor_operator_solve_pcg( Ki, Fi, 'M', Mi, 'truncate_options', {'eps',tol, 'relcutoff', true} );
     ui_vec3=ctensor_to_vector(Ui);
-    relerr=gvector_error(ui_vec3, ui_vec3, 'relerr', true );
+    relerr=tensor_error(ui_vec3, ui_vec3, 'relerr', true );
     k=ctensor_rank( Ui );
     if tol>0
         R=relerr/tol;

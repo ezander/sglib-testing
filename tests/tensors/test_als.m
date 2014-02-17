@@ -24,7 +24,7 @@ assert_equals( A(:), B(:) );
 warning( 'off', 'MATLAB:rankDeficientMatrix' );
 B=als( A, k+2, 100 );
 warning( 'on', 'MATLAB:rankDeficientMatrix' );
-fprintf( '%g\n', gvector_error(A,B,'relerr',true));
+fprintf( '%g\n', tensor_error(A,B,'relerr',true));
 
 function B=als( A, k, N )
 
@@ -37,14 +37,14 @@ N1=round(N/10);
 for i=1:N
     B=ctensor_to_array( {B1,B2,B3} );
     if mod(i-1,N1)==0
-        fprintf( '%4d: %g\n', i-1, gvector_error(A,B,'relerr',true));
+        fprintf( '%4d: %g\n', i-1, tensor_error(A,B,'relerr',true));
     end
     
     S1=reshape( shiftdim(A,0), n1, [] );
-    o1=gvector_norm( S1-B1*khatriraorev( B2, B3 )');
+    o1=tensor_norm( S1-B1*khatriraorev( B2, B3 )');
     %B1=S1'\khatriraorev( B2, B3 );
     B1=(khatriraorev( B2, B3 )\S1')';
-    o2=gvector_norm( S1-B1*khatriraorev( B2, B3 )');
+    o2=tensor_norm( S1-B1*khatriraorev( B2, B3 )');
     %fprintf( '%g=>%g\n', o1,o2);
 
     S2=reshape( shiftdim(A,1), n2, [] );

@@ -124,11 +124,11 @@ all_same=(norm(Fi_vec-Fi_vec2)+norm(Fi_vec-Fi_mat(:))+norm(Fi{1}*Fi{2}'-Fi_mat)<
 underline('apply_boundary_conditions');
 fprintf( 'all_same: %g\n', all_same );
 if ~all_same
-    gvector_error( ctensor_to_vector(G), G_vec )
-    gvector_error( ctensor_to_vector(F), F_vec )
-    gvector_error( ctensor_to_vector(Fi), Fi_vec )
-    gvector_error( ctensor_to_vector(Fi), Fi_vec2 )
-    gvector_error( ctensor_to_array(Fi), Fi_mat )
+    tensor_error( ctensor_to_vector(G), G_vec )
+    tensor_error( ctensor_to_vector(F), F_vec )
+    tensor_error( ctensor_to_vector(Fi), Fi_vec )
+    tensor_error( ctensor_to_vector(Fi), Fi_vec2 )
+    tensor_error( ctensor_to_array(Fi), Fi_mat )
     keyboard;
 end
 
@@ -157,7 +157,7 @@ for tolexp=1:8
     end
     [Ui,flag,info,stats]=tensor_operator_solve_pcg( Ki, Fi, 'M', Mi, 'truncate_options', {'eps',tol, 'relcutoff', true} );
     ui_vec3=ctensor_to_vector(Ui);
-    relerr=gvector_error( ui_vec3, Ui_vec, 'relerr', true );
+    relerr=tensor_error( ui_vec3, Ui_vec, 'relerr', true );
     k=size(Ui{1},2);
     if tol>0
         R=relerr/tol;
