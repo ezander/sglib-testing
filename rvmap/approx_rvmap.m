@@ -39,12 +39,14 @@ x_i = gpc_evaluate(x_i_alpha, V_x, xi_i);
 y_j = gpc_evaluate(y_j_beta, V_y, xi_i);
 phi_i = gpcbasis_evaluate(V_phi, x_i);
 
-A = phi_i * diag(w_i) * phi_i';
-b = phi_i * diag(w_i) * y_j';
+phiw_i = binfun(@times, phi_i, w_i');
+
+A = phiw_i * phi_i';
+b = phiw_i * y_j';
 phi_j_gamma = (A\b)';
 
 if cond_warning
-    kappa = cond(A);
+    kappa = condest(A);
     if kappa>=cond_warning
         warning('sglib:approx_rvmap:cond', ...
             'Condition number of matrix too large (%g), function approximation may be inaccurate', ...
