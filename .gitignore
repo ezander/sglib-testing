@@ -1,3 +1,6 @@
+/tests/mex/*
+/proposed/gpc/foo/*
+/*.pdf
 /demo/tutorial/tex/*
 /demo/tutorial/html/*
 /profiling/TS2.mat
