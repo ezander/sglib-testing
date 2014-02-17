@@ -229,6 +229,9 @@ subplot(1,2,2); plot_density(xi(2,:), 'n', 30)
 a_i_samples = gpc_sample(a_i_alpha, V_a, 30000, 'mode', 'qmc');
 clf; plot_samples(a_i_samples);
 
+%% The structure of the model stuff
+% explain
+
 %% Direct Monte Carlo sampling
 % Now, as a first step, we can do a Monte-Carlo simulation of our
 % deterministic model. Instead of making statistics, we'll just plot a
@@ -356,7 +359,7 @@ P_I = minfo.P_I;
 P_B = minfo.P_B;
 N = size(minfo.K{1},1);
 M = size(A_i{1},1);
-Ki=apply_boundary_conditions_operator( K, P_I );
+%Ki=apply_boundary_conditions_operator( K, P_I );
 
 
 %%
@@ -365,20 +368,23 @@ G = zeros(N, M);
 G(:,1) = minfo.g;
 F = zeros(N, M);
 F(:,1) = minfo.f;
-Fi=apply_boundary_conditions_rhs( K, F, G, P_I, P_B );
+%Fi=apply_boundary_conditions_rhs( K, F, G, P_I, P_B );
 
 %% 
 % Here we transform the tensor operator to a matrix and solve with the
 % standard matlab solve thing for sparse matrices
-Ki_mat = tensor_operator_to_matrix(Ki);
-Fi_vec = Fi(:);
-Ui_vec = Ki_mat\Fi_vec;
-Ui = reshape(Ui_vec, size(Fi));
+[Kn,Fn]=apply_boundary_conditions_system( K, F, G, P_I, P_B );
+
+Kn_mat = tensor_operator_to_matrix(Kn);
+Fn_vec = Fn(:);
+U_vec = Kn_mat\Fn_vec;
+U = reshape(U_vec, size(F));
 
 %%
 % Apply the boundary conditions and show the solution (and guess what? we
 % get the same results as in the other cases)
-u_i_alpha=apply_boundary_conditions_solution(Ui, G, P_I, P_B);
+%u_i_alpha=apply_boundary_conditions_solution(U, G, P_I, P_B);
+u_i_alpha=U;
 
 [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
 subplot(1,2,1); 
