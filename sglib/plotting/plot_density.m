@@ -1,4 +1,4 @@
-function plot_density(dist_or_samples, varargin)
+function [x,y]=plot_density(dist_or_samples, varargin)
 % PLOT_DENSITY Short description of plot_density.
 %   PLOT_DENSITY Long description of plot_density.
 %
@@ -35,16 +35,19 @@ if do_hold
 end
 
 if iscell(dist_or_samples)
-    plot_dist_density(dist_or_samples, options);
+    [x,y]=plot_dist_density(dist_or_samples, options);
 else
-    plot_sample_density(dist_or_samples, options);
+    [x,y]=plot_sample_density(dist_or_samples, options);
 end
 
 if do_hold && ~was_hold
     hold('off');
 end
+if nargout==0
+    clear x y
+end
 
-function plot_dist_density(dist, options)
+function [x,y]=plot_dist_density(dist, options)
 [q0,options] = get_option(options, 'q0', 0);
 [q1,options] = get_option(options, 'q1', 1);
 [dq,options] = get_option(options, 'dq', 0.02);
@@ -79,15 +82,15 @@ end
 x = unique(x);
 switch(type)
     case 'pdf'
-        plot(x, gendist_pdf(x, dist));
+        y=gendist_pdf(x, dist);
     case 'cdf'
-        plot(x, gendist_cdf(x, dist));
+        y=gendist_cdf(x, dist);
     case {'both', 'pdf/cdf', 'cdf/pdf'}
-        plot(x, gendist_pdf(x, dist), x, gendist_cdf(x, dist));
-end        
+        y=[gendist_pdf(x, dist); gendist_cdf(x, dist)];
+end
+plot(x, y);
 
-
-function plot_sample_density(x, options)
+function [xc,y]=plot_sample_density(x, options)
 [type, options]=get_option(options, 'type', 'hist');
 [n, options]=get_option(options, 'n', 100);
 [kde_sig, options]=get_option(options, 'kde_sig', []);
@@ -97,12 +100,13 @@ check_unsupported_options(options, [mfilename, '/sample']);
 
 switch(type)
     case 'hist'
-        histogram(x, n);
+        [xc,y]=histogram(x, n);
         %error('foo');
     case 'empirical'
         error('foo');
     case 'kernel'
-        kernel_density(x, n, kde_sig);
+        [xc,y]=kernel_density(x, n, kde_sig);
+        plot(xc,y);
     otherwise
         error('foo');
 end
@@ -114,7 +118,7 @@ if rug
     rug_plot(x);
 end
 
-function histogram(x, n)
+function [xc,y]=histogram(x, n)
 [nbin,xc]=hist(x, n);
 if n>1
     dx = (xc(2) - xc(1));
@@ -123,5 +127,3 @@ else
 end
 y = nbin / sum(nbin) / dx;
 bar(xc, y, 'BarWidth', 1, 'FaceColor', [0.9, 0.9, 0.9] );
-
-
