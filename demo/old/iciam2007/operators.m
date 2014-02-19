@@ -1,7 +1,7 @@
 function operators
 global n pos els M %#ok
-global p_f m_gam_f m_f lc_f h_f cov_f f_alpha I_f mu_f f_k_alpha f_i_k %#ok
-global p_k m_gam_k m_k lc_k h_k cov_k k_alpha I_k mu_k k_k_alpha k_i_k %#ok
+global p_f m_gam_f m_f lc_f h_f cov_f f_i_alpha I_f mu_f f_k_alpha f_i_k %#ok
+global p_k m_gam_k m_k lc_k h_k cov_k k_i_alpha I_k mu_k k_k_alpha k_i_k %#ok
 global p_u m_gam_u I_u %#ok
 
 global K_ab K_mu_delta K_mu_iota %#ok

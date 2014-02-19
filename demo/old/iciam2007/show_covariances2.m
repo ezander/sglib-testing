@@ -1,18 +1,18 @@
-function show_covariances2( x, k_alpha, f_alpha, u_alpha, I_k, I_f, I_u, cov_k_func, cov_f_func )
+function show_covariances2( x, k_i_alpha, f_i_alpha, u_i_alpha, I_k, I_f, I_u, cov_k_func, cov_f_func )
 
-subplot(4,3,1); show_pce_covariance( x, k_alpha, I_k, 'surf', 'corr_coeff', true );
-subplot(4,3,4); show_pce_covariance( x, k_alpha, I_k, 'eigs' );
-subplot(4,3,7); show_pce_covariance( x, k_alpha, I_k, 'eigfuns' );
-subplot(4,3,10); show_pce_covariance( x, k_alpha, I_k, 'diff', 'cov_func', cov_k_func );
+subplot(4,3,1); show_pce_covariance( x, k_i_alpha, I_k, 'surf', 'corr_coeff', true );
+subplot(4,3,4); show_pce_covariance( x, k_i_alpha, I_k, 'eigs' );
+subplot(4,3,7); show_pce_covariance( x, k_i_alpha, I_k, 'eigfuns' );
+subplot(4,3,10); show_pce_covariance( x, k_i_alpha, I_k, 'diff', 'cov_func', cov_k_func );
 
-subplot(4,3,2); show_pce_covariance( x, f_alpha, I_f, 'surf', 'corr_coeff', true );
-subplot(4,3,5); show_pce_covariance( x, f_alpha, I_f, 'eigs' );
-subplot(4,3,8); show_pce_covariance( x, f_alpha, I_f, 'eigfuns' );
-subplot(4,3,11); show_pce_covariance( x, f_alpha, I_f, 'diff', 'cov_func', cov_f_func );
+subplot(4,3,2); show_pce_covariance( x, f_i_alpha, I_f, 'surf', 'corr_coeff', true );
+subplot(4,3,5); show_pce_covariance( x, f_i_alpha, I_f, 'eigs' );
+subplot(4,3,8); show_pce_covariance( x, f_i_alpha, I_f, 'eigfuns' );
+subplot(4,3,11); show_pce_covariance( x, f_i_alpha, I_f, 'diff', 'cov_func', cov_f_func );
 
-subplot(4,3,3); show_pce_covariance( x, u_alpha, I_u, 'surf', 'corr_coeff', true );
-subplot(4,3,6); show_pce_covariance( x, u_alpha, I_u, 'eigs' );
-subplot(4,3,9); show_pce_covariance( x, u_alpha, I_u, 'eigfuns' );
+subplot(4,3,3); show_pce_covariance( x, u_i_alpha, I_u, 'surf', 'corr_coeff', true );
+subplot(4,3,6); show_pce_covariance( x, u_i_alpha, I_u, 'eigs' );
+subplot(4,3,9); show_pce_covariance( x, u_i_alpha, I_u, 'eigfuns' );
 
 
 function show_pce_covariance( x, r_alpha, I_r, type, varargin )
