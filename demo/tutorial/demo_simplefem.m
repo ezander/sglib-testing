@@ -349,6 +349,14 @@ subplot(1,2,2); spy(A_i{2})
 K = tensor_operator_create({minfo.K, A_i});
 clf; spy(tensor_operator_to_matrix(K))
 
+%%
+% apply to the right hand side
+[N,M]=operator_size(K, 'domain_only', true, 'contract', false);
+G = zeros(N, M);
+G(:,1) = minfo.g;
+F = zeros(N, M);
+F(:,1) = minfo.f;
+
 %% 
 % For applying stochastic Galerkin we need to apply the boundary conditions
 % to the operator and right hand side. In sglib this is implemented such
@@ -357,24 +365,14 @@ clf; spy(tensor_operator_to_matrix(K))
 % again by putting the values on the Dirichlet boundary back in.
 P_I = minfo.P_I;
 P_B = minfo.P_B;
-N = size(minfo.K{1},1);
-M = size(A_i{1},1);
-%Ki=apply_boundary_conditions_operator( K, P_I );
+[Kn,Fn]=apply_boundary_conditions_system( K, F, G, P_I, P_B );
 
 
-%%
-% apply to the right hand side
-G = zeros(N, M);
-G(:,1) = minfo.g;
-F = zeros(N, M);
-F(:,1) = minfo.f;
 %Fi=apply_boundary_conditions_rhs( K, F, G, P_I, P_B );
 
 %% 
 % Here we transform the tensor operator to a matrix and solve with the
 % standard matlab solve thing for sparse matrices
-[Kn,Fn]=apply_boundary_conditions_system( K, F, G, P_I, P_B );
-
 Kn_mat = tensor_operator_to_matrix(Kn);
 Fn_vec = Fn(:);
 U_vec = Kn_mat\Fn_vec;
