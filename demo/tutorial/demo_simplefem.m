@@ -378,6 +378,14 @@ Fn_vec = Fn(:);
 U_vec = Kn_mat\Fn_vec;
 U = reshape(U_vec, size(F));
 
+
+% a1_mean = gendist_moments(a1_dist);
+% a2_mean = gendist_moments(a2_dist);
+% diffusion_1d_complete_solve(a1, a2)
+[Pinv, P] = stochastic_precond_mean_based(Kn, 'precond_type', 'vanloan', 'num_iter', 100);
+[Un, flag, info] = generalised_solve_pcg(Kn, Fn, 'Minv', Pinv);
+
+
 %%
 % Apply the boundary conditions and show the solution (and guess what? we
 % get the same results as in the other cases)
