@@ -383,7 +383,7 @@ U = reshape(U_vec, size(F));
 % a2_mean = gendist_moments(a2_dist);
 % diffusion_1d_complete_solve(a1, a2)
 [Pinv, P] = stochastic_preconditioner(Kn, 'precond_type', 'vanloan', 'num_iter', 100);
-[Un, flag, info] = generalised_solve_pcg(Kn, Fn, 'Minv', Pinv);
+[Un, flag, info] = tensor_solve_pcg(Kn, Fn, 'Minv', Pinv);
 
 
 %%

@@ -69,6 +69,6 @@ if is_ctensor(F)
 end
 
 %% call pcg
-[X,flag,info]=generalised_solve_pcg( A, F, pass_options{:} );
+[X,flag,info]=tensor_solve_pcg( A, F, pass_options{:} );
 
 
