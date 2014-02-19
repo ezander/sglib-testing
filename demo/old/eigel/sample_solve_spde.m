@@ -123,7 +123,7 @@ Fi=apply_boundary_conditions_rhs( K, F, G, P_I, P_B );
 %% Solve the system 
 % convert fields into matrix form
 Fi_mat=ctensor_to_array( Fi );
-Mi_inv=stochastic_precond_mean_based( Ki );
+Mi_inv=stochastic_preconditioner( Ki );
 
 maxiter=100;
 reltol=1e-6;

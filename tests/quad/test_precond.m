@@ -18,19 +18,19 @@ A=tensor_operator_to_matrix( Ki );
 
 %%
 tic
-[Pinv1,P,info]=stochastic_precond_mean_based( Ki, 'precond_type',0,'decomp_type','');
+[Pinv1,P,info]=stochastic_preconditioner( Ki, 'precond_type',0,'decomp_type','');
 toc
 PP1={P{1}{2}{2}{1},P{2}{2}{2}{1}};
 P1=tensor_operator_to_matrix( PP1 );
 
 tic
-[Pinv2,P,info]=stochastic_precond_mean_based( Ki, 'precond_type',1,'decomp_type','');
+[Pinv2,P,info]=stochastic_preconditioner( Ki, 'precond_type',1,'decomp_type','');
 toc
 PP2={P{1}{2}{2}{1},P{2}{2}{2}{1}};
 P2=tensor_operator_to_matrix( PP2 );
 
 tic
-[Pinv3,P,info]=stochastic_precond_mean_based( Ki, 'precond_type',3,'decomp_type','');
+[Pinv3,P,info]=stochastic_preconditioner( Ki, 'precond_type',3,'decomp_type','');
 toc
 PP3={P{1}{2}{2}{1},P{2}{2}{2}{1}};
 P3=tensor_operator_to_matrix( PP3 );
