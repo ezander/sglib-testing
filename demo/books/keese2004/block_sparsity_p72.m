@@ -59,7 +59,7 @@ for i=1:4
     V2 = gpcbasis_create('H', 'I', J);
     
     % compute sparsity pattern
-    C = gpc_triples(V1, V1, V2);
+    C = gpcbasis_triples(V1, V1, V2);
     S = any(C, 3);
     subplot(2,2,i);
 

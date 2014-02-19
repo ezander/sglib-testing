@@ -37,7 +37,7 @@ M_a = gpcbasis_size(V_a, 1);
 M_u = gpcbasis_size(V_u, 1);
 M_v = gpcbasis_size(V_v, 1);
 
-M = gpc_triples(V_a, V_u, V_v);
+M = gpcbasis_triples(V_a, V_u, V_v);
 if normalise
     inv_norm = 1./gpcbasis_norm(V_v, 'sqrt', false);
     inv_norm = reshape(inv_norm, 1, 1, []);
