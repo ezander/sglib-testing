@@ -7,20 +7,20 @@ V = {'H', I}
 N=100000;
 xi=gpcgerm_sample(V, N);
 y=gpc_evaluate(a_i_alpha, V, xi);
-kde(y)
+kernel_density(y)
 
 
 %%
 clear
 
-dist = 'beta';
+dist_name = 'beta';
 params = {4, 2};
-params = {0.5, 0.7};
-[shift, scale]=gendist_fix_moments(dist, params, 3.2, 0.24);
+dist = gendist_create(dist_name, params);
+dist = gendist_fix_moments(dist, 3.2, 0.24);
 x=linspace(-1,5);
-plot(x,gendist_pdf(x, dist, params, shift, scale))
+plot(x,gendist_pdf(x, dist))
 hold all
-dist_func={@gendist_stdnor, {dist, params, shift, scale}, {2,3,4,5}}
+dist_func={@gendist_stdnor, {dist}, {2}}
 
 for p=1:6
     [a_i_alpha, I] = pce_expand_1d(dist_func, p)
@@ -29,7 +29,6 @@ for p=1:6
     N=100000;
     xi=gpcgerm_sample(V, N);
     y=gpc_evaluate(a_i_alpha, V, xi);
-    %kde(y,100)
     empirical_density(y);
     legend('pdf', '1', '2', '3', '4', '5', '6' )
 end
