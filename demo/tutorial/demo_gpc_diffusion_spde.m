@@ -385,6 +385,7 @@ U = reshape(U_vec, size(F));
 [Pinv, P] = stochastic_preconditioner(Kn, 'precond_type', 'vanloan', 'num_iter', 100);
 [Un, flag, info] = tensor_solve_pcg(Kn, Fn, 'Minv', Pinv);
 
+Un = tensor_solve_matlab_wrapper(@pcg, Kn, Fn, 'Minv', Pinv);
 
 %%
 % Apply the boundary conditions and show the solution (and guess what? we
