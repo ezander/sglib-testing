@@ -253,12 +253,14 @@ plot(pos, u_samples)
 % We have that also canned as a function. Showing mean and variance
 % computed by MC and QMC.
 [u_mean, u_var, minfo] = compute_moments_mc(minfo, a_i_alpha, V_a, 100);
-subplot(1,2,1); plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
+plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 title('mc'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
+snapnow;
 
 [u_mean, u_var, minfo] = compute_moments_mc(minfo, a_i_alpha, V_a, 100, 'mode', 'qmc');
-subplot(1,2,2); plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
+plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 title('qmc'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
+snapnow;
 
 %% Computing moments by quadrature
 % Or we can compute that by projection/integration. With smolyak or tensor
@@ -281,12 +283,16 @@ plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 legend('mean-std', 'mean', 'mean+std'); 
 title('tensor'); ylim([0,3.5]); grid on;
 
+
+
+
+
 %% Response surfaces by projection
 % First by projection
 V_u = gpcbasis_create(V_a, 'p', 5);
 
 minfo = model_stats(minfo, 'reset');
-[u_i_alpha, minfo] = compute_response_surface_projection(minfo, a_i_alpha, V_a, V_u, 5, 'grid', 'full_tensor');
+[u_i_alpha, minfo] = compute_response_surface_projection(minfo, a_i_alpha, V_a, V_u, 5, 'grid', 'smolyak');
 model_stats(minfo, 'print');
 
 [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
@@ -298,6 +304,7 @@ title('resp. surf. proj.'); ylim([0,3.5]); grid on;
 subplot(1,2,2); 
 plot_response_surface(u_i_alpha([10,30,60,90],:), V_u);
 title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]);
+plot_response_surface_results
 
 %% Response surface by tensor grid interpolation
 % Then by tensor grid interpolation
@@ -305,15 +312,7 @@ minfo = model_stats(minfo, 'reset');
 [u_i_alpha, minfo] = compute_response_surface_tensor_interpolate(minfo, a_i_alpha, V_a, V_u, 5);
 model_stats(minfo, 'print');
 
-[u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
-subplot(1,2,1); 
-plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
-legend('mean-std', 'mean', 'mean+std'); 
-title('resp. surf. proj.'); ylim([0,3.5]); grid on;
-
-subplot(1,2,2); 
-plot_response_surface(u_i_alpha([10,30,60,90],:), V_u);
-title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]);
+plot_response_surface_results
 
 %% Response surface by non-intrusive Galerkin
 % Then by non-intrusive Galerkin (doesn't work)
@@ -326,20 +325,18 @@ minfo = model_stats(minfo, 'reset');
 [u_i_alpha, minfo, x, w]=compute_response_surface_nonintrusive_galerkin(minfo, a_i_alpha, V_a, V_u, p_int, 'max_iter', max_iter, 'grid', int_grid);
 model_stats(minfo, 'print_step_info');
 
-[u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
-subplot(1,2,1); 
-plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
-legend('mean-std', 'mean', 'mean+std'); 
-title('resp. surf. proj.'); ylim([0,3.5]); grid on;
+plot_response_surface_results
 
-subplot(1,2,2); 
-plot_response_surface(u_i_alpha([10,30,60,90],:), V_u);
-title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]);
+
+
 
 %% Response surface by intrusive Galerkin
-% And now intrusive Stochastic Galerkin (just for the fun of it)
+% The computation of the response surfaces by intrusive stochastic
+% Galerking is a bit more complicated and will be shown here without the
+% accompanying math formulas.  
 %
-% First we need the stochastic Galerkin matrices for the two parameters
+% First we need the stochastic Galerkin matrices for the two parameters a1
+% and a2, 
 A_i = gpc_multiplication_matrices(a_i_alpha, V_a, V_u);
 subplot(1,2,1); spy(A_i{1})
 subplot(1,2,2); spy(A_i{2})
@@ -378,30 +375,35 @@ Fn_vec = Fn(:);
 U_vec = Kn_mat\Fn_vec;
 U = reshape(U_vec, size(F));
 
-
-% a1_mean = gendist_moments(a1_dist);
-% a2_mean = gendist_moments(a2_dist);
-% diffusion_1d_complete_solve(a1, a2)
-[Pinv, P] = stochastic_preconditioner(Kn, 'precond_type', 'vanloan', 'num_iter', 100);
-[Un, flag, info] = tensor_solve_pcg(Kn, Fn, 'Minv', Pinv);
-
-Un = tensor_solve_matlab_wrapper(@pcg, Kn, Fn, 'Minv', Pinv);
+u_i_alpha=U;
+plot_response_surface_results
 
 %%
-% Apply the boundary conditions and show the solution (and guess what? we
-% get the same results as in the other cases)
-%u_i_alpha=apply_boundary_conditions_solution(U, G, P_I, P_B);
-u_i_alpha=U;
+a1_mean = gendist_moments(a1_dist);
+a2_mean = gendist_moments(a2_dist);
+P = a1_mean * K{1,1} + a2_mean*K{2,1};
+Pn=apply_boundary_conditions_system(P, F, G, P_I, P_B);
 
-[u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
-subplot(1,2,1); 
-plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
-legend('mean-std', 'mean', 'mean+std'); 
-title('resp. surf. proj.'); ylim([0,3.5]); grid on;
+Pinv = operator_from_matrix_solve(Pn);
 
-subplot(1,2,2); 
-plot_response_surface(u_i_alpha([10,30,60,90],:), V_u); 
-title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]);
+
+%
+[Un, flag, info] = tensor_solve_pcg(Kn, Fn, 'Minv', Pinv);
+tensor_solver_message(info);
+
+u_i_alpha=Un;
+plot_response_surface_results
+
+
+[Un, flag, info] = tensor_solve_simple(Kn, Fn, 'Minv', Pinv);
+tensor_solver_message(info);
+
+%%
+[Pinv, P] = stochastic_preconditioner(Kn, 'precond_type', 'vanloan', 'num_iter', 5);
+Un = tensor_solve_matlab_wrapper(@pcg, Kn, Fn, 'Minv', Pinv);
+u_i_alpha=Un;
+plot_response_surface_results
+
 
 
 %%

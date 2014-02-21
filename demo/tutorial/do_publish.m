@@ -6,8 +6,8 @@ stylesheet = make_stylesheet;
 
 latexmk = strvarexpand('$pwd$/latexmk -pdf');
 
-open_pdf = ~false;
-publish_to_latex('demo_simplefem', open_pdf, 'imageFormat', 'png', ...
+open_pdf = false;
+publish_to_latex('demo_gpc_diffusion_spde', open_pdf, 'imageFormat', 'png', ...
     'stylesheet', stylesheet, 'latex_filter', @tex_modify, ...
     'pdflatex_cmd', latexmk, 'copy2pwd', false);
 
@@ -29,7 +29,7 @@ str=readtextfile(filename);
 % replace preamble until begin{document}
 str = regexprep(str, '.*\\begin{document}[\n ]*', '');
 str = ['\begin{document}' endl str];
-str = ['\input{preamble}' endl str];
+str = ['\input{../matpub_preamble}' endl str];
 str = ['\documentclass[12pt,a4paper]{scrartcl}' endl str];
 
 % replace contents section with latex table of contents
