@@ -24,8 +24,9 @@
 
 a1 = 2; a2 = 100;
 [u, a, pos]=diffusion_1d_complete_solve(a1, a2);
-plot(pos, u); 
-
+plot(pos, u); snapnow;
+plot(pos, u.^2); snapnow;
+return
 
 %% Stochastic description of the parameters
 % Now suppose the parameters a1 and a2 are uncertain and described by
@@ -148,7 +149,7 @@ fprintf('Moments (a2,true):\nmean=%g, var=%g, skew=%g, kurt=%g\n', mean, var, sk
 fprintf('Moments (a2,gpc): \nmean=%g, var=%g, skew=%g, kurt=%g\n', mean, var, skew, kurt)
 
 %%
-% The moment approximations looked quite well. Now, we plot a kernel
+% The moment approximations looked quite good. Now, we plot a kernel
 % density estimate of the GPC approximation of a2 and compare that to the
 % true distribution. Note that for the kernel density estimation we need to
 % specify the with of the kernels (setting 'kde_sig' to 0.5), because the
@@ -356,26 +357,24 @@ F(:,1) = minfo.f;
 
 %% 
 % For applying stochastic Galerkin we need to apply the boundary conditions
-% to the operator and right hand side. In sglib this is implemented such
-% that the matrices (or tensor operators or whatever) are projected onto
-% the inner (i.e. non-Dirichlet) nodes and the solution is later extended
-% again by putting the values on the Dirichlet boundary back in.
+% to the operator and right hand side. 
+
 P_I = minfo.P_I;
 P_B = minfo.P_B;
 [Kn,Fn]=apply_boundary_conditions_system( K, F, G, P_I, P_B );
 
-
-%Fi=apply_boundary_conditions_rhs( K, F, G, P_I, P_B );
-
 %% 
+% There are different ways now to solve this linear system. First note that
+% the operator is still in tensor product form
+
+Kn
+
 % Here we transform the tensor operator to a matrix and solve with the
 % standard matlab solve thing for sparse matrices
 Kn_mat = tensor_operator_to_matrix(Kn);
 Fn_vec = Fn(:);
 U_vec = Kn_mat\Fn_vec;
-U = reshape(U_vec, size(F));
-
-u_i_alpha=U;
+u_i_alpha=reshape(U_vec, size(F));
 plot_response_surface_results
 
 %%
@@ -404,14 +403,3 @@ Un = tensor_solve_matlab_wrapper(@pcg, Kn, Fn, 'Minv', Pinv);
 u_i_alpha=Un;
 plot_response_surface_results
 
-
-
-%%
-% TODO: Compare response surface with true response
-% TODO: Show grids for interpolation and projection
-% TODO: Make plotting stuff into a function and explain
-% TODO: Explain interpolation and/or projection shortly and show the code, then explain that that's been put into a function
-% TODO: compare some samples computed directly and per surrogate model
-% TODO: create model_stats(cmd) func (reset, print, ...)
-% TODO: compare to dishis results
-% TODO: create gpcbasis_info function (maybe remove gpcbasis_size)

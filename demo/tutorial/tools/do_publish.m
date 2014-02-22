@@ -2,9 +2,11 @@ function do_publish
 
 publishing_defaults
 
+latexmkpath = fileparts(mfilename('fullpath'));
+
 stylesheet = make_stylesheet;
 
-latexmk = strvarexpand('$pwd$/latexmk -pdf');
+latexmk = strvarexpand('$latexmkpath$/latexmk -pdf');
 
 open_pdf = false;
 publish_to_latex('demo_gpc_diffusion_spde', open_pdf, 'imageFormat', 'png', ...
@@ -23,13 +25,16 @@ modify_stylesheet(ml_stylesheet, stylesheet);
 
 
 function tex_modify(filename)
+path = fileparts(mfilename('fullpath'));
+
+
 endl = sprintf('\n');
 str=readtextfile(filename);
 
 % replace preamble until begin{document}
 str = regexprep(str, '.*\\begin{document}[\n ]*', '');
 str = ['\begin{document}' endl str];
-str = ['\input{../matpub_preamble}' endl str];
+str = ['\input{' path '/matpub_preamble}' endl str];
 str = ['\documentclass[12pt,a4paper]{scrartcl}' endl str];
 
 % replace contents section with latex table of contents
@@ -45,7 +50,7 @@ str = regexprep(str, '\\section\*', '\\section');
 str = regexprep(str, '\\subsection\*', '\\subsection');
 
 % make graphics centered
-str = regexprep(str, '(\\includegraphics.*?})', '\\begin{center}$1\\end{center}');
+%str = regexprep(str, '(\\includegraphics.*?})', '\\begin{center}$1\\end{center}');
 
 
 writetextfile(filename, str);

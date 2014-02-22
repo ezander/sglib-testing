@@ -115,3 +115,30 @@ a1_dist = gendist_fix_bounds(a1_dist, 0.5, 5);
 [a1_alpha, V1] = gpc_param_expand(a1_dist, 'p', 'varerr', 0.001)
 [m1,m2,m3,m4]=gpc_moments(a1_alpha, V1); [m1,m2,m3,m4]
 [m1,m2,m3,m4]=gendist_moments(a1_dist); [m1,m2,m3,m4]
+
+
+
+
+
+%% Some more interesting stuff
+[x,y]=plot_density(a2_dist, 'N', 1000, 'q0', 0.95);
+legend_add('exact');
+for p=5:20
+    %[a2_alpha_p, V2_p] = gpc_param_expand(a2_dist, 't', 'varerr', 0.002);
+    [a2_alpha_p, V2_p, varerr] = gpc_param_expand(a2_dist, 't', 'p', p);
+    hold all; plot(x, gpc_pdf_1d(a2_alpha_p, V2_p, x)); hold off;
+    legend_add(strvarexpand('p=$p$, $length(a2_alpha_p)$ terms, varerr=$varerr$'));
+end
+%%
+[x,y]=plot_density(a1_dist, 'N', 1000, 'q0', 0);
+legend_add('exact');
+for varerr=10.^-(1:0.5:3)
+    %[a2_alpha_p, V2_p] = gpc_param_expand(a2_dist, 't', 'varerr', 0.002);
+    [a1_alpha_p, V1_p, varerr1] = gpc_param_expand(a1_dist, 'p', 'varerr', varerr);
+    hold all; plot(x, gpc_pdf_1d(a1_alpha_p, V1_p, x)); hold off;
+    p=length(a1_alpha_p)-1;
+    legend_add(strvarexpand('p=$p$, $length(a1_alpha_p)$ terms, varerr=$varerr$'));
+end
+a1_samples = gpc_sample(a1_alpha_p, V1_p, 100000);
+plot_density(a1_samples, 'type', 'hist', 'hold', true);
+legend_add(strvarexpand('kde'));
