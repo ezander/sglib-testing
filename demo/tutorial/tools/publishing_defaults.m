@@ -8,6 +8,11 @@ set(0,...
     'defaultpatchlinewidth',1.4,...
     'defaultlinemarkersize',16)
 
+fw=200; fh=100;
+set(0,'defaultfigureposition',[0, 0, fw, fh]);
+set(0,'defaultfigurepaperposition',[0, 0, fw, fh]);
+
+
 rand_seed(1234);
 
 format compact;

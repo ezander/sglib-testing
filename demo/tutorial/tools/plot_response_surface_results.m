@@ -12,10 +12,9 @@ for i=1:5
 end
 legend('mean-std', 'mean', 'mean+std', 'surrogate samples', 'exact samples'); 
 title('resp. surf. proj.'); ylim([0,3.5]); grid on; hold off;
+tightplot;
 
 
-
-subplot(1,2,2); 
 plot_response_surface(u_i_alpha([10,30,60,90],:), V_u); 
 title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]);
-
+tightplot;

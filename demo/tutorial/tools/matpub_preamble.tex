@@ -1,13 +1,30 @@
-\usepackage{graphicx}
-\usepackage[svgnames]{xcolor}
+% Set the page margins and paragraph shape
 \usepackage[margin=10ex]{geometry}
-
-
 \sloppy
-\definecolor{mcodeoutput}{named}{black}
 \setlength{\parindent}{0pt}
 
+% Color definitions, not that the svgnames are used in the listings part
+\usepackage[svgnames]{xcolor}
+\definecolor{mcodeoutput}{named}{black}
 
+% Graphics package and definitions
+\usepackage{graphicx}
+\newcommand*{\inclgraphicsone}[1]{%
+        \begin{center}%
+        {\includegraphics[width=0.6\textwidth]{#1}}%
+        \end{center}%
+        }
+\newcommand*{\inclgraphicstwo}[2]{%
+        \begin{center}%
+        \hfill{\includegraphics[width=0.48\textwidth]{#1}}\hfill%
+        \hfill{\includegraphics[width=0.48\textwidth]{#2}}%
+        \end{center}%
+        }
+
+
+
+
+% Definitions for the included listings using the lstlistings package
 \usepackage{listings}
 
 \lstdefinestyle{all}{
@@ -59,7 +76,8 @@
 }
 
 
-
+% Use the hyperref package for internal links (it is usually best to put 
+% that one last in the preamble) 
 \usepackage{hyperref}
 \hypersetup{
         colorlinks=false,
