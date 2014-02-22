@@ -241,9 +241,9 @@ plot_samples(a_i_samples); tightplot;
 N = 30;
 a_i_samples = gpc_sample(a_i_alpha, V_a, N, 'mode', 'lhs');
 u_samples = zeros(N, size(pos,2));
-minfo = diffusion_1d_init();
+model = diffusion_1d_init();
 for i=1:N
-    [u, minfo]=model_solve(minfo, a_i_samples(:,i));
+    [u, model]=model_solve(model, a_i_samples(:,i));
     u_samples(i,:) = u;
 end
 plot(pos, u_samples); tightplot;
@@ -252,12 +252,12 @@ plot(pos, u_samples); tightplot;
 %% Computing moments by sampling
 % We have that also canned as a function. Showing mean and variance
 % computed by MC and QMC.
-[u_mean, u_var, minfo] = compute_moments_mc(minfo, a_i_alpha, V_a, 100);
+[u_mean, u_var, model] = compute_moments_mc(model, a_i_alpha, V_a, 100);
 plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 title('mc'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
 tightplot;
 
-[u_mean, u_var, minfo] = compute_moments_mc(minfo, a_i_alpha, V_a, 100, 'mode', 'qmc');
+[u_mean, u_var, model] = compute_moments_mc(model, a_i_alpha, V_a, 100, 'mode', 'qmc');
 plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 title('qmc'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
 tightplot;
@@ -265,17 +265,17 @@ tightplot;
 %% Computing moments by quadrature
 % Or we can compute that by projection/integration. With smolyak or tensor
 % grid.
-minfo = model_stats(minfo, 'reset');
-[u_mean, u_var, minfo] = compute_moments_quad(minfo, a_i_alpha, V_a, 5, 'grid', 'smolyak');
-model_stats(minfo, 'print');
+model = model_stats(model, 'reset');
+[u_mean, u_var, model] = compute_moments_quad(model, a_i_alpha, V_a, 5, 'grid', 'smolyak');
+model_stats(model, 'print');
 
 plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 legend('mean-std', 'mean', 'mean+std'); 
 title('smolyak'); ylim([0,3.5]); grid on; tightplot;
 
-minfo = model_stats(minfo, 'reset');
-[u_mean, u_var, minfo] = compute_moments_quad(minfo, a_i_alpha, V_a, 5, 'grid', 'tensor');
-model_stats(minfo, 'print');
+model = model_stats(model, 'reset');
+[u_mean, u_var, model] = compute_moments_quad(model, a_i_alpha, V_a, 5, 'grid', 'tensor');
+model_stats(model, 'print');
 
 plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 legend('mean-std', 'mean', 'mean+std'); 
@@ -289,9 +289,9 @@ title('tensor'); ylim([0,3.5]); grid on; tightplot;
 % First by projection
 V_u = gpcbasis_create(V_a, 'p', 5);
 
-minfo = model_stats(minfo, 'reset');
-[u_i_alpha, minfo] = compute_response_surface_projection(minfo, a_i_alpha, V_a, V_u, 5, 'grid', 'smolyak');
-model_stats(minfo, 'print');
+model = model_stats(model, 'reset');
+[u_i_alpha, model] = compute_response_surface_projection(model, a_i_alpha, V_a, V_u, 5, 'grid', 'smolyak');
+model_stats(model, 'print');
 
 [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
 plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
@@ -303,9 +303,9 @@ title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]); tightplot;
 
 %% Response surface by tensor grid interpolation
 % Then by tensor grid interpolation
-minfo = model_stats(minfo, 'reset');
-[u_i_alpha, minfo] = compute_response_surface_tensor_interpolate(minfo, a_i_alpha, V_a, V_u, 5);
-model_stats(minfo, 'print');
+model = model_stats(model, 'reset');
+[u_i_alpha, model] = compute_response_surface_tensor_interpolate(model, a_i_alpha, V_a, V_u, 5);
+model_stats(model, 'print');
 
 plot_response_surface_results
 
@@ -315,10 +315,10 @@ plot_response_surface_results
 max_iter = 20;
 p_int = max(V_u{2}(:));
 int_grid = 'full_tensor';
-minfo.step_relax = 0.98;
-minfo = model_stats(minfo, 'reset');
-[u_i_alpha, minfo, x, w]=compute_response_surface_nonintrusive_galerkin(minfo, a_i_alpha, V_a, V_u, p_int, 'max_iter', max_iter, 'grid', int_grid);
-model_stats(minfo, 'print_step_info');
+model.step_relax = 0.98;
+model = model_stats(model, 'reset');
+[u_i_alpha, model, x, w]=compute_response_surface_nonintrusive_galerkin(model, a_i_alpha, V_a, V_u, p_int, 'max_iter', max_iter, 'grid', int_grid);
+model_stats(model, 'print_step_info');
 
 plot_response_surface_results
 
@@ -338,23 +338,23 @@ subplot(1,2,2); spy(A_i{2})
 
 %%
 % Then we can construct the full tensor product operator out of it.
-K = tensor_operator_create({minfo.K, A_i});
+K = tensor_operator_create({model.K, A_i});
 clf; spy(tensor_operator_to_matrix(K))
 
 %%
 % apply to the right hand side
 [N,M]=operator_size(K, 'domain_only', true, 'contract', false);
 G = zeros(N, M);
-G(:,1) = minfo.g;
+G(:,1) = model.g;
 F = zeros(N, M);
-F(:,1) = minfo.f;
+F(:,1) = model.f;
 
 %% 
 % For applying stochastic Galerkin we need to apply the boundary conditions
 % to the operator and right hand side. 
 
-P_I = minfo.P_I;
-P_B = minfo.P_B;
+P_I = model.P_I;
+P_B = model.P_B;
 [Kn,Fn]=apply_boundary_conditions_system( K, F, G, P_I, P_B );
 
 %% 

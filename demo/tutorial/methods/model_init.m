@@ -1,4 +1,4 @@
-function minfo = model_init(num_params, num_vars, varargin)
+function model = model_init(num_params, num_vars, varargin)
 % MODEL_INIT Short description of model_init.
 %   MODEL_INIT Long description of model_init.
 %
@@ -35,10 +35,10 @@ info.res_func = res_func;
 info.sol_init_func = sol_init_func;
 
 
-minfo = struct();
-minfo.model_info = info;
+model = struct();
+model.model_info = info;
 
-minfo = model_stats(minfo, 'reset');
+model = model_stats(model, 'reset');
 
 function display_missing_func_error(which_func)
 error('sglib:compute_somthing', 'Function %s was not specified, but was needed by the algorithm', which_func);

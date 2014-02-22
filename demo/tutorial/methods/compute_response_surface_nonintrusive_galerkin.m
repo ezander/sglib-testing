@@ -1,4 +1,4 @@
-function [u_i_alpha, minfo, x, w]=compute_response_surface_nonintrusive_galerkin(minfo, a_alpha, V_a, V_u, p_int, varargin)
+function [u_i_alpha, model, x, w]=compute_response_surface_nonintrusive_galerkin(model, a_alpha, V_a, V_u, p_int, varargin)
 % COMPUTE_RESPONSE_SURFACE_NONINTRUSIVE_GALERKIN Short description of compute_response_surface_nonintrusive_galerkin.
 %   COMPUTE_RESPONSE_SURFACE_NONINTRUSIVE_GALERKIN Long description of compute_response_surface_nonintrusive_galerkin.
 %
@@ -33,9 +33,9 @@ check_unsupported_options(options, mfilename);
 if ~isempty(u0_i_alpha)
     u_i_alpha = u0_i_alpha;
 else
-    u_i_alpha = zeros(minfo.model_info.num_vars, gpcbasis_size(V_u, 1));
+    u_i_alpha = zeros(model.model_info.num_vars, gpcbasis_size(V_u, 1));
     % TODO correct this
-    % u_i_alpha = repmat(minfo.u0, 1, gpcbasis_size(V_u,1));
+    % u_i_alpha = repmat(model.u0, 1, gpcbasis_size(V_u,1));
 end
 
 
@@ -55,7 +55,7 @@ for k=1:max_iter
         % compute u_i_p = sum u_i_alpha Psi_alpha(p)
         u_i_p = gpc_evaluate(u_i_alpha, V_u, x_j);
         % evaluate S at p, u_i_p
-        [S_p, minfo] = model_step(minfo, u_i_p, a_j);
+        [S_p, model] = model_step(model, u_i_p, a_j);
         S_p = S_p - u_i_p;
         % update unext
         unext_i_alpha = unext_i_alpha + w(j) * S_p * gpcbasis_evaluate(V_u, x_j, 'dual', true);

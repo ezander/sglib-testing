@@ -1,4 +1,4 @@
-function [sol, minfo] = model_step(minfo, old_sol, params, varargin)
+function [sol, model] = model_step(model, old_sol, params, varargin)
 % MODEL_STEP Short description of model_step.
 %   MODEL_STEP Long description of model_step.
 %
@@ -24,9 +24,9 @@ function [sol, minfo] = model_step(minfo, old_sol, params, varargin)
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-step_func = minfo.model_info.step_func;
+step_func = model.model_info.step_func;
 start = tic;
-[sol, minfo]=funcall(step_func, minfo, old_sol, params, varargin{:});
+[sol, model]=funcall(step_func, model, old_sol, params, varargin{:});
 t = toc(start);
-minfo.model_stats.num_step_calls = minfo.model_stats.num_step_calls + 1;
-minfo.model_stats.time_step_calls = minfo.model_stats.time_step_calls + t;
+model.model_stats.num_step_calls = model.model_stats.num_step_calls + 1;
+model.model_stats.time_step_calls = model.model_stats.time_step_calls + t;

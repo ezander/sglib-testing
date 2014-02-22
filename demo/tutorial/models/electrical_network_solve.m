@@ -1,4 +1,4 @@
-function [u, solve_info, minfo] = electrical_network_solve(minfo, p, varargin)
+function [u, solve_info, model] = electrical_network_solve(model, p, varargin)
 % ELECTRICAL_NETWORK_SOLVE Short description of electrical_network_solve.
 %   ELECTRICAL_NETWORK_SOLVE Long description of electrical_network_solve.
 %
@@ -18,9 +18,9 @@ function [u, solve_info, minfo] = electrical_network_solve(minfo, p, varargin)
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
 options = varargin2options(varargin);
-[u0, options] = get_option(options, 'u0', zeros(minfo.model_info.num_vars,1));
+[u0, options] = get_option(options, 'u0', zeros(model.model_info.num_vars,1));
 check_unsupported_options(options, mfilename);
 
-[u, iter, res, minfo] = general_iterative_solver(minfo, p, 'u0', u0, 'verbose', false);
+[u, iter, res, model] = general_iterative_solver(model, p, 'u0', u0, 'verbose', false);
 solve_info.iter = iter;
 solve_info.res = res;

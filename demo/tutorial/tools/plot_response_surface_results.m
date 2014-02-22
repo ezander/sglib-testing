@@ -7,7 +7,7 @@ xi_plot = gpcgerm_sample(V_u, 5, 'mode', 'qmc');
 a_plot = gpc_evaluate(a_i_alpha, V_a, xi_plot);
 for i=1:5
     plot(pos, gpc_evaluate(u_i_alpha, V_u, xi_plot(:,i)), 'k:' );
-    [u_ex, minfo] = model_solve(minfo, a_plot(:,i));
+    [u_ex, model] = model_solve(model, a_plot(:,i));
     plot(pos, u_ex, 'r:');
 end
 legend('mean-std', 'mean', 'mean+std', 'surrogate samples', 'exact samples'); 

@@ -1,4 +1,4 @@
-function [u_mean, u_var, minfo] = compute_moments_mc(minfo, a_alpha, V_a, N, varargin)
+function [u_mean, u_var, model] = compute_moments_mc(model, a_alpha, V_a, N, varargin)
 % COMPUTE_MOMENTS_MC Compute mean and variance by Monte-Carlo.
 %   [U_MEAN, U_VAR] = COMPUTE_MOMENTS_MC(INIT_FUNC, SOLVE_FUNC, N) computes
 %   the mean and variance of a system described by INIT_FUNC and SOLVE_FUNC
@@ -35,6 +35,6 @@ u_mean = [];
 u_var = [];
 for j = 1:N
     a_j = a(:,j);
-    [u_j, minfo] = model_solve(minfo, a_j);
+    [u_j, model] = model_solve(model, a_j);
     [u_mean, u_var] = mean_var_update(j, u_j, u_mean, u_var);
 end

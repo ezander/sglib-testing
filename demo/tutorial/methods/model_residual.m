@@ -1,4 +1,4 @@
-function [res, minfo] = model_residual(minfo, curr_sol, params, varargin)
+function [res, model] = model_residual(model, curr_sol, params, varargin)
 % MODEL_RESIDUAL Short description of model_residual.
 %   MODEL_RESIDUAL Long description of model_residual.
 %
@@ -23,10 +23,10 @@ function [res, minfo] = model_residual(minfo, curr_sol, params, varargin)
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
-res_func = minfo.model_info.res_func;
+res_func = model.model_info.res_func;
 %start = tic;
-[res, minfo]=funcall(res_func, minfo, curr_sol, params, varargin{:});
+[res, model]=funcall(res_func, model, curr_sol, params, varargin{:});
 %t = toc(start);
-% minfo.model_stats.num_res_calls = minfo.model_stats.num_res_calls + 1;
-% minfo.model_stats.time_res_calls = minfo.model_stats.time_res_calls + t;
-%minfo.res_info = res_info;
+% model.model_stats.num_res_calls = model.model_stats.num_res_calls + 1;
+% model.model_stats.time_res_calls = model.model_stats.time_res_calls + t;
+%model.res_info = res_info;
