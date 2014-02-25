@@ -36,8 +36,12 @@ switch cmd
         end
     case 'print'
         stats = model.model_stats;
-        fprintf('Solve calls: %d\n', stats.num_solve_calls);
-        fprintf('Total time:  %g sec\n', stats.time_solve_calls);
+        if stats.num_solve_calls
+            model_stats( model, 'print_solve_info', varargin{:});
+        end
+        if stats.num_step_calls
+            model_stats( model, 'print_step_info', varargin{:});
+        end
     case 'print_solve_info'
         stats = model.model_stats;
         fprintf('Solve calls: %d\n', stats.num_solve_calls);

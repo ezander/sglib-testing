@@ -40,16 +40,13 @@ options = varargin2options(varargin);
 [verbosity, options] = get_option(options, 'verbosity', 0);
 check_unsupported_options(options, mfilename);
 
-step_func = model.model_info.step_func;
-res_func = model.model_info.res_func;
-
 if isempty(u0)
     u = funcall(model.model_info.sol_init_func, p);
 else
     u = u0;
 end
-for iter = 1:max_iter
-    [res, model] = funcall(res_func, model, u, p);
+for iter = 1:maxiter
+    [res, model] = model_residual(model, u, p);
     res_norm = norm(res);
     if verbosity>0
         fprintf( 'nonlin_solve: iter %d, norm=%g\n', iter, res_norm);
@@ -62,5 +59,9 @@ for iter = 1:max_iter
             abstol, maxiter);
     end
     
-    [u, model] = funcall(step_func, model, u, p);
+    u_old = u;
+    [u, model] = model_step(model, u, p);
+    if norm(u-u_old, inf)<steptol
+        break;
+    end
 end
