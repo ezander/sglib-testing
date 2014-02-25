@@ -25,7 +25,7 @@ df = @(state,x,p)(2*x);
 res = @(state,x,p)(-df(state,x,p)\f(state,x,p));
 state = struct('u0', 1);
 state.A = 1;
-[u, iter, res] = nonlinear_solve_picard(res, state, 3, 'verbose', false);
+[u, iter, res] = nonlinear_solve_picard(res, state, 3, 'verbosity', 0);
 assert_equals(u, sqrt(3), 'sqrt3');
 
 % function to solve A*x 
@@ -45,7 +45,7 @@ state.u0 = zeros(n,1);
 state.A = A; 
 state.b = funcall(f, state, u_ex, []);
 
-[u, iter, res] = nonlinear_solve_picard(res, state, [], 'verbose', false, 'abstol', 1e-8);
+[u, iter, res] = nonlinear_solve_picard(res, state, [], 'verbosity', 0, 'abstol', 1e-8);
 assert_equals(u, u_ex, 'nonlin_system');
 assert_true(res<1e-8, [], 'nonlin_system_res');
 

@@ -10,9 +10,10 @@ function [u, iter, res, model] = general_iterative_solver(model, p, varargin)
 %  
 %   Options:
 %       u0: start vector [model.u0]
-%       max_iter: maximum number of iterations [100]
-%       abstol: absolute stopping tolerance for the residual norm [1e-5]
-%       verbose: display convergence information [false]
+%       maxiter: maximum number of iterations [100]
+%       abstol: absolute stopping tolerance for the residual norm [1e-6]
+%       steptol: minimum difference between iterates [1e-8]
+%       verbosity: display convergence information if larger zero [0]
 %
 % Example (<a href="matlab:run_example nonlinear_solve_picard">run</a>)
 %
@@ -33,9 +34,10 @@ function [u, iter, res, model] = general_iterative_solver(model, p, varargin)
 
 options = varargin2options(varargin);
 [u0, options] = get_option(options, 'u0', []);
-[max_iter, options] = get_option(options, 'max_iter', 100);
-[abstol, options] = get_option(options, 'abstol', 1e-5);
-[verbose, options] = get_option(options, 'verbose', false);
+[maxiter, options] = get_option(options, 'maxiter', 100);
+[abstol, options] = get_option(options, 'abstol', 1e-6);
+[steptol, options] = get_option(options, 'steptol', 1e-8);
+[verbosity, options] = get_option(options, 'verbosity', 0);
 check_unsupported_options(options, mfilename);
 
 step_func = model.model_info.step_func;
@@ -49,15 +51,15 @@ end
 for iter = 1:max_iter
     [res, model] = funcall(res_func, model, u, p);
     res_norm = norm(res);
-    if verbose
+    if verbosity>0
         fprintf( 'nonlin_solve: iter %d, norm=%g\n', iter, res_norm);
     end
     if res_norm<abstol
         break;
-    elseif iter==max_iter
+    elseif iter==maxiter
         error('solve:no_conv', ...
             'Could not reach convergence (abstol=%g) in %d iterations', ...
-            abstol, max_iter);
+            abstol, maxiter);
     end
     
     [u, model] = funcall(step_func, model, u, p);

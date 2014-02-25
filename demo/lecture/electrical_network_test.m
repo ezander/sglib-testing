@@ -14,18 +14,18 @@ norm(res)
 %%
 % solve the system with a nonlinear solver based on Picard iterations
 u = state.u0;
-max_iter = 100;
+maxiter = 100;
 abstol = 1e-5;
 
-for iter = 1:max_iter
+for iter = 1:maxiter
     res = electrical_network_residual(state, u, p);
     fprintf( 'iter %d, norm=%g\n', iter, norm(res));
     if norm(res)<abstol
         break;
-    elseif iter==max_iter
+    elseif iter==maxiter
         error('solve:no_conv', ...
             'Could not reach convergence (abstol=%g) in %d iterations', ...
-            abstol, max_iter);
+            abstol, maxiter);
     end
     
     du = electrical_network_picard_iter_step(state, u, p);
@@ -39,7 +39,7 @@ end
 step_func = @electrical_network_picard_iter_step;
 residual_func = @electrical_network_residual;
 u0 = 0.01*rand(size(state.u0));
-u2 = general_iterative_solver(step_func, residual_func, state, p, 'u0', u0, 'verbose', true);
+u2 = general_iterative_solver(step_func, residual_func, state, p, 'u0', u0, 'verbosity', 1);
 
 % compare both solutions (inline solver and function)
 norm(u-u2)
@@ -48,7 +48,7 @@ norm(u-u2)
 % now the same with Newton's method which should converge much faster
 step_func = @electrical_network_newton_step;
 u0 = 0.01*rand(size(state.u0));
-u3 = general_iterative_solver(step_func, residual_func, state, p, 'u0', u0, 'verbose', true);
+u3 = general_iterative_solver(step_func, residual_func, state, p, 'u0', u0, 'verbosity', 1);
 
 norm(electrical_network_residual(state, u2, p))
 norm(electrical_network_residual(state, u3, p))

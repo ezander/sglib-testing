@@ -10,9 +10,9 @@ function [u, iter, res, state] = general_iterative_solver(step_func, residual_fu
 %  
 %   Options:
 %       u0: start vector [state.u0]
-%       max_iter: maximum number of iterations [100]
+%       maxiter: maximum number of iterations [100]
 %       abstol: absolute stopping tolerance for the residual norm [1e-5]
-%       verbose: display convergence information [false]
+%       verbosity: display convergence information if larger zero [0]
 %
 % Example (<a href="matlab:run_example nonlinear_solve_picard">run</a>)
 %
@@ -33,25 +33,25 @@ function [u, iter, res, state] = general_iterative_solver(step_func, residual_fu
 
 options = varargin2options(varargin);
 [u0, options] = get_option(options, 'u0', state.u0);
-[max_iter, options] = get_option(options, 'max_iter', 100);
+[maxiter, options] = get_option(options, 'maxiter', 100);
 [abstol, options] = get_option(options, 'abstol', 1e-5);
-[verbose, options] = get_option(options, 'verbose', false);
+[verbosity, options] = get_option(options, 'verbosity', 0);
 check_unsupported_options(options, mfilename);
 
 
 u = u0;
-for iter = 1:max_iter
+for iter = 1:maxiter
     [res, state] = funcall(residual_func, state, u, p);
     res_norm = norm(res);
-    if verbose
+    if verbosity>0
         fprintf( 'nonlin_solve: iter %d, norm=%g\n', iter, res_norm);
     end
     if res_norm<abstol
         break;
-    elseif iter==max_iter
+    elseif iter==maxiter
         error('solve:no_conv', ...
             'Could not reach convergence (abstol=%g) in %d iterations', ...
-            abstol, max_iter);
+            abstol, maxiter);
     end
     
     [du, state] = funcall(step_func, state, u, p);

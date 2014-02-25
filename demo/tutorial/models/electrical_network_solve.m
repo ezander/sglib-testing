@@ -19,8 +19,13 @@ function [u, solve_info, model] = electrical_network_solve(model, p, varargin)
 
 options = varargin2options(varargin);
 [u0, options] = get_option(options, 'u0', zeros(model.model_info.num_vars,1));
+[abstol, options] = get_option(options, 'abstol', 1e-6);
+[steptol, options] = get_option(options, 'steptol', 1e-8);
+[maxiter, options] = get_option(options, 'maxiter', 100);
+[verbosity, options] = get_option(options, 'verbosity', 0);
 check_unsupported_options(options, mfilename);
 
-[u, iter, res, model] = general_iterative_solver(model, p, 'u0', u0, 'verbose', false);
+[u, iter, res, model] = general_iterative_solver(model, p, 'u0', u0, ...
+    'verbosity', verbosity, 'abstol', abstol, 'steptol', steptol, 'maxiter', maxiter);
 solve_info.iter = iter;
 solve_info.res = res;

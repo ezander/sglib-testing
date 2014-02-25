@@ -25,9 +25,10 @@ function [u_i_alpha, model, x, w]=compute_response_surface_nonintrusive_galerkin
 
 options=varargin2options(varargin);
 [u0_i_alpha, options]=get_option(options, 'initial_sol', []);
-[max_iter, options]=get_option(options, 'max_iter', 50);
-[threshold, options]=get_option(options, 'threshold', 1e-5);
+[maxiter, options]=get_option(options, 'maxiter', 50);
+[steptol, options]=get_option(options, 'steptol', 1e-5);
 [grid, options]=get_option(options, 'grid', 'smolyak');
+[verbosity, options]=get_option(options, 'verbosity', 0);
 check_unsupported_options(options, mfilename);
 
 if ~isempty(u0_i_alpha)
@@ -44,7 +45,7 @@ a=gpc_evaluate(a_alpha, V_a, x);
 Q = length(w);
 
 converged=false;
-for k=1:max_iter
+for k=1:maxiter
     unext_i_alpha = u_i_alpha;
     % do the computation of unext
     
@@ -67,10 +68,12 @@ for k=1:max_iter
     u_i_alpha = unext_i_alpha;
     
     % print 
-    strvarexpand('iter: $k$, diff: $diff$');
+    if verbosity>0
+        strvarexpand('iter: $k$, diff: $diff$');
+    end
 
     % check for convergence
-    if diff<threshold
+    if diff<steptol
         converged = true;
         break;
     end
@@ -82,6 +85,6 @@ for k=1:max_iter
 end
 
 if ~converged
-    warning('sglib:non_intr_galerkin', 'The Galerkin iteration did not converge after %d iterations.', max_iter);
+    warning('sglib:non_intr_galerkin', 'The Galerkin iteration did not converge after %d iterations.', maxiter);
 end
 

@@ -27,8 +27,8 @@ options=varargin2options(varargin);
 [solve_func, options]=get_option(options, 'solve_func', []);
 [p_int_proj, options]=get_option(options, 'p_int_proj', []);
 [u0_i_alpha, options]=get_option(options, 'u0_i_alpha', []);
-[max_iter, options]=get_option(options, 'max_iter', 50);
-[threshold, options]=get_option(options, 'threshold', 1e-5);
+[maxiter, options]=get_option(options, 'maxiter', 50);
+[steptol, options]=get_option(options, 'steptol', 1e-5);
 [grid, options]=get_option(options, 'grid', 'smolyak');
 check_unsupported_options(options, mfilename);
 
@@ -47,7 +47,7 @@ end
 Q = length(w);
 
 converged=false;
-for k=1:max_iter
+for k=1:maxiter
     unext_i_alpha = u_i_alpha;
     % do the computation of unext
     
@@ -71,7 +71,7 @@ for k=1:max_iter
     strvarexpand('iter: $k$, diff: $diff$');
 
     % check for convergence
-    if diff<threshold
+    if diff<steptol
         converged = true;
         break;
     end

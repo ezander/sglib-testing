@@ -312,12 +312,12 @@ plot_response_surface_results
 %% Response surface by non-intrusive Galerkin
 % Then by non-intrusive Galerkin (doesn't work)
 
-max_iter = 20;
+maxiter = 20;
 p_int = max(V_u{2}(:));
 int_grid = 'full_tensor';
 model.step_relax = 0.98;
 model = model_stats(model, 'reset');
-[u_i_alpha, model, x, w]=compute_response_surface_nonintrusive_galerkin(model, a_i_alpha, V_a, V_u, p_int, 'max_iter', max_iter, 'grid', int_grid);
+[u_i_alpha, model, x, w]=compute_response_surface_nonintrusive_galerkin(model, a_i_alpha, V_a, V_u, p_int, 'maxiter', maxiter, 'grid', int_grid);
 model_stats(model, 'print_step_info');
 
 plot_response_surface_results

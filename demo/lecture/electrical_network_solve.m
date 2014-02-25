@@ -30,6 +30,6 @@ switch(step_method)
 end
 
 residual_func = @electrical_network_residual;
-[u, iter, res, state] = general_iterative_solver(step_func, residual_func, state, p, 'u0', u0, 'verbose', false);
+[u, iter, res, state] = general_iterative_solver(step_func, residual_func, state, p, 'u0', u0, 'verbosity', 0);
 solve_info.iter = iter;
 solve_info.res = res;
