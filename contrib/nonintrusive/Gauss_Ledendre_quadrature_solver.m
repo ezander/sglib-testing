@@ -1,4 +1,4 @@
-function [ u_alpha, total_residual_eval] = Gauss_Ledendre_quadrature_solver( R, f0, order, qua_order, acr ) 
+function [ u_alpha, total_residual_eval] = Gauss_Ledendre_quadrature_solver( R, fg, f0, order, qua_order, acr ) 
 % 
  
 %%====================================================================================
@@ -50,7 +50,7 @@ for i=1:num_node
     for j=1:maxiter
 
       
-        u = u_old + residual(p, AI, A, f0, u_old);
+        u = u_old + residual(p, AI, A, fg, f0, u_old);
 
         if max(abs(u-u_old))<acr;
          % fprintf('Converged! iter= %d\n',j)

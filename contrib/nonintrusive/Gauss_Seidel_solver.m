@@ -1,4 +1,4 @@
-function [ u_alpha, total_residual_eval ] = Gauss_Seidel_solver( R, f0, order, qua_order, acr ) 
+function [ u_alpha, total_residual_eval ] = Gauss_Seidel_solver( R, fg, f0, order, qua_order, acr ) 
  
 %%====================================================================================
  % compute the coefficients by stochastic Galerkin method, using Gauss-Seidel iterations
@@ -52,7 +52,7 @@ num_node= length(node);
              
        % evaluate A^(-1)*(p_2 f - (2+p_1) (u'*u) *u) 
        for k=1:num_node
-          temp(:,k) = u_cur(:,k) + residual(node(:,k), AI, A, f0, u_cur(:,k));
+          temp(:,k) = u_cur(:,k) + residual(node(:,k), AI, A, fg, f0, u_cur(:,k));
        end
        
        % integrate for the coefficients

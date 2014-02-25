@@ -53,7 +53,7 @@ fn = norm(f);
 
 while ((k < km) & (acc > acr) & (arc > arr)),
 %  res = (f - (A*u + (2+p1)*(u'*u)*u));
-  res = residual([p1,p2], H, A, f0, u);
+  res = residual([p1,p2], H, A, fg, f0, u);
   du = H*res;
   u = u + du;
   arc = norm(res)/fn;

@@ -53,7 +53,7 @@ jac_err=zeros(1, N);
 
             for k=1:maxiter
                      
-                u = u_old + residual(p, AI, A, f0, u_old); 
+                u = u_old + residual(p, AI, A, fg, f0, u_old); 
 
                 if max(abs(u-u_old))<acr_fine
                    %fprintf('Converged! iter= %d\n',k)
@@ -79,10 +79,10 @@ for i=1:length(order_pool)
  
    acr=acr_pool(j);
    
- % [u_alpha, eval_col_list(j) ] = Gauss_Ledendre_quadrature_solver( R, f0, order, qua_order,acr );  % compute the coefficients using gauss-legendre quadrature   
+ % [u_alpha, eval_col_list(j) ] = Gauss_Ledendre_quadrature_solver( R, fg, f0, order, qua_order,acr );  % compute the coefficients using gauss-legendre quadrature   
    
     
-  [u_alpha_jacobi, eval_jac_list(j) ]    = Gauss_Jacobi_solver( R, f0, order, qua_order,acr); %   using Gauss-Jacobi iterations
+  [u_alpha_jacobi, eval_jac_list(j) ]    = Gauss_Jacobi_solver( R, fg, f0, order, qua_order,acr); %   using Gauss-Jacobi iterations
   
  
   

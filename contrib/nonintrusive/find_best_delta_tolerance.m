@@ -52,7 +52,7 @@ jac_err=zeros(1, N);
 
             for k=1:maxiter
                      
-                u = u_old + residual(p, AI, A, f0, u_old); 
+                u = u_old + residual(p, AI, A, fg, f0, u_old); 
 
                 if max(abs(u-u_old))<acr_fine
                    %fprintf('Converged! iter= %d\n',k)
@@ -78,13 +78,13 @@ for i=1:length(order_pool)
   [ind, var_list] =multi_dim_polynomial_order_list( 2, order);  %
   
  
-  [u_alpha, eval_col_list(j) ] = Gauss_Ledendre_quadrature_solver( R, f0, order, qua_order,acr );  % compute the coefficients using gauss-legendre quadrature   
+  [u_alpha, eval_col_list(j) ] = Gauss_Ledendre_quadrature_solver( R, fg, f0, order, qua_order,acr );  % compute the coefficients using gauss-legendre quadrature   
    
   
- % [u_alpha_seidel, eval_sei_list(j)]    = Gauss_Seidel_solver( R, f0, order, qua_order ); %   using Gauss-Seidel iterations  
+ % [u_alpha_seidel, eval_sei_list(j)]    = Gauss_Seidel_solver( R, fg, f0, order, qua_order ); %   using Gauss-Seidel iterations  
  
     
-  %[u_alpha_jacobi, eval_jac_list(j) ]    = Gauss_Jacobi_solver( R, f0, order, qua_order ); %   using Gauss-Jacobi iterations
+  %[u_alpha_jacobi, eval_jac_list(j) ]    = Gauss_Jacobi_solver( R, fg, f0, order, qua_order ); %   using Gauss-Jacobi iterations
   
  
   
