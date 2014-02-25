@@ -34,6 +34,6 @@ basepath=fileparts( mfilename('fullpath') );
 addpath( fullfile(basepath, 'data') );
 addpath( genpath(fullfile(basepath, 'proposed')) );
 
-addpath(fullfile(basepath, 'demo', 'tutorial', 'models'));
-addpath(fullfile(basepath, 'demo', 'tutorial', 'methods'));
+addpath(fullfile(basepath, 'demo', 'models'));
+addpath(fullfile(basepath, 'demo', 'methods'));
 addpath(fullfile(basepath, 'demo', 'tutorial', 'tools'));
