@@ -25,6 +25,7 @@ function [rmse, rmse_int, model] = compute_mc_error(model, a_alpha, V_a, u_alpha
 
 options=varargin2options(varargin);
 [mode,options]=get_option(options, 'mode', '');
+[use_surrogate,options]=get_option(options, 'use_surrogate', true);
 [solve_opts,options]=get_option(options, 'solve_opts', {});
 check_unsupported_options(options, mfilename);
 
@@ -45,8 +46,12 @@ a = gpc_evaluate(a_alpha, V_a, xi);
 mse = nan(N,1);
 for j = 1:N
     a_j = a(:,j);
-    [u_j_ex, model] = model_solve(model, a_j, solve_opts{:});
     u_j_ap = gpc_evaluate(u_alpha, V_u, xi(:, j));
+    if use_surrogate
+        [u_j_ex, model] = model_solve(model, a_j, 'u0', u_j_ap, solve_opts{:});
+    else
+        [u_j_ex, model] = model_solve(model, a_j, solve_opts{:});
+    end
     mse(j) = sum((u_j_ex-u_j_ap).^2);
 end
 rmse = sqrt(mean(mse));

@@ -25,7 +25,7 @@ function [sol, model] = model_solve(model, params, varargin)
 
 solve_func = model.model_info.solve_func;
 start = tic;
-[sol, solve_info, model]=funcall(solve_func, model, params, varargin);
+[sol, solve_info, model]=funcall(solve_func, model, params, varargin{:});
 t = toc(start);
 model.model_stats.num_solve_calls = model.model_stats.num_solve_calls + 1;
 model.model_stats.time_solve_calls = model.model_stats.time_solve_calls + t;
