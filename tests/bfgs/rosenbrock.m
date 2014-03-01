@@ -1,4 +1,4 @@
-function [y,dy,H]=rosenbrock(x)
+function [y,dy,ddy]=rosenbrock(x)
 
 % page 30, Ex 2.1, (2.23)
 y = 100*(x(2,:) - x(1,:).^2).^2 + (1-x(1,:)).^2;
@@ -10,12 +10,11 @@ if nargout>1
         ];
 end
 if nargout>2
-    H = [
+    ddy = [
         -400*(x(2,:) - x(1,:).^2) + 800*x(1,:).^2 + 2;
         -400*x(1,:);
         -400*x(1,:);
         repmat(200, 1, size(x,2));
     ];
-    H = reshape(H, 2, 2, [])
+    ddy = reshape(ddy, 2, 2, []);
 end
-
