@@ -1,4 +1,4 @@
-function woodbury_test
+function test_woodbury
 
 
 N=6;

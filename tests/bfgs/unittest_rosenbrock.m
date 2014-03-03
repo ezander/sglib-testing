@@ -35,6 +35,18 @@ test_dy(@rosenbrock_nd1, x, del)
 test_ddy(@rosenbrock_nd1, x, del)
 
 
+k=3;
+x=13.45123;
+
+% f1_func = @(x)(exp(-(x/k).^2));
+% df1_func = @(x)(-2*x/k^2.*exp(-(x/k).^2));
+% f2_func = @(x)(atan(x/k)*2/pi).^2;
+% df2_func = @(x)(4/pi/k./(1+(x/k).^2).*(atan(x/k)*2/pi)); 
+f_func = @(x)((exp(-(x/k).^2)) + (atan(x/k)*2/pi).^2);
+df_func = @(x)(-2*x/k^2.*exp(-(x/k).^2) + 4/pi/k./(1+(x/k).^2).*(atan(x/k)*2/pi)); 
+func = func_combine_f_df(f_func, df_func);
+test_dy(func, x, del)
+
 
 function test_dy(func, x, del)
 [y1,dy1]=funcall(func, x);

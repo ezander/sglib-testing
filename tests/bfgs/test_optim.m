@@ -1,17 +1,26 @@
-N=10;
-x = rand(2,N);
+function test_optim
 
-[y,dy,H]=rosenbrock(x);
-
-dx = 1e-8;
-[y1, dy1] = rosenbrock(x + repmat([dx;0], 1, N));
-[y2, dy2] = rosenbrock(x + repmat([0;dx], 1, N));
+func = @rosenbrock;
+x0=[-1.9;2];
+x0=[4*rand-2;4*rand-2];
+x_ex = [1; 1];
 
 clc
-[(y1-y)/dx; dy(1,:)]
-[(y2-y)/dx; dy(2,:)]
+plot_func(func);
+[x,flag,iter] = minfind_newton(func, x0, 'output_func', @iterplot)
+clc
 
 
 
-[reshape(H(1,:,:),2,[]); (dy1 - dy)/dx]
-[reshape(H(2,:,:),2,[]); (dy2 - dy)/dx]
+function plot_func(func)
+N=100;
+x=linspace(-2,2,N);
+y=linspace(-1,3,N);
+x=linspace(-2,2,N);
+y=linspace(-8,5,N);
+[X,Y]=meshgrid(x,y);
+z = funcall(func, [X(:),Y(:)]');
+Z=reshape(z, size(X));
+hold off
+%plotedit on
+contour(X,Y,Z,[1:10].^2);

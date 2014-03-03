@@ -1,18 +1,41 @@
-function alpha = line_search()
+function [alpha, xn, yn, dyn, flag]=line_search(func, x, p, y, dy, varargin)
+% LINE_SEARCH Performs a ... line search.
+%   [ALPHA,XN,YN,DYN,FLAG]=LINE_SEARCH(FUNC,X,P,Y,DY,OPTIONS)
+%
+%   The algorithm works by ... (see [1], Algorithm 3.2, page 59) for the
+%   line search algorithm and (see [1], Algorithm 3.3, page 60).
+%
+% Options:
+%   alpha0: double {1}
+%     Initial value for alpha.
+%   rho: double {0.5}
+%     Reduction factor for alpha.
+%   c: double {1e-4}
+%     Constant in the Armijo condition.
+%   maxiter: integer {100}
+%     Maximum number of iterations until suitable alpha is found.
+%   verbosity: integer {0}
+%     If larger zero diagnoistic messages will be printed.
+%   
+% References
+%   [1] Nocedal, J. and Wright, S.J. (1999): Numerical Optimization,
+%       Springer-Verlag. ISBN 0-387-98793-2.
 
-% p 59 algorithm 3.2
+
+options=varargin2options(varargin,mfilename);
+[alpha0, options]=get_option(options,'alpha0',1);
+[alpha_max, options]=get_option(options,'alpha_max',10);
+[rho, options]=get_option(options,'rho',0.5);
+[c1, options]=get_option(options,'c1',1e-4);
+[c2, options]=get_option(options,'c2',0.9);
+[maxiter, options]=get_option(options,'maxiter',100);
+[verbosity, options]=get_option(options,'verbosity',0);
+check_unsupported_options(options);
 
 % parameters
 alpha1 = (pi)/8;
-alpha_max = 10;
-phi_func = @test_func; % maybe from vec + func
 
 % optional stuff
-c1 = 1e-4;
-c2 = 0.9;
-maxiter=100;
-
-
 alpha0 = 0;
 
 clc

@@ -1,4 +1,4 @@
-function bfgs_update_test
+function test_bfgs_update
 
 
 return
