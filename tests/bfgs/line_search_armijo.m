@@ -47,6 +47,7 @@ options=varargin2options(varargin,mfilename);
 [rho, options]=get_option(options,'rho',0.5);
 [c, options]=get_option(options,'c',1e-4);
 [maxiter, options]=get_option(options,'maxiter',100);
+[stretch, options]=get_option(options,'stretch', true);
 [verbosity, options]=get_option(options,'verbosity',0);
 check_unsupported_options(options);
 
@@ -72,4 +73,25 @@ for iter=1:maxiter
 end
 if flag
     warning('sglib:line_search:armijo', 'Did not find sufficient decrease after %d iterations.', maxiter);
+end
+
+if ~stretch || alpha~=alpha0
+    return
+end
+
+alphan=alpha;
+for iter=1:maxiter
+    alphan = alphan / rho;
+    xnn = tensor_add(x, p, alphan);
+    [ynn, dynn] = funcall(func, xnn);
+    if verbosity>0
+        strvarexpand('armijo line search: iter=$iter$, alpha=$alpha$, yn=$yn$, yn_max=$y + alpha * slope$');
+    end
+    if ynn > y + alphan * slope
+        break;
+    end
+    alpha = alphan;
+    xn = xnn;
+    yn = ynn;
+    dyn = dynn;
 end
