@@ -47,7 +47,7 @@ options=varargin2options(varargin,mfilename);
 [rho, options]=get_option(options,'rho',0.5);
 [c, options]=get_option(options,'c',1e-4);
 [maxiter, options]=get_option(options,'maxiter',100);
-[stretch, options]=get_option(options,'stretch', true);
+[stretch, options]=get_option(options,'stretch', false);
 [verbosity, options]=get_option(options,'verbosity',0);
 check_unsupported_options(options);
 

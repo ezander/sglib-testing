@@ -7,10 +7,16 @@ x_ex = [1; 1];
 
 clc
 plot_func(func);
-outfunc = funcreate(@iterplot, @funarg, @funarg, 'ro-');
-[x,flag,iter] = minfind_newton(func, x0, 'abstol', 1e-8, 'output_func', outfunc, 'verbosity', 1)
-outfunc = funcreate(@iterplot, @funarg, @funarg, 'go-');
-[x,flag,iter] = minfind_quasi_newton(func, x0, 'abstol', 1e-8, 'output_func', outfunc, 'verbosity', 1)
+newton_opts.output_func = funcreate(@iterplot, @funarg, @funarg, 'ro-');
+newton_opts.abstol = 1e-8;
+newton_opts.verbosity = 1;
+[x,flag,iter] = minfind_newton(func, x0, newton_opts)
+
+qnewton_opts.output_func = funcreate(@iterplot, @funarg, @funarg, 'go-');
+qnewton_opts.abstol = 1e-8;
+qnewton_opts.verbosity = 1;
+qnewton_opts.line_search_opts = {'stretch', true, 'alpha0', 0.6};
+[x,flag,iter] = minfind_quasi_newton(func, x0, qnewton_opts)
 
 
 
