@@ -15,8 +15,11 @@ clc
 format compact; format short g;
 A2\X
 woodbury_solve(Ainv, U, V, X)
+woodbury_solve(inv(MatrixOperator(A)), U, V, X)
 
-
+wop = WoodburySolveOperator(A);
+wop = wop.update(U,V);
+wop.solve(X)
 
 
 
