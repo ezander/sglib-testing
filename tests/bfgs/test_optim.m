@@ -1,4 +1,5 @@
 function test_optim
+%clear classes
 
 func = @rosenbrock;
 x0=[-1.9;2];

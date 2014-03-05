@@ -10,15 +10,22 @@ options=varargin2options(varargin,mfilename);
 [line_search_opts, options]=get_option(options, 'line_search_opts', {});
 check_unsupported_options(options);
 
+mode = 'sr1';
+mode = 'dfp';
+mode = 'bfgs';
 
 x=x0;
-H=H0;
+%H=H0;
+B = QuasiNewtonOperator([], H0, mode);
+B = LBFGSOperator(H0, 1);
+H = inv(B);
+
 
 flag=1;
 [y, dy] = funcall(func, x);
 tol=abstol*max(1,tensor_norm(dy));
 for iter=1:maxiter
-    p = -operator_apply(H, dy);
+    p = -(H * dy);
     if isempty(line_search_func)
         alpha = 1;
         xn = tensor_add(x, p, alpha);
@@ -32,7 +39,9 @@ for iter=1:maxiter
     
     s = tensor_add(xn, x, -1);
     yy = tensor_add(dyn, dy, -1);
-    [~, H] = qn_matrix_update('bfgs', [], H, yy, s);
+    %[~, H] = qn_matrix_update(mode, [], H, yy, s);
+    H = H.update(yy, s);
+    
     
     x = xn;
     y = yn;

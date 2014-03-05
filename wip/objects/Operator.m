@@ -24,7 +24,7 @@ classdef Operator
         end
         
         
-        % Methods, that can be overridden if necessary or the derived class
+        % Methods, that can be overridden, if necessary or the derived class
         % has a faster implementations
         function op = compose(op, other_op)
             % COMPOSE Create the composition of two operators.
@@ -40,6 +40,10 @@ classdef Operator
             % RESIDUAL Compute the residual b - A*x.
             y=op.apply(x);
             r=tensor_add(b, y, -1);
+        end
+        
+        function varargout=eig(op)
+            [varargout{1:nargout}] = eig(op.asmatrix());
         end
         
         % Overrriden operators
