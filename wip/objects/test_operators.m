@@ -51,11 +51,3 @@ v = rand(5,2);
 wsop=wsop.update(u,v);
 norm(wsop * x - (A+u*v')*x)
 norm(wsop\x - (A+u*v')\x)
-
-
-
-
-
-
-
-

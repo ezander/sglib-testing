@@ -16,8 +16,16 @@ classdef QuasiNewtonOperator < UpdatableOperator
     end
     methods
         function qnop=QuasiNewtonOperator(B0, H0, mode)
-            qnop.B = B0;
-            qnop.H = H0;
+            if isa(B0, 'Operator')
+                qnop.B = B0.asmatrix();
+            else
+                qnop.B = B0;
+            end
+            if isa(H0, 'Operator')
+                qnop.H = H0.asmatrix();
+            else
+                qnop.H = H0;
+            end
             qnop.mode = mode;
         end
         

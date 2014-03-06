@@ -1,9 +1,9 @@
-classdef IdentityOperator
+classdef IdentityOperator < Operator
     % IDENTITYOPERATOR Efficient implementation of the identity operator.
     properties
         n
     end
-    methods (Abstract)
+    methods
         function idop=IdentityOperator(n)
             idop.n = n(:);
         end
@@ -14,12 +14,12 @@ classdef IdentityOperator
         function x=solve(idop, x) %#ok<INUSL>
         end
         
-        function s=size_impl(op)
-            s = [op.n, op.n];
+        function s=size_impl(idop)
+            s = [idop.n, idop.n];
         end
         
-        function A=asmatrix(op)
-            A = speye(prod(n));
+        function A=asmatrix(idop)
+            A = speye(prod(idop.n));
         end
         
         function op = compose(idop, other_op)
@@ -31,6 +31,10 @@ classdef IdentityOperator
             % INV Invert the operator.
             op = idop;
         end
-        
+    end
+    methods (Static)
+        function idop=from_vector(x)
+            idop = IdentityOperator(tensor_size(x,true));
+        end
     end
 end

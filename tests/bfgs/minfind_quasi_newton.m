@@ -1,18 +1,13 @@
-function [x,flag,iter]=minfind_quasi_newton(func, x0, varargin)
+function [x,flag,iter]=minfind_quasi_newton(func, x0, H0, varargin)
 
 options=varargin2options(varargin,mfilename);
 [maxiter, options]=get_option(options,'maxiter',100);
 [abstol, options]=get_option(options,'abstol',1e-6);
 [output_func, options]=get_option(options,'output_func',[]);
 [verbosity, options]=get_option(options,'verbosity',0);
-[H0, options]=get_option(options,'H0',speye(tensor_size(x0, true)));
 [line_search_func, options]=get_option(options, 'line_search_func', @line_search_armijo);
 [line_search_opts, options]=get_option(options, 'line_search_opts', {});
 check_unsupported_options(options);
-
-mode = 'sr1';
-mode = 'dfp';
-mode = 'bfgs';
 
 x=x0;
 H=H0;
