@@ -23,9 +23,11 @@ model = electrical_network_init('R', R, 'fg', fg, 'newton', use_newton);
 % always use Newton) (I take 100 here instead of 1000, as that makes it 10
 % times faster and there it doesn't seem to make a big difference).
 fine_model_MC = electrical_network_init('R', R, 'fg', fg, 'newton', true);
-N_MC = 100;
+N_MC = 1000;
+M_MC = 30;
 params_MC.solve_opts = {'maxiter', 1000, 'steptol', 1e-14, 'abstol', 0};
 params_MC.use_surrogate = true;
+params_MC.repeat = M_MC;
         
 % Define the parameters of the model
 p1_dist = gendist_create('uniform', {-1, 1});
@@ -59,8 +61,9 @@ for j=1:length(params)
     results(j).gal_solves = model.model_stats.num_step_calls;
 
     rand('seed', 1234); %#ok<RAND>
-    rmse = compute_mc_error(fine_model_MC, p_alpha, V_p, u_alpha_gal, Vu, N_MC, params_MC);
+    [rmse, rmse_std]= compute_mc_error(fine_model_MC, p_alpha, V_p, u_alpha_gal, Vu, N_MC, params_MC);
     results(j).gal_error = rmse;
+    results(j).gal_error_std = rmse_std;
     
     % Then compute the Collocation response surface and the error
     model = model_stats(model, 'reset');
@@ -69,17 +72,33 @@ for j=1:length(params)
     results(j).col_solves = model.model_stats.num_step_calls;
     
     rand('seed', 1234); %#ok<RAND>
-    rmse = compute_mc_error(fine_model_MC, p_alpha, V_p, u_alpha_col, Vu, N_MC, params_MC);
+    [rmse, rmse_std] = compute_mc_error(fine_model_MC, p_alpha, V_p, u_alpha_col, Vu, N_MC, params_MC);
     results(j).col_error = rmse;
+    results(j).col_error_std = rmse_std;
 end
 
 % Show the results
 underline('Results', 'newlines', 1);
 fprintf('    #iter            error              \n');
-fprintf(' m  col  gal   colloc     galerkin       \n');
+fprintf(' m  col  gal  colloc                galerkin       \n');
 for j=1:length(results)
     par = params(j);
     res = results(j);
-    fprintf( '%2d  %3d  %3d  %9.3e  %9.3e\n', par.m, res.col_solves, ...
-        res.gal_solves, res.col_error, res.gal_error );
+    fprintf( '%2d  %3d  %3d  %9.3e+-%9.3e  %9.3e+-%9.3e\n', par.m, ...
+        res.col_solves, res.gal_solves, ...
+        res.col_error, res.col_error_std, ...
+        res.gal_error, res.gal_error_std );
+end
+
+
+underline('Results', 'newlines', 1);
+fprintf('    #iter            error              \n');
+fprintf(' m  col  gal  colloc            galerkin       \n');
+for j=1:length(results)
+    par = params(j);
+    res = results(j);
+    fprintf( '%2d  %3d  %3d  %9.3e+-%4.2g%%  %9.3e+-%4.2g%%\n', par.m, ...
+        res.col_solves, res.gal_solves, ...
+        res.col_error, 100*res.col_error_std/res.col_error, ...
+        res.gal_error, 100*res.gal_error_std/res.gal_error );
 end
