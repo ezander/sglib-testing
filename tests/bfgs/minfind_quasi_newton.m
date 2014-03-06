@@ -15,11 +15,7 @@ mode = 'dfp';
 mode = 'bfgs';
 
 x=x0;
-%H=H0;
-B = QuasiNewtonOperator([], H0, mode);
-B = LBFGSOperator(H0, 1);
-H = inv(B);
-
+H=H0;
 
 flag=1;
 [y, dy] = funcall(func, x);
@@ -39,8 +35,13 @@ for iter=1:maxiter
     
     s = tensor_add(xn, x, -1);
     yy = tensor_add(dyn, dy, -1);
-    %[~, H] = qn_matrix_update(mode, [], H, yy, s);
-    H = H.update(yy, s);
+    if isa(H, 'UpdatableOperator')
+        H = H.update(yy, s);
+    elseif ifnumeric(H)
+        [~, H] = qn_matrix_update(mode, [], H, yy, s);
+    else
+        error('sglib:minfind_quasi_newton', 'Cannot update H. Unknown type');
+    end
     
     
     x = xn;
