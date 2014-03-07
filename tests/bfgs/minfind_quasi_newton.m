@@ -43,7 +43,7 @@ for iter=1:maxiter
     y = yn;
     dy = dyn;
     if verbosity>0
-        strvarexpand('minfind_quasi_newton: iter=$iter$, y=$y$, alpha=$alpha$ $eig(H)$');
+        strvarexpand('minfind_quasi_newton: iter=$iter$, y=$y$, ||dy||=$tensor_norm(dy)$, alpha=$alpha$, $eig(H)$');
     end
     if tensor_norm(dy)<tol
         flag=0;
@@ -51,3 +51,12 @@ for iter=1:maxiter
     end
 end    
 
+if flag
+    info.method=mfilename;
+    info.flag=flag;
+    info.iter=iter;
+    info.reltol=tol;
+    info.maxiter=maxiter;
+    info.relres=tensor_norm(dy)/tol;
+    tensor_solver_message(info);
+end

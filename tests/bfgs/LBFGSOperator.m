@@ -34,6 +34,10 @@ classdef LBFGSOperator < UpdatableOperator
         end
         
         function lop = update(lop, y, s)
+            if lop.L==0
+                return
+            end
+            
             k = length(lop.S);
             if k>=lop.L
                 k0 = 2;
