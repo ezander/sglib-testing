@@ -24,7 +24,7 @@
 
 a1 = 2; a2 = 100;
 [u, a, pos]=diffusion_1d_complete_solve(a1, a2);
-plot(pos, u); tightplot;
+plot(pos, u); enhance_plot;
 
 %% Stochastic description of the parameters
 % Now suppose the parameters a1 and a2 are uncertain and described by
@@ -33,7 +33,7 @@ plot(pos, u); tightplot;
 % very different ranges.
 % 
 % Suppose therefore, that a1 follows a Beta(1.2,2) distribution, which is
-% shift and scaled such that it has support [0.5, 5]. In sglib this can be
+% shifted and scaled such that it has support [0.5, 5]. In sglib this can be
 % easily specified with the statistics functions, using the
 % |gendist_create| and |gendist_fix_bounds| functions (|gendist| stands
 % here for general distribution, because the functions work on
@@ -51,7 +51,7 @@ a1_dist = gendist_fix_bounds(a1_dist, 0.5, 5);
 % but asymmetrical leaning somewhat to the left. 
 
 plot_density(a1_dist, 'type', 'both');
-legend( 'pdf a1', 'cdf a1'); tightplot;
+legend( 'pdf a1', 'cdf a1'); enhance_plot;
 
 %%
 % The second parameter a2 follows a shifted and scaled Beta(0.7, 0.6)
@@ -64,7 +64,7 @@ a2_dist = gendist_create('beta', {0.7, 0.6});
 a2_dist = gendist_fix_bounds(a2_dist, 50, 150);
 
 plot_density(a2_dist, 'type', 'both', 'extra_x', [50.0001, 149.999])
-legend( 'pdf a2', 'cdf a2'); tightplot;
+legend( 'pdf a2', 'cdf a2'); enhance_plot;
 
 %% GPC approximation of the parameters
 % For some stochastic methods we could directly use the distributions given
@@ -120,7 +120,7 @@ plot_density(a1_samples, 'n', 30);
 plot_density(a1_samples, 'type', 'kernel', 'rug', true, 'max_rug', inf, 'hold', true);
 plot_density(a1_dist, 'hold', true);
 legend('GPC histogram', 'GPC kernel density', 'GPC samples', 'Exact pdf');
-tightplot;
+enhance_plot;
 
 %%
 % The approximation of the shape of distribution is not very good in the
@@ -158,7 +158,7 @@ a2_samples = gpc_sample(a2_alpha, V2, 100000);
 
 plot_density(a2_samples, 'type', 'kernel', 'kde_sig', 0.5, 'rug', true, 'max_rug', 300);
 plot_density(a2_dist, 'hold', true);
-legend('GPC kernel density', 'GPC samples', 'Exact pdf'); tightplot;
+legend('GPC kernel density', 'GPC samples', 'Exact pdf'); enhance_plot;
 
 
 %% Combining the GPC spaces
@@ -216,8 +216,8 @@ axis square;
 
 %%
 % We can also see that by looking at histograms of the marginals.
-plot_density(xi(1,:), 'n', 30); tightplot;
-plot_density(xi(2,:), 'n', 30); tightplot;
+plot_density(xi(1,:), 'n', 30); enhance_plot;
+plot_density(xi(2,:), 'n', 30); enhance_plot;
 
 %%
 % Now, we sample from the GPC expansion of the parameters, which gives the
@@ -227,7 +227,7 @@ plot_density(xi(2,:), 'n', 30); tightplot;
 % vertically with the larger spike on top, and the semicircle distribtion
 % goes horizontally with the bump more to the left).
 a_i_samples = gpc_sample(a_i_alpha, V_a, 30000, 'mode', 'qmc');
-plot_samples(a_i_samples); tightplot;
+plot_samples(a_i_samples); enhance_plot;
 
 %% The structure of the model stuff
 % explain
@@ -246,7 +246,7 @@ for i=1:N
     [u, model]=model_solve(model, a_i_samples(:,i));
     u_samples(i,:) = u;
 end
-plot(pos, u_samples); tightplot;
+plot(pos, u_samples); enhance_plot;
 
 
 %% Computing moments by sampling
@@ -255,12 +255,12 @@ plot(pos, u_samples); tightplot;
 [u_mean, u_var, model] = compute_moments_mc(model, a_i_alpha, V_a, 100);
 plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 title('mc'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
-tightplot;
+enhance_plot;
 
 [u_mean, u_var, model] = compute_moments_mc(model, a_i_alpha, V_a, 100, 'mode', 'qmc');
 plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 title('qmc'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
-tightplot;
+enhance_plot;
 
 %% Computing moments by quadrature
 % Or we can compute that by projection/integration. With smolyak or tensor
@@ -271,7 +271,7 @@ model_stats(model, 'print');
 
 plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 legend('mean-std', 'mean', 'mean+std'); 
-title('smolyak'); ylim([0,3.5]); grid on; tightplot;
+title('smolyak'); ylim([0,3.5]); grid on; enhance_plot;
 
 model = model_stats(model, 'reset');
 [u_mean, u_var, model] = compute_moments_quad(model, a_i_alpha, V_a, 5, 'grid', 'tensor');
@@ -279,7 +279,7 @@ model_stats(model, 'print');
 
 plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 legend('mean-std', 'mean', 'mean+std'); 
-title('tensor'); ylim([0,3.5]); grid on; tightplot;
+title('tensor'); ylim([0,3.5]); grid on; enhance_plot;
 
 
 
@@ -296,10 +296,10 @@ model_stats(model, 'print');
 [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
 plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 legend('mean-std', 'mean', 'mean+std'); 
-title('resp. surf. proj.'); ylim([0,3.5]); grid on; tightplot;
+title('resp. surf. proj.'); ylim([0,3.5]); grid on; enhance_plot;
 
 plot_response_surface(u_i_alpha([10,30,60,90],:), V_u);
-title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]); tightplot;
+title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]); enhance_plot;
 
 %% Response surface by tensor grid interpolation
 % Then by tensor grid interpolation
