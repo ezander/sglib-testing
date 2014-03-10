@@ -19,54 +19,44 @@ function unittest_fzero_illinois
 
 munit_set_function( 'fzero_illinois' );
 
-clc
-format compact
-format short g
+%% Simple test with illinois, bisection, regula falsi
 func = @(x)(cos(x)-0.8);
 xa = 0;
 xb = pi/2;
-disp(' ')
-fzero_illinois(func, xa, xb, 'maxiter', 100)
+[x, flag, info]=fzero_illinois(func, xa, xb);
+assert_equals(flag, 0);
+assert_equals(x, acos(0.8));
+assert_equals(info.fval, 0);
+assert_equals(info.gval, 0);
+assert_true(info.iter<=6, 'maximum 6 iterations');
 
-% disp(' ')
-% fzero_illinois(func, xa, xb, 'maxiter', 100, 'illinois', false)
-% 
-% disp(' ')
-% fzero_illinois(func, xa, xb, 'maxiter', 100, 'bisect', true)
+[x, flag, info]=fzero_illinois(func, xa, xb, 'bisect', true);
+assert_equals(flag, 0);
+assert_equals(x, acos(0.8));
+assert_equals(info.fval, 0);
+assert_equals(info.gval, 0);
+assert_true(info.iter<=24);
+
+[x, flag, info]=fzero_illinois(func, xa, xb, 'illinois', false);
+assert_equals(flag, 0);
+assert_equals(x, acos(0.8));
+assert_equals(info.fval, 0);
+assert_equals(info.gval, 0);
+assert_true(info.iter<=16);
 
 
+%%
 func2 = @(x)([cos(x)-0.8; cos(x)-0.7]);
 xa = 0;
 xb = pi/2;
-disp(' ')
 [x,flag,info]=fzero_illinois(func2, xa, xb, 'maxiter', 100, 'd', [1,0]);
-[x, acos(0.8)]
-info.gval
-info.fval
+assert_equals(x, acos(0.8));
+assert_equals(flag, 0);
+assert_equals(info.fval, 0);
+assert_equals(info.gval, [0; 0.1]);
 [x,flag,info]=fzero_illinois(func2, xa, xb, 'maxiter', 100, 'd', [0,1]);
-[x, acos(0.7)]
-info.gval
-info.fval
-info
+assert_equals(x, acos(0.7));
+assert_equals(flag, 0);
+assert_equals(info.fval, 0);
+assert_equals(info.gval, [-0.1;0]);
 
-[x,flag,info]=fzero_ridders(func2, xa, xb, 'maxiter', 100, 'd', [0,1]);
-[x, acos(0.7)]
-info.gval
-info.fval
-info
-
-return
-
-
-options=struct();
-options=optimset(options, 'display', 'iter');
-%options=optimset(options, 'tolx', 1e-4);
-options=optimset(options, 'outputfcn', @outfun);
-fzero(func, [xa, xb], options);
-
-function stop = outfun(x, info, state)
-stop = false;
-%disp([info.iteration, info.fval, x]);
-if abs(info.fval)<1e-8
-    stop=true;
-end
