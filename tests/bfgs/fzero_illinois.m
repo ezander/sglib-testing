@@ -53,11 +53,22 @@ options=varargin2options(varargin, mfilename);
 [verbosity,options]=get_option(options, 'verbosity', 0);
 [d,options]=get_option(options, 'd', []);
 [illinois,options]=get_option(options, 'illinois', true);
+[fa,options]=get_option(options, 'fa', []);
+[fb,options]=get_option(options, 'fb', []);
 check_unsupported_options(options);
 
-[fa, ga] = evaluate(func, xa, d);
-[fb, gb] = evaluate(func, xb, d);
-funccount = 2;
+
+funccount = 0;
+
+if isempty(fa)
+    fa = evaluate(func, xa, d);
+    funccount = funccount + 1;
+end
+if isempty(fb)
+    fb = evaluate(func, xb, d);
+    funccount = funccount + 1;
+end
+assert(sign(fa)~=sign(fb), 'Function must have different sign at xa and xb');
 
 flag=1;
 left=true;
