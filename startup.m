@@ -38,5 +38,5 @@ addpath(fullfile(basepath, 'demo', 'models'));
 addpath(fullfile(basepath, 'demo', 'methods'));
 addpath(fullfile(basepath, 'demo', 'tutorial', 'tools'));
 
-addpath(fullfile(basepath, 'wip', 'objects'));
+%addpath(fullfile(basepath, 'tests', 'objects'));
 
