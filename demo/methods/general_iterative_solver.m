@@ -46,6 +46,9 @@ else
     u = u0;
 end
 for iter = 1:maxiter
+    if any(isnan(u))
+        keyboard;
+    end
     [res, model] = model_residual(model, u, p);
     res_norm = norm(res);
     if verbosity>0
@@ -54,7 +57,7 @@ for iter = 1:maxiter
     if res_norm<abstol
         break;
     elseif iter==maxiter
-        error('solve:no_conv', ...
+        warning('solve:no_conv', ...
             'Could not reach convergence (abstol=%g) in %d iterations', ...
             abstol, maxiter);
     end
