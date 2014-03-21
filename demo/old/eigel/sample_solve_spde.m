@@ -96,10 +96,10 @@ G_X=spdiags(multiindex_factorial(I_u),0,M,M);
 % i.e. scale the pce coefficients with the norm of the stochastic ansatz
 % functions and create tensor, matrix and vector versions out of it
 f_k_beta=compute_pce_rhs( f_k_alpha, I_f, I_RHS );
-F=kl_to_tensor( f_i_k, f_k_beta );
+F=kl_to_ctensor( f_i_k, f_k_beta );
 
 g_k_beta=compute_pce_rhs( g_k_alpha, I_g, I_RHS );
-G=kl_to_tensor( g_i_k, g_k_beta );
+G=kl_to_ctensor( g_i_k, g_k_beta );
 
 
 %% load and create the stochastic operator

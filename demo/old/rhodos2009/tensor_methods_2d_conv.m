@@ -75,12 +75,12 @@ M=size(I_u,1); %#ok, full stochastic dimension
 % i.e. scale the pce coefficients with the norm of the stochastic ansatz
 % functions and create tensor, matrix and vector versions out of it
 f_k_beta=compute_pce_rhs( f_k_alpha, I_f, I_u );
-F=kl_to_tensor( f_i_k, f_k_beta );
+F=kl_to_ctensor( f_i_k, f_k_beta );
 f_mat=F{1}*F{2}';
 f_vec=f_mat(:);
 
 g_k_beta=compute_pce_rhs( g_k_alpha, I_g, I_u );
-G=kl_to_tensor( g_i_k, g_k_beta );
+G=kl_to_ctensor( g_i_k, g_k_beta );
 g_mat=G{1}*G{2}';
 g_vec=g_mat(:);
 
