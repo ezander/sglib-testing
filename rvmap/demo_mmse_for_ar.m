@@ -38,6 +38,17 @@ x_i_alpha = gpc_rand_coeffs(V_x, n);
 
 [phi_j_gamma, V_phi]=mmse_estimate(x_i_alpha, V_x, y_j_beta, V_y, p_phi, p_int, 'cond_warning', 1e10);
 
+x_func = funcreate(@gpc_evaluate, x_i_alpha, V_x, @funarg);
+y_func = funcreate(@gpc_evaluate, y_j_beta, V_y, @funarg);
+
+[phi2_j_gamma, V_phi2]=mmse_estimate_generic(x_func, y_func, V_y, p_phi, p_int, 'cond_warning', 1e10);
+
+assert_equals(phi_j_gamma, phi2_j_gamma);
+assert_equals(V_phi, V_phi2);
+
+
+
+
 %%
 N=100;
 xi = gpcgerm_sample(V_y,N);
@@ -49,7 +60,7 @@ x_approx = gpc_evaluate(phi_j_gamma, V_phi, y);
 %plot(x(1,:), x(2,:), 'ko', x_approx(1,:), x_approx(2,:), 'r.');
 ms=10;
 plot(x(1,:), x(2,:), 'ko', 'MarkerSize', ms); hold all;
-plot(x_approx(1,:), x_approx(2,:), 'kx', 'MarkerSize', ms); hold off;
+plot(x_approx(1,:), x_approx(2,:), 'rx', 'MarkerSize', ms); hold off;
 axis tight;
 %return
 

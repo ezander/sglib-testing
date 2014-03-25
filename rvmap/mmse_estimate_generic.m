@@ -1,4 +1,4 @@
-function [phi_i_delta, V_phi]=mmse_estimate(x_i_alpha, V_x, y_j_beta, V_y, p_phi, p_int, varargin)
+function [phi_i_delta, V_phi]=mmse_estimate_generic(x_func, y_func, V_xy, p_phi, p_int, varargin)
 % APPROX_RVMAP Short description of approx_rvmap.
 %   APPROX_RVMAP Long description of approx_rvmap.
 %
@@ -27,21 +27,18 @@ options=varargin2options(varargin);
 [cond_warning,options]=get_option(options, 'cond_warning', false);
 check_unsupported_options(options, mfilename);
 
-% Check that bases of x and y are compatible
-assert(gpcbasis_size(V_y, 2)==gpcbasis_size(V_x, 2));
-% check_gpc_compatibility(V_x, V_y, 'same_germ');
-
-% Determine dimension of y can create function basis
-m = size(y_j_beta, 1);
-V_phi=gpcbasis_create('U', 'm', m, 'p', p_phi);
-
 % Generate integration points
-[xi_k, w_k] = gpc_integrate([], V_y, p_int);
+[xi_k, w_k] = gpc_integrate([], V_xy, p_int);
 
-% Evaluate x, y and phi(y) at the integration points
-x_i_k = gpc_evaluate(x_i_alpha, V_x, xi_k);
-y_j_k = gpc_evaluate(y_j_beta, V_y, xi_k);
+% Evaluate x and y at the integration points
+x_i_k = funcall(x_func, xi_k);
+y_j_k = funcall(y_func, xi_k);
+
+% Determine dimension of codomain of y and create function basis
+m = size(y_j_k, 1);
+V_phi=gpcbasis_create('U', 'm', m, 'p', p_phi);
 phi_gamma_k = gpcbasis_evaluate(V_phi, y_j_k);
+
 
 % Compute matrix A and right hand side b and solve
 phiw_gamma_k = binfun(@times, phi_gamma_k, w_k');
