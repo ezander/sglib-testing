@@ -1,4 +1,3 @@
-clear
 
 %% load or create the geomatry
 % !!! pos, els, G_N (kann auch stattdessen I sein) und stiffness_func

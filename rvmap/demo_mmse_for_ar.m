@@ -56,8 +56,6 @@ y = gpc_evaluate(y_j_beta, V_y, xi);
 x = gpc_evaluate(x_i_alpha, V_x, xi);
 x_approx = gpc_evaluate(phi_j_gamma, V_phi, y);
 
-%plot(x(1,:), x(2,:), 'b.', x_approx(1,:), x_approx(2,:), 'r.');
-%plot(x(1,:), x(2,:), 'ko', x_approx(1,:), x_approx(2,:), 'r.');
 ms=10;
 plot(x(1,:), x(2,:), 'ko', 'MarkerSize', ms); hold all;
 plot(x_approx(1,:), x_approx(2,:), 'rx', 'MarkerSize', ms); hold off;
@@ -66,7 +64,6 @@ axis tight;
 
 if exist('str', 'var')
     disp(['saving: ', str, '.png ...']);
-    print('-dpng', [str, '.png']);
-    figdir='/home/ezander/institut/institute/administration/archive/annual_reports/jb2013/zander/figs';
-    save_figure(gcf, str, 'figdir', figdir);
+    %print('-dpng', [str, '.png']);
+    save_figure(gcf, str, 'figdir', jb_figdir);
 end
