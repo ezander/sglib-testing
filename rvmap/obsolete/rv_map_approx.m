@@ -15,7 +15,7 @@ x_i_alpha = gpc_rand_coeffs(V_x, n);
 p_phi = 4;
 p_int = 9;
 
-[phi_j_gamma, V_phi]=mmse_estimate(x_i_alpha, V_x, y_j_beta, V_y, p_phi, p_int, 'cond_warning', 1e10);
+[phi_j_gamma, V_phi]=mmse_estimate_gpc(x_i_alpha, V_x, y_j_beta, V_y, p_phi, p_int, 'cond_warning', 1e10);
 
 %% show difference between approximations
 xi = gpcgerm_sample(V_y);

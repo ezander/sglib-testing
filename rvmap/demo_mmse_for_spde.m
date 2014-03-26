@@ -78,7 +78,7 @@ save_figure(mh(2), 'k_updated', 'figdir', jb_figdir);
 
 function [xn_i_beta, V_xn]=mmse_compose_error_model(x_func, y_func, V_xy, ym_beta, V_ym, p_phi, p_int_mmse, p_un, p_int_proj)
 
-[phi_j_delta,V_phi]=mmse_estimate_generic(x_func, y_func, V_xy, p_phi, p_int_mmse);
+[phi_j_delta,V_phi]=mmse_estimate(x_func, y_func, V_xy, p_phi, p_int_mmse);
 
 phi_func = funcreate(@gpc_evaluate, phi_j_delta, V_phi);
 ym_func = funcreate(@gpc_evaluate, ym_beta, V_ym);

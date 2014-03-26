@@ -36,12 +36,12 @@ y_j_beta = gpc_rand_coeffs(V_y, m);
 V_x=gpcbasis_create('H', 'm', m0, 'p', p_x);
 x_i_alpha = gpc_rand_coeffs(V_x, n);
 
-[phi_j_gamma, V_phi]=mmse_estimate(x_i_alpha, V_x, y_j_beta, V_y, p_phi, p_int, 'cond_warning', 1e10);
+[phi_j_gamma, V_phi]=mmse_estimate_gpc(x_i_alpha, V_x, y_j_beta, V_y, p_phi, p_int, 'cond_warning', 1e10);
 
 x_func = funcreate(@gpc_evaluate, x_i_alpha, V_x, @funarg);
 y_func = funcreate(@gpc_evaluate, y_j_beta, V_y, @funarg);
 
-[phi2_j_gamma, V_phi2]=mmse_estimate_generic(x_func, y_func, V_y, p_phi, p_int, 'cond_warning', 1e10);
+[phi2_j_gamma, V_phi2]=mmse_estimate(x_func, y_func, V_y, p_phi, p_int, 'cond_warning', 1e10);
 
 assert_equals(phi_j_gamma, phi2_j_gamma);
 assert_equals(V_phi, V_phi2);
