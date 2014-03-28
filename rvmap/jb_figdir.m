@@ -1,16 +1,5 @@
 function figdir=jb_figdir
-% JB_FIGDIR Short description of jb_figdir.
-%   JB_FIGDIR Long description of jb_figdir.
-%
-% Options
-%
-% References
-%
-% Notes
-%
-% Example (<a href="matlab:run_example jb_figdir">run</a>)
-%
-% See also
+% JB_FIGDIR Return the location to place figures in.
 
 %   Elmar Zander
 %   Copyright 2014, Inst. of Scientific Computing, TU Braunschweig

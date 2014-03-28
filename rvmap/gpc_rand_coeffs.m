@@ -1,12 +1,9 @@
-function x_i_alpha = gpc_rand_coeffs(V_x, Nx, varargin)
-% GPC_RAND_COEFFS Short description of gpc_rand_coeffs.
-%   GPC_RAND_COEFFS Long description of gpc_rand_coeffs.
-%
-% Options
-%
-% References
-%
-% Notes
+function x_i_alpha = gpc_rand_coeffs(V_x, Nx)
+% GPC_RAND_COEFFS Create some random coefficients for a GPC for testing purposes.
+%   X_I_ALPHA = GPC_RAND_COEFFS(V_X, NX) creates GPC coefficients for
+%   testing purposes. X_I_ALPHA will contain NX time "size of V_X"
+%   coefficients. The coefficients will be computed randomly but with some
+%   exponentially decaying factor.
 %
 % Example (<a href="matlab:run_example gpc_rand_coeffs">run</a>)
 %

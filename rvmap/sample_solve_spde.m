@@ -1,3 +1,8 @@
+% SAMPLE_SOLVE_SPDE Sample code to solve a 1D stochastic PDE.
+%   Note: this needs to be a script so that the output can be cached via
+%   the CACHE_SCRIPT function. See function LOAD_SPDE_SOLUTION in
+%   DEMO_MMSE_FOR_SPDE.
+
 
 %% load or create the geomatry
 % !!! pos, els, G_N (kann auch stattdessen I sein) und stiffness_func

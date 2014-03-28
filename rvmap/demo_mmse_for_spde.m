@@ -1,16 +1,7 @@
 function demo_mmse_for_spde(varargin)
-% DEMO_MMSE_FOR_SPDE Short description of demo_mmse_for_spde.
-%   DEMO_MMSE_FOR_SPDE Long description of demo_mmse_for_spde.
+% DEMO_MMSE_FOR_SPDE Demonstration of the MMSE methods for a sample SPDE.
 %
-% Options
-%
-% References
-%
-% Notes
-%
-% Example (<a href="matlab:run_example demo_mmse_for_spde">run</a>)
-%
-% See also
+% See also MMSE_ESTIMATE, MMSE_UPDATE_MODEL
 
 %   Elmar Zander
 %   Copyright 2014, Inst. of Scientific Computing, TU Braunschweig
@@ -93,17 +84,19 @@ save_figure(mh(2), 'k_updated', 'figdir', jb_figdir);
 
 
 function [r_i_alpha, V_r, pos, els] = load_spde_solution(what)
-cache_script('sample_solve_spde');
+[u_i_alpha, I_u, k_i_alpha, I_k, pos, els] = load_complete_spde_solution();
 switch what
     case 'u'
         I_r=I_u;
         r_i_alpha = u_i_alpha;
     case 'k'
         I_r=I_k;
-        r_i_alpha = kl_to_pce(k_i_k, k_k_alpha);
+        r_i_alpha = k_i_alpha;
     otherwise
         error('error:einval', 'unknown: what="%s"', what)
 end
 V_r = gpcbasis_create('H', 'I', I_r);
-pos=pos; %#ok<ASGSL,NODEF>
-els=els; %#ok<NODEF,ASGSL>
+
+function [u_i_alpha, I_u, k_i_alpha, I_k, pos, els] = load_complete_spde_solution() %#ok<STOUT>
+cache_script('sample_solve_spde');
+k_i_alpha = kl_to_pce(k_i_k, k_k_alpha);

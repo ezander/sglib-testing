@@ -41,7 +41,7 @@ function [phi_i_delta, V_phi]=mmse_estimate(x_func, y_func, V_xy, p_phi, p_int, 
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
 options=varargin2options(varargin);
-[cond_warning,options]=get_option(options, 'cond_warning', false);
+[cond_warning,options]=get_option(options, 'cond_warning', inf);
 [polysys,options]=get_option(options, 'polysys', 'M');
 check_unsupported_options(options, mfilename);
 
@@ -57,13 +57,13 @@ m = size(y_j_k, 1);
 V_phi=gpcbasis_create(polysys, 'm', m, 'p', p_phi);
 phi_gamma_k = gpcbasis_evaluate(V_phi, y_j_k);
 
-
 % Compute matrix A and right hand side b and solve
 phiw_gamma_k = binfun(@times, phi_gamma_k, w_k');
 A = phiw_gamma_k * phi_gamma_k';
 b = x_i_k * phiw_gamma_k';
 phi_i_delta = (A\b')';
-size(A)
+
+% Issue warning if the condition number is too high
 if isfinite(cond_warning)
     kappa = condest(A);
     if kappa>=cond_warning

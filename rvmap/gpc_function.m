@@ -1,12 +1,6 @@
-function gpc_function(varargin)
-% GPC_FUNCTION Short description of gpc_function.
+function r_func = gpc_function(r_i_alpha, V_r)
+% GPC_FUNCTION Create a function object from a GPC.
 %   GPC_FUNCTION Long description of gpc_function.
-%
-% Options
-%
-% References
-%
-% Notes
 %
 % Example (<a href="matlab:run_example gpc_function">run</a>)
 %
@@ -23,3 +17,4 @@ function gpc_function(varargin)
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
+r_func = funcreate(@gpc_evaluate, r_i_alpha, V_r);
