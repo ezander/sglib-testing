@@ -26,8 +26,8 @@ p_int_proj = 6;
 [u_i_alpha, V_u, pos] = load_spde_solution('u');
 [k_i_alpha, V_k] = load_spde_solution('k');
 
-u_func = funcreate(@gpc_evaluate, u_i_alpha, V_u, @funarg);
-k_func = funcreate(@gpc_evaluate, k_i_alpha, V_k, @funarg);
+u_func = gpc_function(u_i_alpha, V_u);
+k_func = gpc_function(k_i_alpha, V_k);
 
 % Construct a struct for the first measurement (measuring u at 0.2 giving a
 % value of u(0.2)=10+-0.5 (normally distributed)

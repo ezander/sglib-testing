@@ -39,9 +39,6 @@ function u_i_beta = gpc_projection(u_func, V_u, p_int)
 [xi_k,w_k] = gpc_integrate([], V_u, p_int);
 Q = length(w_k);
 
-M = gpcbasis_size(V_u, 1);
-u_i_beta = zeros(100, M);
-
 for k = 1:Q
     u_i_j = funcall(u_func, xi_k(:,k));
     psi_j_beta_dual = gpcbasis_evaluate(V_u, xi_k(:,k), 'dual', true);

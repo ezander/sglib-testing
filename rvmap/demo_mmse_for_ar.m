@@ -15,6 +15,7 @@ function demo_mmse_for_ar
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
 %%
+clf
 
 m0=2; m=2; n=2; p_phi=1; p_int=9; p_x=3; p_y=2;
 demo(m0, m, n, p_phi, p_int, p_x, p_y, 'exact2_p1');
@@ -52,8 +53,8 @@ x_i_alpha = gpc_rand_coeffs(V_x, n);
 
 [phi_j_gamma, V_phi]=mmse_estimate_gpc(x_i_alpha, V_x, y_j_beta, V_y, p_phi, p_int, 'cond_warning', 1e10);
 
-x_func = funcreate(@gpc_evaluate, x_i_alpha, V_x, @funarg);
-y_func = funcreate(@gpc_evaluate, y_j_beta, V_y, @funarg);
+x_func = gpc_function(x_i_alpha, V_x);
+y_func = gpc_function(y_j_beta, V_y);
 
 [phi2_j_gamma, V_phi2]=mmse_estimate(x_func, y_func, V_y, p_phi, p_int, 'cond_warning', 1e10);
 
@@ -63,7 +64,6 @@ assert_equals(V_phi, V_phi2);
 
 
 
-%%
 N=100;
 xi = gpcgerm_sample(V_y,N);
 y = gpc_evaluate(y_j_beta, V_y, xi);
@@ -74,10 +74,8 @@ ms=10;
 plot(x(1,:), x(2,:), 'ko', 'MarkerSize', ms); hold all;
 plot(x_approx(1,:), x_approx(2,:), 'rx', 'MarkerSize', ms); hold off;
 axis tight;
-%return
 
 if exist('str', 'var')
     disp(['saving: ', str, '.png ...']);
-    %print('-dpng', [str, '.png']);
     save_figure(gcf, str, 'figdir', jb_figdir);
 end

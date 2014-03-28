@@ -1,5 +1,5 @@
 function [ym_beta, V_ym] = create_measurement_gpc(dists, polysys)
-% CREATE_MEASUREMENT_GPC Create a GPC expansion for the mesaurements.
+% CREATE_MEASUREMENT_GPC Create a GPC expansion for the measurements.
 %   [YM_BETA, V_YM] = CREATE_MEASUREMENT_GPC(DISTS, POLYSYS) creates from
 %   cell array DISTS containing the distributions of independent
 %   measurements a GPC that represents all those distributions as ouput. In
@@ -35,6 +35,3 @@ for i=1:m
     [yi_beta, V_yi] = gpc_param_expand(dists{i}, polysys{i});
     [ym_beta, V_ym] = gpc_combine_inputs(ym_beta, V_ym, yi_beta, V_yi);
 end
-
-
-
