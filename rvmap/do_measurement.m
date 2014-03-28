@@ -1,5 +1,5 @@
 function y=do_measurement(funcs, u)
-% DO_MEASUREMENT Perform a measurement.
+% DO_MEASUREMENT Perform a measurement using the measurement operator.
 %   Y=DO_MEASUREMENT(FUNCS, U) performs a measurement on U given the
 %   functions in the cell array FUNCS. This cell array represents the
 %   measurement operator M, that will give actual values that "would be
@@ -36,5 +36,3 @@ y = zeros(m,n);
 for i=1:m
     y(i,:) = funcall(funcs{i}, u);
 end
-
-

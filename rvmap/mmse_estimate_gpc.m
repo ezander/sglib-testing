@@ -1,5 +1,5 @@
 function [phi_i_delta, V_phi]=mmse_estimate_gpc(x_i_alpha, V_x, y_j_beta, V_y, p_phi, p_int, varargin)
-% MMSE_ESTIMATE_GPC Compute MMSE estimator for GPC variables.
+% MMSE_ESTIMATE_GPC Compute the MMSE estimator for GPC variables.
 %   [PHI_I_DELTA, V_PHI]=MMSE_ESTIMATE_GPC(X_I_ALPHA, V_X, Y_J_BETA, V_Y,
 %   P_PHI, P_INT, OPTIONS) computes the minimum mean square error estimator
 %   PHI that minimises the error between X and PHI(Y). Here, X is given as

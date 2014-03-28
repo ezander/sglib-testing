@@ -1,12 +1,5 @@
 function [y_relerr, xi] = compute_mc_error(y_j_beta, V_y, x_i_alpha, V_x, phi_j_gamma, V_phi, N)
-% COMPUTE_MC_ERROR Short description of compute_mc_error.
-%   COMPUTE_MC_ERROR Long description of compute_mc_error.
-%
-% Options
-%
-% References
-%
-% Notes
+% COMPUTE_MC_ERROR Computes the error between two GPCs by Monte-Carlo sampling.
 %
 % Example (<a href="matlab:run_example compute_mc_error">run</a>)
 %

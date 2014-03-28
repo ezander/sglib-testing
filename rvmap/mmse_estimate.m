@@ -1,5 +1,5 @@
 function [phi_i_delta, V_phi]=mmse_estimate(x_func, y_func, V_xy, p_phi, p_int, varargin)
-% MMSE_ESTIMATE Compute a MMSE estimator.
+% MMSE_ESTIMATE Compute the MMSE estimator.
 %   [PHI_I_DELTA, V_PHI]=MMSE_ESTIMATE(X_FUNC, Y_FUNC, V_XY, P_PHI, P_INT,
 %   OPTIONS) computes the minimum mean square error estimator PHI that
 %   minimises the error between X and PHI(Y). Here, X is given by the

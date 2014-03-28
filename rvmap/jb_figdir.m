@@ -1,5 +1,5 @@
 function figdir=jb_figdir
-% JB_FIGDIR Return the location to place figures in.
+% JB_FIGDIR Return the location to save figures in.
 
 %   Elmar Zander
 %   Copyright 2014, Inst. of Scientific Computing, TU Braunschweig
