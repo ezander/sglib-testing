@@ -1,19 +1,37 @@
 function [phi_i_delta, V_phi]=mmse_estimate_gpc(x_i_alpha, V_x, y_j_beta, V_y, p_phi, p_int, varargin)
-% APPROX_RVMAP Short description of approx_rvmap.
-%   APPROX_RVMAP Long description of approx_rvmap.
+% MMSE_ESTIMATE_GPC Compute MMSE estimator for GPC variables.
+%   [PHI_I_DELTA, V_PHI]=MMSE_ESTIMATE_GPC(X_I_ALPHA, V_X, Y_J_BETA, V_Y,
+%   P_PHI, P_INT, OPTIONS) computes the minimum mean square error estimator
+%   PHI that minimises the error between X and PHI(Y). Here, X is given as
+%   a GPC by X_I_ALPHA and V_X, Y by Y_J_BETA and V_Y. Both must be defined
+%   on the same GPC germ. PHI is represented by multivariate polynomials of
+%   maximum degree P_PHI. The coefficients are returned in PHI_I_DELTA, and
+%   the system of polynomials if described by V_PHI (same for other GPC
+%   functions). The one dimensional basis polynomials are the monomials by
+%   default, but that can be changed using the POLYSYS option. P_INT is the
+%   order of integration used.
 %
 % Options
+%    'polysys': {'M'}, 'p', 'P', 'U', 'T', 'H', ...
+%       The polynomial system used for representing PHI. Any sort of GPC
+%       basis polynomial can be used.
+%    'cond_warning': double, {inf}
+%       A treshold value for the condition number of the linear system that
+%       needs to be solved. If the condition number estimate is higher a
+%       warning message is shown.
 %
 % References
+%    [1] http://en.wikipedia.org/wiki/Minimum_mean_square_error
+%    [2] D. P. Bertsekas and J. N. Tsitsiklis, Introduction to probability,
+%        2 ed., Athena Scientific, 2008. 
+%   MMSE_ESTIMATE_GPC Long description of mmse_estimate_gpc.
 %
-% Notes
+% Example (<a href="matlab:run_example mmse_estimate_gpc">run</a>)
 %
-% Example (<a href="matlab:run_example approx_rvmap">run</a>)
-%
-% See also
+% See also GPC, MMSE_ESTIMATE
 
 %   Elmar Zander
-%   Copyright 2013, Inst. of Scientific Computing, TU Braunschweig
+%   Copyright 2014, Inst. of Scientific Computing, TU Braunschweig
 %
 %   This program is free software: you can redistribute it and/or modify it
 %   under the terms of the GNU General Public License as published by the
@@ -23,37 +41,12 @@ function [phi_i_delta, V_phi]=mmse_estimate_gpc(x_i_alpha, V_x, y_j_beta, V_y, p
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
-options=varargin2options(varargin);
-[cond_warning,options]=get_option(options, 'cond_warning', false);
-check_unsupported_options(options, mfilename);
 
 % Check that bases of x and y are compatible
 assert(gpcbasis_size(V_y, 2)==gpcbasis_size(V_x, 2));
 % check_gpc_compatibility(V_x, V_y, 'same_germ');
 
-% Determine dimension of y can create function basis
-m = size(y_j_beta, 1);
-V_phi=gpcbasis_create('U', 'm', m, 'p', p_phi);
+x_func = funcreate(@gpc_evaluate, x_i_alpha, V_x, @funarg);
+y_func = funcreate(@gpc_evaluate, y_j_beta, V_y, @funarg);
 
-% Generate integration points
-[xi_k, w_k] = gpc_integrate([], V_y, p_int);
-
-% Evaluate x, y and phi(y) at the integration points
-x_i_k = gpc_evaluate(x_i_alpha, V_x, xi_k);
-y_j_k = gpc_evaluate(y_j_beta, V_y, xi_k);
-phi_gamma_k = gpcbasis_evaluate(V_phi, y_j_k);
-
-% Compute matrix A and right hand side b and solve
-phiw_gamma_k = binfun(@times, phi_gamma_k, w_k');
-A = phiw_gamma_k * phi_gamma_k';
-b = x_i_k * phiw_gamma_k';
-phi_i_delta = (A\b')';
-size(A)
-if cond_warning
-    kappa = condest(A);
-    if kappa>=cond_warning
-        warning('sglib:mmse_estimate_gpc:cond', ...
-            'Condition number of matrix too large (%g), function approximation may be inaccurate', ...
-            kappa);
-    end
-end
+[phi_i_delta, V_phi]=mmse_estimate(x_func, y_func, V_y, p_phi, p_int, varargin{:});

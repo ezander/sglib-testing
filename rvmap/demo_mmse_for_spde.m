@@ -23,31 +23,46 @@ function demo_mmse_for_spde(varargin)
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
+% Set up the parameters for integration order and expansion degrees
 p_phi = 3;
 p_int_mmse = 3;
 p_un = 3;
 p_int_proj = 6;
 
 
-
+% Load the SPDE surrogate models for U and KAPPA and construct evaluation
+% functions for them
 [u_i_alpha, V_u, pos] = load_spde_solution('u');
 [k_i_alpha, V_k] = load_spde_solution('k');
 
 u_func = funcreate(@gpc_evaluate, u_i_alpha, V_u, @funarg);
 k_func = funcreate(@gpc_evaluate, k_i_alpha, V_k, @funarg);
 
-rho=5;
-measurements = {
-    {@(u)(u(20,:)), gendist_create('normal', {10, rho*0.1}), 'H'};
-    {@(u)(u(80,:)), gendist_create('normal', {5, rho*0.3}), 'H'};
-    };
+% Construct a struct for the first measurement (measuring u at 0.2 giving a
+% value of u(0.2)=10+-0.5 (normally distributed)
+M(1).func = @(u)(u(20,:));
+M(1).dist = gendist_create('normal', {10, 0.5});
+M(1).gpc_polysys = 'H';
 
-[ym_beta, V_ym] = create_measurement_gpc(measurements);
-M_func=funcreate(@do_measurement, measurements, @funarg);
+% Construct a struct for the second measurement (measuring u at 0.8 giving a
+% value of u(0.2)=5+-0.5 (normally distributed);
+M(2).func = @(u)(u(80,:));
+M(2).dist = gendist_create('normal', {5, 1.5});
+M(2).gpc_polysys = 'H';
+
+% Constructs a GPC of the combined actual measurements plus error model y_m
+[ym_beta, V_ym] = create_measurement_gpc({M.dist}, {M.gpc_polysys});
+
+% Create a function for the measurement operator M
+M_func=funcreate(@do_measurement, {M.func}, @funarg);
+
+% Build the composition y = M o u
 y_func = funcompose(u_func, M_func);
 
-[un_i_beta, V_un]=mmse_compose_error_model(u_func, y_func, V_u, ym_beta, V_ym, p_phi, p_int_mmse, p_un, p_int_proj);
+% Update the stochastic model for U using the measurements y_m
+[un_i_beta, V_un]=mmse_update_model(u_func, y_func, V_u, ym_beta, V_ym, p_phi, p_int_mmse, p_un, p_int_proj);
 
+% Plot the original and updated U
 n = 20;
 mh=multiplot_init(2,1);
 multiplot; plot_pce_realizations_1d( pos, u_i_alpha, V_u{2}, 'realizations', n, 'show_stat', 3 );
@@ -60,9 +75,10 @@ save_figure(mh(1), 'u_orig', 'figdir', jb_figdir);
 save_figure(mh(2), 'u_updated', 'figdir', jb_figdir);
 
 
+% Update the stochastic model for KAPPA using the measurements y_m
+[kn_i_beta, V_kn]=mmse_update_model(k_func, y_func, V_u, ym_beta, V_ym, p_phi, p_int_mmse, p_un, p_int_proj);
 
-[kn_i_beta, V_kn]=mmse_compose_error_model(k_func, y_func, V_u, ym_beta, V_ym, p_phi, p_int_mmse, p_un, p_int_proj);
-
+% Plot the original and updated KAPPA
 n = 20;
 mh=multiplot_init(2,1);
 multiplot; plot_pce_realizations_1d( pos, k_i_alpha, V_k{2}, 'realizations', n, 'show_stat', 3 );
@@ -74,38 +90,6 @@ same_scaling(mh, 'y');
 save_figure(mh(1), 'k_orig', 'figdir', jb_figdir);
 save_figure(mh(2), 'k_updated', 'figdir', jb_figdir);
 
-
-
-function [xn_i_beta, V_xn]=mmse_compose_error_model(x_func, y_func, V_xy, ym_beta, V_ym, p_phi, p_int_mmse, p_un, p_int_proj)
-
-[phi_j_delta,V_phi]=mmse_estimate(x_func, y_func, V_xy, p_phi, p_int_mmse);
-
-phi_func = funcreate(@gpc_evaluate, phi_j_delta, V_phi);
-ym_func = funcreate(@gpc_evaluate, ym_beta, V_ym);
-xn_func = funcompose(ym_func, phi_func);
-
-V_xn = gpcbasis_create(V_ym, 'p', p_un);
-xn_i_beta = gpc_projection(xn_func, V_xn, p_int_proj);
-
-
-function [ym_beta, V_ym] = create_measurement_gpc(Mi)
-m = size(Mi,1);
-ym_beta = zeros(0,1);
-V_ym = gpcbasis_create('');
-for i=1:m
-    [yi_beta, V_yi] = gpc_param_expand(Mi{i}{2}, Mi{i}{3});
-    [ym_beta, V_ym] = gpc_combine_inputs(ym_beta, V_ym, yi_beta, V_yi);
-end
-
-
-
-function y=do_measurement(Mi, u)
-m = size(Mi,1);
-n = size(u,2);
-y = zeros(m,n);
-for i=1:m
-    y(i,:) = funcall(Mi{i}{1}, u);
-end
 
 
 function [r_i_alpha, V_r, pos, els] = load_spde_solution(what)
