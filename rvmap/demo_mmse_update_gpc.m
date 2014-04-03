@@ -1,5 +1,5 @@
 function demo_mmse_update_gpc
-% DEMO_MMSE_LINEAR Show that the linear MMSE estimator is reproduced.
+% DEMO_MMSE_UPDATE_GPC Show that the linear MMSE estimator is reproduced.
 %
 % References
 %   [1] http://en.wikipedia.org/wiki/Minimum_mean_square_error#Linear_MMSE_estimator
@@ -29,8 +29,7 @@ x_i_alpha = gpc_rand_coeffs(V_x, 4);
 x_func = gpc_function(x_i_alpha, V_x);
 
 V_eps = gpcbasis_create('H', 'm', 5, 'p', 1);
-eps_j_beta = gpc_rand_coeffs(V_eps, 3);
-eps_j_beta(:,1) = 0;
+eps_j_beta = gpc_rand_coeffs(V_eps, 3, 'zero_mean', true);
 eps_func = gpc_function(eps_j_beta, V_eps);
 
 % Model for Y is y=Ax+z (we could do that by function evaluation, but we

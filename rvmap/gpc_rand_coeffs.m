@@ -1,4 +1,4 @@
-function x_i_alpha = gpc_rand_coeffs(V_x, Nx)
+function x_i_alpha = gpc_rand_coeffs(V_x, Nx, varargin)
 % GPC_RAND_COEFFS Create some random coefficients for a GPC for testing purposes.
 %   X_I_ALPHA = GPC_RAND_COEFFS(V_X, NX) creates GPC coefficients for
 %   testing purposes. X_I_ALPHA will contain NX time "size of V_X"
@@ -20,8 +20,18 @@ function x_i_alpha = gpc_rand_coeffs(V_x, Nx)
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
+options=varargin2options(varargin,mfilename);
+[zero_mean,options]=get_option(options, 'zero_mean', false);
+[order_decay,options]=get_option(options, 'order_decay', 0.1);
+check_unsupported_options(options);
+
 I_x=V_x{2};
 
 Mx = gpcbasis_size(V_x, 1);
 x_i_alpha = rand(Nx, Mx)+0.2;
-x_i_alpha = binfun(@times, x_i_alpha, 10.^(-multiindex_order(I_x)'));
+x_i_alpha = binfun(@times, x_i_alpha, order_decay.^(multiindex_order(I_x)'));
+
+if zero_mean
+    mean_ind = multiindex_find(zeros(1,size(I_x,2)), I_x);
+    x_i_alpha(:,mean_ind) = 0;
+end
