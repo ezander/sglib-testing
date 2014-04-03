@@ -44,6 +44,11 @@ pn_func = funcompose(ym_func, phi_func);
 V_pn = gpcbasis_create(V_m, 'p', p_pn);
 pn_i_beta = gpc_projection(pn_func, V_pn, p_int_proj);
 
+% Subtract the old coefficients to get the update
+pm_i_beta = gpc_projection(pm_func, V_pn, p_int_proj);
+%gpc_covariance(pn_i_beta, V_pn, pm_i_beta)
+pn_i_beta = pn_i_beta - pm_i_beta;
+
 % Replace the mean value in the GPC of P by the best estimator value
 % pm=phi(ym)
 pm = funcall(phi_func, ym);

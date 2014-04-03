@@ -23,6 +23,8 @@ linear_mmse_estimator_for_observation_process
 
 function linear_mmse_estimator_for_observation_process
 
+rand_seed(1234553412345)
+
 % Generate some random GPC expansions for X and Z (mean Z must be zero!)
 V_x = gpcbasis_create('H', 'm', 4, 'p', 1);
 x_i_alpha = gpc_rand_coeffs(V_x, 4);
@@ -61,9 +63,11 @@ b = mean_x - W * mean_y;
 % This would be the classical new estimate (xn=W*ym+b) and covariance matrix Cxn
 Cxn = W * (A*Cx);
 xn = W * (ym - mean_y) + mean_x;
+Ce = Cx - Cxn;
+
 
 % Compare to the from 
-assert_equals(Cxn, gpc_covariance(xn_i_beta, V_xn), 'Cxn match')
+assert_equals(Ce, gpc_covariance(xn_i_beta, V_xn), 'Ce match')
 assert_equals(xn, gpc_moments(xn_i_beta, V_xn), 'xn match')
 assert_equals(W * ym + b, gpc_moments(xn_i_beta, V_xn), 'xn match (2)')
 

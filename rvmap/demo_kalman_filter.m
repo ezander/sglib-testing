@@ -1,4 +1,4 @@
-function demo_kalman_filter(varargin)
+function demo_kalman_filter
 % DEMO_KALMAN_FILTER Show how to reproduce the Kalman filter.
 %
 %   This demos tries to directly reproduce the results from [1], first in
@@ -44,7 +44,6 @@ rand_seed(1234553412345)
 nx = 5;
 nu = 2;
 nz = 3;
-nz = 0;
 
 % Define the number of random variables x, w, and v are modelled upon
 mx = 6;
@@ -56,10 +55,10 @@ V_x = gpcbasis_create('H', 'm', mx, 'p', 1);
 x_i_alpha = gpc_rand_coeffs(V_x, nx);
 
 V_w = gpcbasis_create('H', 'm', mw, 'p', 1);
-w_i_beta = 0*gpc_rand_coeffs(V_w, nx, 'zero_mean', true);
+w_i_beta = gpc_rand_coeffs(V_w, nx, 'zero_mean', true);
 
 V_v = gpcbasis_create('H', 'm', mv, 'p', 1);
-v_j_gamma = 0*gpc_rand_coeffs(V_v, nz, 'zero_mean', true);
+v_j_gamma = gpc_rand_coeffs(V_v, nz, 'zero_mean', true);
 
 % Recover the covariance matrices from here
 P = gpc_covariance(x_i_alpha, V_x);
@@ -75,9 +74,8 @@ H = rand(nz, nx);
 u = rand(nu, 1);
 z = rand(nz, 1);
 I = eye(nx);
-F = I;
 
-%% Now the classical stuff
+%% Now the classical Kalman stuff
 %  a) Prediction step (predicted new state xnp and covariance Pnp)
 
 mean_x = gpc_moments(x_i_alpha, V_x);
@@ -92,46 +90,52 @@ K = Pnp * H' / S;
 xn = xnp + K * y;
 Pn = (I - K*H)*Pnp;
 
-
-
 %% And now with the MMSE functions on GPC variables
 
-% Define a priori model for xn: xn = F * x + B * u + w
-[V_xnp, Px, Pw, xi_x_ind, xi_w_ind] = gpcbasis_combine(V_x, V_w, 'outer_sum');
+% Define a priori model for xn: 
+%   xn = F * x + B * u + w
+% (The tricky thing is that the separate probalility spaces for x and w
+% have to be combined into one, and during the function evaluation split up
+% again, so that the x and w part only get "their" variables)
+[V_xnp, ~, ~, xi_x_ind, xi_w_ind] = gpcbasis_combine(V_x, V_w, 'outer_sum');
 xnp_func = @(xi)(...
-    F * gpc_evaluate(x_i_alpha, V_x, xi(xi_x_ind, :)) + ...
-    repmat(B*u, 1, size(xi,2)) + ...
-    gpc_evaluate(w_i_beta, V_w, xi(xi_w_ind, :)));
+    F * gpc_evaluate(x_i_alpha, V_x, xi(xi_x_ind, :)) + ...  % F * x +
+    repmat(B*u, 1, size(xi,2)) + ...                         % B * u +
+    gpc_evaluate(w_i_beta, V_w, xi(xi_w_ind, :)));           % w
 
-% Another way to do it
+% Just another way to do it, by combining the GPC expansions and then
+% making a function out of it
 [xw_ii_gamma, V_xnp] = gpc_combine_inputs(x_i_alpha, V_x, w_i_beta, V_w);
 xnp_i_gamma = [F, I] * xw_ii_gamma;
 xnp_i_gamma(:,1) = xnp_i_gamma(:,1) + B*u;
 xnp_func = gpc_function(xnp_i_gamma, V_xnp);
 
-% Check that the predicted values match
-assert_equals(gpc_moments(xnp_i_gamma, V_xnp), xnp, 'xnp')
-assert_equals(gpc_covariance(xnp_i_gamma, V_xnp), Pnp, 'Pnp')
+% In-between check that the predicted state xnp and covariance Pnp match
+assert_equals(gpc_moments(xnp_i_gamma, V_xnp), xnp, 'predicted state estimate xnp')
+assert_equals(gpc_covariance(xnp_i_gamma, V_xnp), Pnp, 'predicted covariance estimate Pnp')
 
 % Define observation model (without the v, that comes extra)
 %   z = H * xn
 y_func = @(xi)(H * funcall(xnp_func, xi));
 
+% In-between check of the covariance matrices of the observation
+assert_equals(gpc_covariance(H*xnp_i_gamma, V_xnp)+R, S, 'innovation covariance S')
+
+% Define error model (must be defined separately from observation model)
 v_func = gpc_function(v_j_gamma, V_v);
 
-% check the covariance matrices
-assert_equals(gpc_covariance(H*xnp_i_gamma, V_xnp), S-R, 'S-R')
-assert_equals(gpc_covariance(H*xnp_i_gamma, V_xnp)+gpc_covariance(v_j_gamma, V_v), S, 'S')
-
-
+% Now call the MMSE update procedure
 p_phi=1;
 p_int_mmse=2;
 p_xn=1;
 p_int_proj=2;
 [xn_i_beta, V_xn]=mmse_update_gpc(xnp_func, y_func, V_xnp, z, v_func, V_v, p_phi, p_int_mmse, p_xn, p_int_proj);
 
-gpc_moments(H*xn_i_beta, V_xn) - z
-gpc_moments(xn_i_beta, V_xn) - xn
-gpc_covariance(xn_i_beta, V_xn) - Pn
+% Final check of Kalman estimate and covariance update
+assert_equals( gpc_moments(xn_i_beta, V_xn), xn, 'updated state estimate xn');
+assert_equals( gpc_covariance(xn_i_beta, V_xn), Pn, 'updated covariance estimate Pn');
 
-1
+% ... and you see that the classical Kalman filter is exactly reproduced.
+% The MMSE is completely independent of degree and in the limit case of all
+% degrees equal to 1 reproduces the Kalman filter (or linear observation
+% processes). 
