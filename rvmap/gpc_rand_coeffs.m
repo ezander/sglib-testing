@@ -28,10 +28,14 @@ check_unsupported_options(options);
 I_x=V_x{2};
 
 Mx = gpcbasis_size(V_x, 1);
-x_i_alpha = rand(Nx, Mx)+0.2;
-x_i_alpha = binfun(@times, x_i_alpha, order_decay.^(multiindex_order(I_x)'));
-
+x_i_alpha = zeros(Nx, Mx);
 if zero_mean
-    mean_ind = multiindex_find(zeros(1,size(I_x,2)), I_x);
-    x_i_alpha(:,mean_ind) = 0;
+    min_order = 1;
+else
+    min_order = 0;
 end
+ind = multiindex_order(I_x)>=min_order;
+Mi = sum(ind);
+
+x_i_alpha(:,ind) = rand(Nx, Mi)+0.2;
+x_i_alpha = binfun(@times, x_i_alpha, order_decay.^(multiindex_order(I_x)'));
