@@ -28,28 +28,35 @@ function [pn_i_beta, V_pn]=mmse_update_gpc(p_func, y_func, V_py, ym, eps_func, V
 [V_m, P_py, P_eps, xi_xy_ind, xi_eps_ind] = gpcbasis_combine(V_py, V_eps, 'outer_sum');
 
 % Create evaluation function for a) measurement + error model (ym_func) and
-% b) for the parameter to be estimated (pm_func), but now as functions in
+% b) for the parameter to be estimated (p2_func), but now as functions in
 % the combined space V_m
 ym_func = @(xi)(funcall(y_func, xi(xi_xy_ind,:)) + funcall(eps_func, xi(xi_eps_ind, :)));
-pm_func = @(xi)(funcall(p_func, xi(xi_xy_ind,:)));
+p2_func = @(xi)(funcall(p_func, xi(xi_xy_ind,:)));
 
 % Now compute the MMSE estimator for P given Y+error and make a function
 % out of this estimator
-[phi_j_delta,V_phi]=mmse_estimate(pm_func, ym_func, V_m, p_phi, p_int_mmse);
+[phi_j_delta,V_phi]=mmse_estimate(p2_func, ym_func, V_m, p_phi, p_int_mmse);
 phi_func = gpc_function(phi_j_delta, V_phi);
 
-% Create the new stochastic model for the parameter as function composition
-% between Y and phi and compute its GPC expansion
-pn_func = funcompose(ym_func, phi_func);
+% Create the prediction stochastic model for the parameter as function
+% composition between Y and phi and compute its GPC expansion
+pp_func = funcompose(ym_func, phi_func);
 V_pn = gpcbasis_create(V_m, 'p', p_pn);
-pn_i_beta = gpc_projection(pn_func, V_pn, p_int_proj);
+pp_i_beta = gpc_projection(pp_func, V_pn, p_int_proj);
 
 % Subtract the old coefficients to get the update
-pm_i_beta = gpc_projection(pm_func, V_pn, p_int_proj);
-%gpc_covariance(pn_i_beta, V_pn, pm_i_beta)
-pn_i_beta = pn_i_beta - pm_i_beta;
+p_i_beta = gpc_projection(p2_func, V_pn, p_int_proj);
+pn_i_beta = pp_i_beta - p_i_beta;
+
+% The new model pn and the update should be orthogonal
+assert(norm(gpc_covariance(pn_i_beta, V_pn, pp_i_beta))<1e-10)
 
 % Replace the mean value in the GPC of P by the best estimator value
 % pm=phi(ym)
 pm = funcall(phi_func, ym);
 pn_i_beta(:,1) = pm;
+
+
+
+
+
