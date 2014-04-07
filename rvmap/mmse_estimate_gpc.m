@@ -43,10 +43,10 @@ function [phi_i_delta, V_phi]=mmse_estimate_gpc(x_i_alpha, V_x, y_j_beta, V_y, p
 
 
 % Check that bases of x and y are compatible
-assert(gpcbasis_size(V_y, 2)==gpcbasis_size(V_x, 2));
+assert(gpcbasis_size(V_x, 2)==gpcbasis_size(V_y, 2));
 % check_gpc_compatibility(V_x, V_y, 'same_germ');
 
 x_func = gpc_function(x_i_alpha, V_x);
 y_func = gpc_function(y_j_beta, V_y);
 
-[phi_i_delta, V_phi]=mmse_estimate(x_func, y_func, V_y, p_phi, p_int, varargin{:});
+[phi_i_delta, V_phi]=mmse_estimate(x_func, y_func, V_x, p_phi, p_int, varargin{:});

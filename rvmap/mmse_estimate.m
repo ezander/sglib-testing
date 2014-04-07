@@ -1,10 +1,10 @@
-function [phi_i_delta, V_phi]=mmse_estimate(x_func, y_func, V_xy, p_phi, p_int, varargin)
+function [phi_i_delta, V_phi]=mmse_estimate(x_func, y_func, V_x, p_phi, p_int, varargin)
 % MMSE_ESTIMATE Compute the MMSE estimator.
-%   [PHI_I_DELTA, V_PHI]=MMSE_ESTIMATE(X_FUNC, Y_FUNC, V_XY, P_PHI, P_INT,
+%   [PHI_I_DELTA, V_PHI]=MMSE_ESTIMATE(X_FUNC, Y_FUNC, V_X, P_PHI, P_INT,
 %   OPTIONS) computes the minimum mean square error estimator PHI that
 %   minimises the error between X and PHI(Y). Here, X is given by the
 %   function X_FUNC, Y by the function Y_FUNC, and both are defined on the
-%   same GPC germ V_XY. PHI is represented by multivariate polynomials of
+%   same GPC germ V_X. PHI is represented by multivariate polynomials of
 %   maximum degree P_PHI. The coefficients are returned in PHI_I_DELTA, and
 %   the system of polynomials if described by V_PHI (same for other GPC
 %   functions). The one dimensional basis polynomials are the monomials by
@@ -46,7 +46,7 @@ options=varargin2options(varargin);
 check_unsupported_options(options, mfilename);
 
 % Generate integration points
-[xi_k, w_k] = gpc_integrate([], V_xy, p_int);
+[xi_k, w_k] = gpc_integrate([], V_x, p_int);
 
 % Evaluate x and y at the integration points
 x_i_k = funcall(x_func, xi_k);
