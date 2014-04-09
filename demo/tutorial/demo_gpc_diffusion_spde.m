@@ -229,9 +229,6 @@ plot_density(xi(2,:), 'n', 30); enhance_plot;
 a_i_samples = gpc_sample(a_i_alpha, V_a, 30000, 'mode', 'qmc');
 plot_samples(a_i_samples); enhance_plot;
 
-%% The structure of the model stuff
-% explain
-
 %% Direct Monte Carlo sampling
 % Now, as a first step, we can do a Monte-Carlo simulation of our
 % deterministic model. Instead of making statistics, we'll just plot a
@@ -248,10 +245,18 @@ for i=1:N
 end
 plot(pos, u_samples); enhance_plot;
 
+%%
+% Note: the function diffusion_1d_init sets up a model structure, which contains
+% information about the deterministic model, e.g. its dimension, how many parameters it
+% has, a handle to the solve function (for MC and collocation), a handle to
+% a solver step function (for non-intrusive Galerkin), etc. The advantage
+% is that the complete information about the model is captured in one
+% structure and only this struct needs to be passed around.
 
 %% Computing moments by sampling
-% We have that also canned as a function. Showing mean and variance
-% computed by MC and QMC.
+% Monte Carlo is can also be invoked directly for the model in form of some
+% ready made function. The following shows how to compute the mean and
+% variance by MC and QMC.
 [u_mean, u_var, model] = compute_moments_mc(model, a_i_alpha, V_a, 100);
 plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 title('mc'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
@@ -263,8 +268,8 @@ title('qmc'); legend('mean-std', 'mean', 'mean+std'); ylim([0,3.5]); grid on;
 enhance_plot;
 
 %% Computing moments by quadrature
-% Or we can compute that by projection/integration. With smolyak or tensor
-% grid.
+% There are also function that do that by by quadrature. The following code
+% shows how to do that with a Smolyak and with a tensor grid.
 model = model_stats(model, 'reset');
 [u_mean, u_var, model] = compute_moments_quad(model, a_i_alpha, V_a, 5, 'grid', 'smolyak');
 model_stats(model, 'print');
@@ -282,17 +287,23 @@ legend('mean-std', 'mean', 'mean+std');
 title('tensor'); ylim([0,3.5]); grid on; enhance_plot;
 
 
-
-
-
 %% Response surfaces by projection
-% First by projection
+% While the previous functions directly computed moments of the models
+% response it is also possible to compute response surfaces. The code first
+% constructs a function space V_u for the response surface (or surrogate
+% model if you prefer) of orthogonal polynomials defined on the same germ
+% as a but now up to complete degree 5. Then the response surface is
+% computed.
 V_u = gpcbasis_create(V_a, 'p', 5);
 
 model = model_stats(model, 'reset');
 [u_i_alpha, model] = compute_response_surface_projection(model, a_i_alpha, V_a, V_u, 5, 'grid', 'smolyak');
 model_stats(model, 'print');
 
+%%
+% To visualise the result first the mean and variance are plotted. And then
+% the response surfaces at the points x=0.1, 0.3, 0.6, and 0.9 are plotted.
+% Since the parameter space is two dimensional those are indeed surfaces.
 [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
 plot(pos, u_mean-sqrt(u_var), pos, u_mean, pos, u_mean+sqrt(u_var));
 legend('mean-std', 'mean', 'mean+std'); 
@@ -302,7 +313,10 @@ plot_response_surface(u_i_alpha([10,30,60,90],:), V_u);
 title('response surfaces at 0.1, 0.3, 0.6 and 0.9'); zlim([0, 5]); enhance_plot;
 
 %% Response surface by tensor grid interpolation
-% Then by tensor grid interpolation
+% Here the response surfaces are computed by tensor grid interpolation. In
+% order to reduce the code the plotting commands have been moved into a
+% script, since they will be the same for all response surface
+% computations.
 model = model_stats(model, 'reset');
 [u_i_alpha, model] = compute_response_surface_tensor_interpolate(model, a_i_alpha, V_a, V_u, 5);
 model_stats(model, 'print');
@@ -310,25 +324,19 @@ model_stats(model, 'print');
 plot_response_surface_results
 
 %% Response surface by non-intrusive Galerkin
-% Then by non-intrusive Galerkin (doesn't work)
-
-maxiter = 20;
-p_int = max(V_u{2}(:));
+% Here the response surfaces are computed via the non-intrusive Galerkin
+% method.
+p_int = max(V_u{2}(:))+1;
 int_grid = 'full_tensor';
-model.step_relax = 0.98;
-model = model_stats(model, 'reset');
 [u_i_alpha, model, x, w]=compute_response_surface_nonintrusive_galerkin(model, a_i_alpha, V_a, V_u, p_int, 'maxiter', maxiter, 'grid', int_grid);
-model_stats(model, 'print_step_info');
 
 plot_response_surface_results
-
-
 
 
 %% Response surface by intrusive Galerkin
 % The computation of the response surfaces by intrusive stochastic
 % Galerking is a bit more complicated and will be shown here without the
-% accompanying math formulas.  
+% accompanying math formulas. 
 %
 % First we need the stochastic Galerkin matrices for the two parameters a1
 % and a2, 
@@ -342,7 +350,9 @@ K = tensor_operator_create({model.K, A_i});
 clf; spy(tensor_operator_to_matrix(K))
 
 %%
-% apply to the right hand side
+% Setup the boundary conditions and right hand side (very manually here,
+% since they are deterministic, for stochastic BCs and RHSs are some
+% specialised functions available).
 [N,M]=operator_size(K, 'domain_only', true, 'contract', false);
 G = zeros(N, M);
 G(:,1) = model.g;
@@ -351,7 +361,8 @@ F(:,1) = model.f;
 
 %% 
 % For applying stochastic Galerkin we need to apply the boundary conditions
-% to the operator and right hand side. 
+% to the operator and right hand side to get a modified system with
+% boundary conditions included. 
 
 P_I = model.P_I;
 P_B = model.P_B;
@@ -372,15 +383,19 @@ u_i_alpha=reshape(U_vec, size(F));
 plot_response_surface_results
 
 %%
+% Here we construct a preconditioner for later use in a PCG solver. (This
+% would be easier if we started with a KL expansion of the coefficient
+% field a, but now it requires bit handiwork).
 a1_mean = gendist_moments(a1_dist);
 a2_mean = gendist_moments(a2_dist);
 P = a1_mean * K{1,1} + a2_mean*K{2,1};
 Pn=apply_boundary_conditions_system(P, F, G, P_I, P_B);
-
 Pinv = operator_from_matrix_solve(Pn);
 
-
-%
+%%
+% Now solve with a PCG and after that with a solver based on simple
+% iterations (or preconditioned Richardson if you prefer). The response
+% surfaces come out identical.
 [Un, flag, info] = tensor_solve_pcg(Kn, Fn, 'Minv', Pinv);
 tensor_solver_message(info);
 
@@ -392,8 +407,11 @@ plot_response_surface_results
 tensor_solver_message(info);
 
 %%
+% Here an standard Matlab iterative solver is used (@pcg) for solving the
+% system. Since Matlab's solver can't handle the sglib data structures and
+% operators directly tensor_solve_matlab_wrapper constructs a wrappers and
+% passed them to the Matlab pcg.
 [Pinv, P] = stochastic_preconditioner(Kn, 'precond_type', 'vanloan', 'num_iter', 5);
 Un = tensor_solve_matlab_wrapper(@pcg, Kn, Fn, 'Minv', Pinv);
 u_i_alpha=Un;
 plot_response_surface_results
-
