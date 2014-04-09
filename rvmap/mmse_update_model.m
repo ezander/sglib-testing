@@ -32,6 +32,7 @@ function [xn_i_beta, V_xn]=mmse_update_model(x_func, y_func, V_xy, ym_beta, V_ym
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
+warning('This function is obsolete. Don''t use any more!!!');
 
 [phi_j_delta,V_phi]=mmse_estimate(x_func, y_func, V_xy, p_phi, p_int_mmse);
 
