@@ -48,19 +48,20 @@ check_unsupported_options(options, mfilename);
 % Generate integration points
 [xi_k, w_k] = gpc_integrate([], V_x, p_int);
 
-% Evaluate x and y at the integration points
+% Evaluate X and Y at the integration points
 x_i_k = funcall(x_func, xi_k);
 y_j_k = funcall(y_func, xi_k);
 
-% Determine dimension of codomain of y and create function basis
+% Determine dimension of codomain of Y and create 
+% function basis V_phi
 m = size(y_j_k, 1);
 V_phi=gpcbasis_create(polysys, 'm', m, 'p', p_phi);
-phi_gamma_k = gpcbasis_evaluate(V_phi, y_j_k);
+Psi_gamma_k = gpcbasis_evaluate(V_phi, y_j_k);
 
 % Compute matrix A and right hand side b and solve
-phiw_gamma_k = binfun(@times, phi_gamma_k, w_k');
-A = phiw_gamma_k * phi_gamma_k';
-b = x_i_k * phiw_gamma_k';
+wPsi_gamma_k = binfun(@times, Psi_gamma_k, w_k');
+A = Psi_gamma_k * wPsi_gamma_k';
+b = x_i_k * wPsi_gamma_k';
 phi_i_delta = (A\b')';
 
 % Issue warning if the condition number is too high

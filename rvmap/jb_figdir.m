@@ -12,4 +12,5 @@ function figdir=jb_figdir
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
-figdir='/home/ezander/institute/administration/archive/annual_reports/jb2013/zander/figs';
+%figdir='/home/ezander/institute/administration/archive/annual_reports/jb2013/zander/figs';
+figdir='/home/ezander/projects/docs/papers/mmse/figs';
