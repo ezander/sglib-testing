@@ -21,9 +21,8 @@ stiffness_func=funcreate(@stiffness_matrix, pos, els, @funarg);
 % define stochastic expansion parameters
 
 p_k=get_base_param( 'p_k', 2 );
-m_k=get_base_param( 'm_k', 10 );
-l_k=get_base_param( 'l_k', 30 );
-
+m_k=get_base_param( 'm_k', 5 );
+l_k=get_base_param( 'l_k', 35 );
 
 % define the distribution (name, parameters, shift, scale)
 dist_k=get_base_param( 'dist_k', gendist_create('beta', {4,2}, 'shift', 0.1) );
@@ -36,17 +35,21 @@ cov_k_func=get_base_param( 'cov_k_func', @gaussian_covariance );
 cov_k=get_base_param( 'cov_k', {cov_k_func,{lc_k,1}} );
 
 % expand the field
-[k_i_k,k_k_alpha,I_k,l_k]=expand_field_kl_pce( stdnor_k, cov_k, pos, G_N, p_k, m_k, l_k, 'mean_func', mean_k_func );
+[k_i_k,k_k_alpha,I_k,l_k]=expand_field_kl_pce( stdnor_k, cov_k, pos, G_N, p_k, m_k, l_k, 'mean_func', mean_k_func, 'projection_method', false );
+
+% test
+%k_i_alpha=expand_field_pce_sg( stdnor_k, cov_k, [], pos, G_N, p_k, m_k, 'mean_func', mean_k_func );
+%norm(k_i_alpha - k_i_k*k_k_alpha)
 
 %% construct the right hand side random field f 
 % define stochastic expansion parameters
 p_f=get_base_param( 'p_f', 2 );
 %m_f=get_base_param( 'm_f', 40 );
-m_f=get_base_param( 'm_f', 10 );
+m_f=get_base_param( 'm_f', 0*5 );
 l_f=get_base_param( 'l_f', 40 );
 
 % define the distribution
-dist_f=get_base_param( 'dist_f', {'beta', {4,2}, 0, 1.0 } );
+dist_f=get_base_param( 'dist_f', {'beta', {4,2}, 1, 1.0 } );
 mean_f_func=get_base_param( 'mean_f_func', [] );
 stdnor_f={@gendist_stdnor, dist_f};
 
@@ -55,7 +58,7 @@ lc_f=get_base_param( 'lc_f', 0.03 );
 cov_f_func=get_base_param( 'cov_f_func', @exponential_covariance );
 cov_f=get_base_param( 'cov_f', {cov_f_func,{lc_f,1}} );
 
-[f_i_k,f_k_alpha,I_f,l_f]=expand_field_kl_pce( stdnor_f, cov_f, pos, G_N, p_f, m_f, l_f, 'mean_func', mean_f_func );
+[f_i_k,f_k_alpha,I_f,l_f]=expand_field_kl_pce( stdnor_f, cov_f, pos, G_N, p_f, m_f, l_f, 'mean_func', mean_f_func, 'projection_method', false );
 
 
 %% Construct the Dirichlet boundary conditions g 
@@ -63,7 +66,7 @@ cov_f=get_base_param( 'cov_f', {cov_f_func,{lc_f,1}} );
 % values on the boundary)
 
 p_g=get_base_param( 'p_g', 1 );
-m_g=get_base_param( 'm_g', 2 );
+m_g=get_base_param( 'm_g', 0*2 );
 l_g=get_base_param( 'l_g', 2 );
 eps_g=get_base_param( 'eps_g', 0 );
 

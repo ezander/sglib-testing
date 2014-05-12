@@ -47,4 +47,6 @@ xm = funcall(phi_func, ym);
 xn_i_beta(:,1) = xm;
 
 % The new model pn and the update should be orthogonal
-assert(norm(gpc_covariance(xn_i_beta, V_xn, xm_i_beta))<1e-10)
+if norm(gpc_covariance(xn_i_beta, V_xn, xm_i_beta))>1e-10
+    warning('sglib:mmse_update_gpc', 'gpc not orthogonal');
+end
