@@ -1,4 +1,4 @@
-function [phi_i_delta, V_phi]=mmse_estimate_gpc(x_i_alpha, V_x, y_j_beta, V_y, p_phi, p_int, varargin)
+function [phi_i_delta, V_phi]=mmse_estimate_gpc(X_i_alpha, V_X, Y_j_beta, V_Y, p_phi, p_int, varargin)
 % MMSE_ESTIMATE_GPC Compute the MMSE estimator for GPC variables.
 %   [PHI_I_DELTA, V_PHI]=MMSE_ESTIMATE_GPC(X_I_ALPHA, V_X, Y_J_BETA, V_Y,
 %   P_PHI, P_INT, OPTIONS) computes the minimum mean square error estimator
@@ -43,10 +43,12 @@ function [phi_i_delta, V_phi]=mmse_estimate_gpc(x_i_alpha, V_x, y_j_beta, V_y, p
 
 
 % Check that bases of x and y are compatible
-assert(gpcbasis_size(V_x, 2)==gpcbasis_size(V_y, 2));
+assert(gpcbasis_size(V_X, 2)==gpcbasis_size(V_Y, 2));
 % check_gpc_compatibility(V_x, V_y, 'same_germ');
 
-x_func = gpc_function(x_i_alpha, V_x);
-y_func = gpc_function(y_j_beta, V_y);
+% Generate functions from the GPC bases and coeffs
+X_func = gpc_function(X_i_alpha, V_X);
+Y_func = gpc_function(Y_j_beta, V_Y);
 
-[phi_i_delta, V_phi]=mmse_estimate(x_func, y_func, V_x, p_phi, p_int, varargin{:});
+% Call the MMSE estimator function
+[phi_i_delta, V_phi]=mmse_estimate(X_func, Y_func, V_X, p_phi, p_int, varargin{:});

@@ -1,10 +1,10 @@
-function [phi_i_delta, V_phi]=mmse_estimate(x_func, y_func, V_x, p_phi, p_int, varargin)
+function [phi_i_delta, V_phi]=mmse_estimate(X_func, Y_func, V, p_phi, p_int, varargin)
 % MMSE_ESTIMATE Compute the MMSE estimator.
-%   [PHI_I_DELTA, V_PHI]=MMSE_ESTIMATE(X_FUNC, Y_FUNC, V_X, P_PHI, P_INT,
+%   [PHI_I_DELTA, V_PHI]=MMSE_ESTIMATE(X_FUNC, Y_FUNC, V, P_PHI, P_INT,
 %   OPTIONS) computes the minimum mean square error estimator PHI that
 %   minimises the error between X and PHI(Y). Here, X is given by the
 %   function X_FUNC, Y by the function Y_FUNC, and both are defined on the
-%   same GPC germ V_X. PHI is represented by multivariate polynomials of
+%   same GPC germ V. PHI is represented by multivariate polynomials of
 %   maximum degree P_PHI. The coefficients are returned in PHI_I_DELTA, and
 %   the system of polynomials if described by V_PHI (same for other GPC
 %   functions). The one dimensional basis polynomials are the monomials by
@@ -46,22 +46,22 @@ options=varargin2options(varargin);
 check_unsupported_options(options, mfilename);
 
 % Generate integration points
-[xi_k, w_k] = gpc_integrate([], V_x, p_int);
+[xi_k, w_k] = gpc_integrate([], V, p_int);
 
 % Evaluate X and Y at the integration points
-x_i_k = funcall(x_func, xi_k);
-y_j_k = funcall(y_func, xi_k);
+X_i_k = funcall(X_func, xi_k);
+Y_j_k = funcall(Y_func, xi_k);
 
 % Determine dimension of codomain of Y and create 
 % function basis V_phi
-m = size(y_j_k, 1);
+m = size(Y_j_k, 1);
 V_phi=gpcbasis_create(polysys, 'm', m, 'p', p_phi);
-Psi_gamma_k = gpcbasis_evaluate(V_phi, y_j_k);
+Psi_gamma_k = gpcbasis_evaluate(V_phi, Y_j_k);
 
 % Compute matrix A and right hand side b and solve
 wPsi_gamma_k = binfun(@times, Psi_gamma_k, w_k');
 A = Psi_gamma_k * wPsi_gamma_k';
-b = x_i_k * wPsi_gamma_k';
+b = X_i_k * wPsi_gamma_k';
 phi_i_delta = (A\b')';
 
 % Issue warning if the condition number is too high
