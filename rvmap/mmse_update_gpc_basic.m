@@ -23,7 +23,7 @@ function Xn_i_alpha=mmse_update_gpc_basic(X_i_alpha, Y_func, V, ym, p_phi, p_int
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+% Convert the GPC expansion of X into a function object
 X_func = gpc_function(X_i_alpha, V);
 
 % Now compute the MMSE estimator for X given Y and make a function
