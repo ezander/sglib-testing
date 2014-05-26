@@ -11,5 +11,7 @@ A = state.A;
 fg = state.fg;
 f0 = state.f0;
 
+assert(numel(p)==2);
+
 % Compute the residual of the electrical network
 res = (fg + p(2)).*f0 - (A*u + (p(1)+2)*(u'*u)*u);
