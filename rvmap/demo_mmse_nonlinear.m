@@ -25,7 +25,7 @@ xi0 = pi/8;
 V_x = gpcbasis_create('hh', 'p', 10);
 x_func = @(xi)(cos(k*xi(1,:)));
 [x_i_alpha] = gpc_projection(x_func, V_x, 10);
-x_func=gpc_function(x_i_alpha,V_x);
+%x_func=gpc_function(x_i_alpha,V_x);
 
 y_func = @(xi)(k*xi(1,:) + alpha * xi(2,:));
 
@@ -56,9 +56,29 @@ legend('a priori', 'pred', 'meas', 'truth');
 
 % Show the a priori density of x
 multiplot;
+%%
+xi = gpcgerm_sample(V_x, 300000);
 x = funcall(x_func, xi);
 plot_density(x, 'rug', true);
+plot_density(x, 'type', 'kernel', 'rug', true, 'kde_sig', 0.002);
 hold on; plot(xm, 0, 'rx', 'markersize', 12); plot(cos(k*xi0), 0, 'ro', 'markersize', 12); hold off; 
+
+
+g = @(del,k)(-normal_pdf(del,0,k)+normal_pdf(2*pi-del,0,k));
+g = @(del,k)(-normal_pdf(del,0,k));
+g = @(del,k)(...
+    -normal_pdf(del,0,k)...
+    +normal_pdf(2*pi-del,0,k)...
+    -normal_pdf(2*pi+del,0,k)...
+    +normal_pdf(4*pi-del,0,k)...
+    );
+%g = @(del,k)(-normal_pdf(del,0,k)+normal_pdf(2*pi-del,0,k)-normal_pdf(2*pi+del,0,k));
+f_X = @(x)(-2./sqrt(1-x.^2).*g(acos(x),k));
+hold on;
+xxx=linspace(-0.99,0.99,200);
+plot(xxx,f_X(xxx), 'g-'); grid on;
+hold off
+%%
 
 
 xn_i_alpha = mmse_update_gpc_basic(x_i_alpha, y_func, V_x, ym, p_phi, p_int, p_int);
