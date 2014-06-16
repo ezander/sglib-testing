@@ -28,7 +28,6 @@ rand_seed(1234553412345)
 % Generate some random GPC expansions for X and Z (mean Z must be zero!)
 V_x = gpcbasis_create('H', 'm', 4, 'p', 1);
 x_i_alpha = gpc_rand_coeffs(V_x, 4);
-x_func = gpc_function(x_i_alpha, V_x);
 
 V_eps = gpcbasis_create('H', 'm', 5, 'p', 1);
 eps_j_beta = gpc_rand_coeffs(V_eps, 3, 'zero_mean', true);
@@ -47,7 +46,7 @@ p_phi=1;
 p_int_mmse=2;
 p_xn=1;
 p_int_proj=2;
-[xn_i_beta, V_xn]=mmse_update_gpc(x_func, y_func, V_x, ym, eps_func, V_eps, p_phi, p_int_mmse, p_xn, p_int_proj);
+[xn_i_beta, V_xn]=mmse_update_gpc(x_i_alpha, y_func, V_x, ym, eps_func, V_eps, p_phi, p_int_mmse, p_xn, p_int_proj);
 
 
 % Do the classical linear update (minimising y - (Wx+b))

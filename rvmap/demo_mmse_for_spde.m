@@ -15,10 +15,10 @@ function demo_mmse_for_spde(varargin)
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
 % Set up the parameters for integration order and expansion degrees
-p_phi = 2;
+p_phi = 3;
 p_int_mmse = 4;
-p_un = 2;
-p_int_proj = 4;
+p_un = 4;
+p_int_proj = p_un+1;
 
 % Load the SPDE surrogate models for U and KAPPA and construct evaluation
 % functions for them
@@ -63,7 +63,7 @@ eps_func = gpc_function(eps_j_gamma, V_eps);
 p_pn = p_un;
 
 
-[un_i_beta, V_un]=mmse_update_gpc(  u_func, y_func, V_u, ym, eps_func, V_eps, p_phi, p_int_mmse, p_pn, p_int_proj);
+[un_i_beta, V_un]=mmse_update_gpc(  u_i_alpha, y_func, V_u, ym, eps_func, V_eps, p_phi, p_int_mmse, p_pn, p_int_proj);
 
 
 
@@ -82,7 +82,7 @@ save_figure(mh(2), 'u_updated', 'figdir', jb_figdir);
 
 
 % Update the stochastic model for KAPPA using the measurements y_m
-[kn_i_beta, V_kn]=mmse_update_gpc(  k_func, y_func, V_u, ym, eps_func, V_eps, p_phi, p_int_mmse, p_pn, p_int_proj);
+[kn_i_beta, V_kn]=mmse_update_gpc(  k_i_alpha, y_func, V_u, ym, eps_func, V_eps, p_phi, p_int_mmse, p_pn, p_int_proj);
 
 % Plot the original and updated KAPPA
 n = 20;

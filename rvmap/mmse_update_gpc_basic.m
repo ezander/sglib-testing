@@ -1,4 +1,4 @@
-function Xn_i_alpha=mmse_update_gpc_basic(X_i_alpha, Y_func, V, ym, p_phi, p_int_mmse, p_int_proj)
+function Xn_i_alpha=mmse_update_gpc_basic(X_i_alpha, Y_func, V, ym, p_phi, p_int_mmse, p_int_proj, varargin)
 % MMSE_UPDATE_GPC_BASIC Short description of mmse_update_gpc_basic.
 %   MMSE_UPDATE_GPC_BASIC Long description of mmse_update_gpc_basic.
 %
@@ -45,3 +45,10 @@ Xn_i_alpha(:,1) = xm;
 
 % The updated model xn and the update should be orthogonal
 %assert(norm(gpc_covariance(xn_i_alpha, V_x, xm_i_alpha))<1e-10)
+
+% The new model pn and the update should be orthogonal
+CXn = norm(gpc_covariance(Xn_i_alpha, V), 'fro');
+CXnXM = norm(gpc_covariance(Xn_i_alpha, V, XM_i_alpha), 'fro');
+if CXnXM>1e-10*CXn
+    warning('sglib:mmse_update_gpc_basic', 'gpc update not orthogonal (%g>1e-10*%g)', CXnXM, CXn);
+end

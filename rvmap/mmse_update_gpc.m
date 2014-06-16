@@ -1,4 +1,4 @@
-function [Xn_i_beta, V_Xn]=mmse_update_gpc(X_func, Y_func, V_X, ym, eps_func, V_eps, p_phi, p_int_mmse, p_pn, p_int_proj)
+function [Xn_i_beta, V_Xn]=mmse_update_gpc(X_i_alpha, Y_func, V_X, ym, eps_func, V_eps, p_phi, p_int_mmse, p_pn, p_int_proj)
 % MMSE_UPDATE_GPC Update a GPC given some measurements and a measurement model.
 %
 % Example (<a href="matlab:run_example mmse_update_gpc">run</a>)
@@ -16,39 +16,17 @@ function [Xn_i_beta, V_Xn]=mmse_update_gpc(X_func, Y_func, V_X, ym, eps_func, V_
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
-% Combine the bases of the a priori model (V_x) and of the error model
+% Combine the bases of the a priori model (V_X) and of the error model
 % (V_eps)
-[V_XM, ~, ~, xi_x_ind, xi_eps_ind] = gpcbasis_combine(V_X, V_eps, 'outer_sum');
+[V_Xn, ind_V_X, ~, ind_xi_X, ind_xi_eps] = gpcbasis_combine(V_X, V_eps, 'outer_sum');
 
-% Create evaluation function for a) measurement + error model (ym_func) and
-% b) for the parameter to be estimated (x2_func), but now as functions in
-% the combined space V_m
-YM_func = @(xi)(funcall(Y_func, xi(xi_x_ind,:)) + funcall(eps_func, xi(xi_eps_ind, :)));
-X2_func = @(xi)(funcall(X_func, xi(xi_x_ind,:)));
+% Create evaluation function for measurement + error model (YM_func) 
+YM_func = @(xi)(funcall(Y_func, xi(ind_xi_X,:)) + funcall(eps_func, xi(ind_xi_eps, :)));
 
-% Now compute the MMSE estimator for X given Y+eps and make a function
-% out of this estimator
-[phi_j_delta,V_phi]=mmse_estimate(X2_func, YM_func, V_XM, p_phi, p_int_mmse);
-phi_func = gpc_function(phi_j_delta, V_phi);
+% Extend the GPC coefficients X_i_alpha to the larger basis V_Xn
+X_i_beta = zeros(size(X_i_alpha,1), gpcbasis_size(V_Xn,1));
+X_i_beta(:,ind_V_X) = X_i_alpha;
 
-% Create the prediction stochastic model for X as function
-% composition between Y and phi and compute its GPC expansion
-XM_func = funcompose(YM_func, phi_func);
-V_Xn = gpcbasis_create(V_XM, 'p', p_pn);
-XM_i_beta = gpc_projection(XM_func, V_Xn, p_int_proj);
+Xn_i_beta=mmse_update_gpc_basic(X_i_beta, YM_func, V_Xn, ym, p_phi, p_int_mmse, p_int_proj);
 
-% Subtract the old coefficients to get the update
-x_i_beta = gpc_projection(X2_func, V_Xn, p_int_proj);
-Xn_i_beta =  x_i_beta - XM_i_beta;
 
-% Replace the mean value in the GPC of XN by the best estimator value
-% xm=phi(ym)
-xm = funcall(phi_func, ym);
-Xn_i_beta(:,1) = xm;
-
-% The new model pn and the update should be orthogonal
-CXn = norm(gpc_covariance(Xn_i_beta, V_Xn), 'fro');
-CXnXM = norm(gpc_covariance(Xn_i_beta, V_Xn, XM_i_beta), 'fro');
-if CXnXM>1e-10*CXn
-    warning('sglib:mmse_update_gpc', 'gpc update not orthogonal (%g>1e-10*%g)', CXnXM, CXn);
-end
