@@ -8,7 +8,7 @@ function plot_response_surface(u_i_alpha, V_u, varargin)
 %     Some better heuristics needs to be implemented, probably.
 %   N: integer {20}
 %     Number of divisions in x and y direction.
-%   alpha_val: double {'auto'}
+%   alpha: double {'auto'}
 %     Value for transparency, 0 means fully transparent, 1 means opaque.
 %   pdf_plane: double {'auto'}
 %     Z-position of the pdf plane, showing the joint pdf of the parameters.
