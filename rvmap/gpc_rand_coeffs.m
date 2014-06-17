@@ -23,18 +23,19 @@ function x_i_alpha = gpc_rand_coeffs(V_x, Nx, varargin)
 options=varargin2options(varargin,mfilename);
 [zero_mean,options]=get_option(options, 'zero_mean', false);
 [order_decay,options]=get_option(options, 'order_decay', 0.1);
+[min_order,options]=get_option(options, 'min_order', 0);
+[max_order,options]=get_option(options, 'max_order', inf);
 check_unsupported_options(options);
 
 I_x=V_x{2};
 
 Mx = gpcbasis_size(V_x, 1);
 x_i_alpha = zeros(Nx, Mx);
-if zero_mean
+if zero_mean && min_order<1
     min_order = 1;
-else
-    min_order = 0;
 end
-ind = multiindex_order(I_x)>=min_order;
+order = multiindex_order(I_x);
+ind = (min_order<=order) & (order<=max_order);
 Mi = sum(ind);
 
 x_i_alpha(:,ind) = rand(Nx, Mi)+0.2;
