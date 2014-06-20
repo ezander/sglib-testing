@@ -29,8 +29,14 @@ u0 = state.u0;
 T = state.T;
 solve_info = struct();
 d = state.d;
-u=undamped_spring_solve_direct(u0, k, m, d, T);
-%u=undamped_spring_solve_ode(u0, k, m, d, T);
+switch state.solver
+    case 'direct'
+        u=undamped_spring_solve_direct(u0, k, m, d, T);
+    case 'numerical'
+        u=undamped_spring_solve_ode(u0, k, m, d, T);
+    otherwise
+        error('foo:bar', 'Unknown solver: %s', solver);
+end
 
 function u=undamped_spring_solve_ode(u0, k, m, d, T)
 [t,u] = ode45(@undamped_spring_ode, [0, T], u0, [], k, m, d);
@@ -40,13 +46,28 @@ u = u(end,:)';
 function u=undamped_spring_solve_direct(u0, k, m, d, T)
 x0 = u0(1);
 v0 = u0(2);
-omega = sqrt(k/m-d^2);
+assert(k>0 && m>0 && 0*d>=0);
 alpha = d/m;
+D = k/m-(d/m)^2;
+if true && D>0
+    omega = sqrt(D);
+    xt = exp(-alpha*T) * (x0 * cos(omega*T) + (v0 + alpha*x0) / omega * sin(omega*T));
+    vt = exp(-alpha*T) * (v0 * cos(omega*T) - ((alpha*v0 + alpha^2*x0) / omega + x0 * omega) * sin(omega*T));
+elseif D<0
+    omega = sqrt(-D);
+    xt = exp(-alpha*T) * (x0 * cosh(omega*T) + (v0 + alpha*x0) / omega * sinh(omega*T));
+    vt = exp(-alpha*T) * (v0 * cosh(omega*T) - ((alpha*v0 + alpha^2*x0) / omega - x0 * omega) * sinh(omega*T));
+else
+    error('not covered yet');
+end
+
+if xt>1 && d>=0
+    keyboard
+end
+u = [xt; vt];
 % xt = x0 * cos(omega*T) + v0 / omega * sin(omega*T);
 % vt = v0 * cos(omega*T) - x0 * omega * sin(omega*T);
-xt = exp(-d/m*T) * (x0 * cos(omega*T) + (v0 + alpha*x0) / omega * sin(omega*T));
-vt = exp(-d/m*T) * (v0 * cos(omega*T) - ((alpha*v0 + alpha^2*x0) / omega + x0 * omega) * sin(omega*T));
-u = [xt; vt];
+%log10(abs(u))'
 
 
 function [dudt] = undamped_spring_ode(t, u, k, m, d)

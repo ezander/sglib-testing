@@ -8,7 +8,9 @@ function [state, info] = undamped_spring_init( varargin )
 options = varargin2options(varargin);
 [x0, options] = get_option(options, 'x0', 1);
 [v0, options] = get_option(options, 'v0', 0);
+[d options] = get_option(options, 'd', 0);
 [T, options] = get_option(options, 'T', 10);
+[solver, options] = get_option(options, 'solver', 'direct');
 check_unsupported_options(options, mfilename);
 
 % store everything in the state variable
@@ -23,4 +25,5 @@ else
 end
 state.u0 = [x0; v0];
 state.T = T;
-state.d = 0;
+state.d = d;
+state.solver = solver;
