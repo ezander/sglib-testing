@@ -16,9 +16,7 @@ function demo_mmse_for_spde(varargin)
 
 % Set up the parameters for integration order and expansion degrees
 p_phi = 3;
-p_int_mmse = 4;
-p_un = 4;
-p_int_proj = p_un+1;
+p_un = 3;
 
 % Load the SPDE surrogate models for U and KAPPA and construct evaluation
 % functions for them
@@ -37,7 +35,7 @@ M(1).gpc_polysys = 'H';
 % Construct a struct for the second measurement (measuring u at 0.8 giving a
 % value of u(0.2)=5+-0.5 (normally distributed);
 M(2).func = @(u)(u(50,:));
-M(2).dist = gendist_create('normal', {28, 10.3});
+M(2).dist = gendist_create('normal', {28, 0.3});
 M(2).gpc_polysys = 'H';
 
 % Construct a struct for the second measurement (measuring u at 0.8 giving a
@@ -63,6 +61,8 @@ eps_func = gpc_function(eps_j_gamma, V_eps);
 p_pn = p_un;
 
 
+p_int_proj = p_un+1;
+p_int_mmse = p_int_proj+1;
 [un_i_beta, V_un]=mmse_update_gpc(  u_i_alpha, y_func, V_u, ym, eps_func, V_eps, p_phi, p_int_mmse, p_pn, p_int_proj);
 
 
@@ -82,6 +82,8 @@ save_figure(mh(2), 'u_updated', 'figdir', jb_figdir);
 
 
 % Update the stochastic model for KAPPA using the measurements y_m
+p_int_proj = p_un+3;
+p_int_mmse = p_int_proj;
 [kn_i_beta, V_kn]=mmse_update_gpc(  k_i_alpha, y_func, V_u, ym, eps_func, V_eps, p_phi, p_int_mmse, p_pn, p_int_proj);
 
 % Plot the original and updated KAPPA
@@ -114,4 +116,5 @@ V_r = gpcbasis_create('H', 'I', I_r);
 
 function [u_i_alpha, I_u, k_i_alpha, I_k, pos, els] = load_complete_spde_solution() %#ok<STOUT>
 cache_script('sample_solve_spde');
-k_i_alpha = kl_to_pce(k_i_k, k_k_alpha);
+k_i_alpha = kl_to_pce(k_i_k, k_k_beta);
+I_k = I_u;

@@ -66,7 +66,7 @@ cov_f=get_base_param( 'cov_f', {cov_f_func,{lc_f,1}} );
 % values on the boundary)
 
 p_g=get_base_param( 'p_g', 1 );
-m_g=get_base_param( 'm_g', 0*2 );
+m_g=get_base_param( 'm_g', 2 );
 l_g=get_base_param( 'l_g', 2 );
 eps_g=get_base_param( 'eps_g', 0 );
 
@@ -109,6 +109,8 @@ F=kl_to_ctensor( f_i_k, f_k_beta );
 
 g_k_beta=compute_pce_rhs( g_k_alpha, I_g, I_RHS );
 G=kl_to_ctensor( g_i_k, g_k_beta );
+
+k_k_beta=compute_pce_rhs( k_k_alpha, I_k, I_RHS );
 
 
 %% load and create the stochastic operator

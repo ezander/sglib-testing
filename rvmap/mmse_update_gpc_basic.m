@@ -52,3 +52,9 @@ CXnXM = norm(gpc_covariance(Xn_i_alpha, V, XM_i_alpha), 'fro');
 if CXnXM>1e-10*CXn
     warning('sglib:mmse_update_gpc_basic', 'gpc update not orthogonal (%g>1e-10*%g)', CXnXM, CXn);
 end
+[~, X_var] = gpc_moments(X_i_alpha, V);
+[~, Xn_var]= gpc_moments(Xn_i_alpha, V);
+if any(X_var - Xn_var<-1e-10)
+    %keyboard
+    warning('sglib:mmse_update_gpc_basic', 'gpc no variance reduction');
+end
