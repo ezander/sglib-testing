@@ -13,7 +13,7 @@ R_uu = K(x,y);
 Rk_uu = r_i_k*diag(sigma_k.^2)*r_i_k';
 
 multiplot_init(3);
-set(0, 'defaulttextinterpreter', 'latex');
+set(gcf, 'defaulttextinterpreter', 'latex');
 
 multiplot;
 plot_3d(x,y,R_uu);
