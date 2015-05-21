@@ -24,10 +24,11 @@ C_g = cov(g');
 
 % Now compare C and C_g (the differenve should be within the MC error),
 % which is approximately norm(C)/sqrt(N)
-C
-C_g
-rel_err = norm(C_g-C)/norm(C)
-norm(C)/sqrt(N)
+strvarexpand('Exact cov matrix= $C$');
+strvarexpand('Sample cov matrix=$C_g$');
+strvarexpand('rel_err  = $norm(C_g-C)/norm(C)$');
+strvarexpand('expected = $norm(C)/sqrt(N)$');
+
 
 
 

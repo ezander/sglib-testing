@@ -7,7 +7,7 @@ L = chol(C, 'lower');
 
 % Generate QMC points
 N = 100000;
-xi = normal_invcdf(halton_sequence(N, 2)');
+xi = normal_samples(2, N, true);
 
 % Compute the points for correlated Gaussians
 % (and make sure that they have approx. the correct correlation structure)

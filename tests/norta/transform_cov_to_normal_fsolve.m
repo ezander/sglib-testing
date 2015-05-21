@@ -15,7 +15,7 @@ opts = optimset('Display', 'off');
 % Now solve (default for rho_N0 is rho_X, because often they are not very
 % far apart)
 rho_N0 = rho_X; 
-if exist('fsolve')
+if exist('fsolve') %#ok<EXIST>
     % fsolve if not builtin (it's in the optimisation toolbox) but faster
     [rho_N, ~, flag] = fsolve(func, rho_N0, opts);
 else

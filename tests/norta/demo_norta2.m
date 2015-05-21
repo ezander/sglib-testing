@@ -5,7 +5,7 @@ X2 = gendist_create('lognormal', {1, 0.4});
 rho_X = 0.2;
 
 % Generate independent samples
-xi_tilde = randn(2, N);
+xi_tilde = normal_samples(2, N, true);
 
 % Generate independend samples and plot
 multiplot_init(4, 4, 'ordering', 'row');
