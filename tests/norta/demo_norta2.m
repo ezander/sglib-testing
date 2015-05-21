@@ -1,5 +1,5 @@
 % Set up the distributions and number samples
-N=10000;
+N=20000;
 X1 = gendist_create('beta', {3, 2});
 X2 = gendist_create('lognormal', {1, 0.4});
 rho_X = 0.2;
@@ -8,10 +8,11 @@ rho_X = 0.2;
 xi_tilde = randn(2, N);
 
 % Generate independend samples and plot
-multiplot_init(4, 2, 'ordering', 'row');
+multiplot_init(4, 4, 'ordering', 'row');
 x1 = gendist_stdnor(xi_tilde(1,:), X1);
 x2 = gendist_stdnor(xi_tilde(2,:), X2);
-plot_correlations([x1;x2]);
+plot_correlations(xi_tilde, 1, 1);
+plot_correlations([x1;x2], 1, 3);
 
 
 % Now generate dependend samples with the NORTA method 
@@ -30,8 +31,10 @@ L = gaussian_transform_matrix(rho_N);
 xi = L * xi_tilde;
 x1 = gendist_stdnor(xi(1,:), X1);
 x2 = gendist_stdnor(xi(2,:), X2);
-plot_correlations([x1;x2]);
+plot_correlations(xi, 3, 1);
+plot_correlations([x1;x2], 3, 3);
 
 % Check the covariance
 C_X = cov(x1,x2);
 strvarexpand('Covariance should be $rho_X$ and is $C_X(1,2)$.');
+
