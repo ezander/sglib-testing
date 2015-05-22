@@ -11,17 +11,12 @@ end
 
 % turn of annoying output
 opts = optimset('Display', 'off');
+opts = optimset(opts, 'TolX', 1e-6);
 
-% Now solve (default for rho_N0 is rho_X, because often they are not very
-% far apart)
-rho_N0 = rho_X; 
-if exist('fsolve') %#ok<EXIST>
-    % fsolve if not builtin (it's in the optimisation toolbox) but faster
-    [rho_N, ~, flag] = fsolve(func, rho_N0, opts);
-else
-    % use the builtin function fzero only if fsolve is not available
-    [rho_N, ~, flag] = fzero(func, rho_N0, opts);
-end
+% Now solve (default for rho_N0 to the interval [0, 1] which should contain
+% the solution)
+rho_N0 = [0, 1];
+[rho_N, ~, flag] = fzero(func, rho_N0, opts);
 
 % If the solver did not converge, issue a warning (better error handling
 % would not be bad here)
