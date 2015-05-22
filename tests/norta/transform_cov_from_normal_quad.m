@@ -3,7 +3,7 @@ function rho_X = transform_cov_from_normal_quad(X1, X2, rho_N)
 
 % Compute Choleski decomposition of covariance matrix
 C = [1, rho_N; rho_N, 1];
-L = chol(C, 'lower');
+L = covariance_decomp(C, 'fillup', true);
 
 % Generate Gauss-Hermite integration points
 [xi1, w1] = gauss_hermite_rule(7);

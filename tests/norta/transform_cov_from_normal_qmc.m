@@ -3,11 +3,11 @@ function rho_X = transform_cov_from_normal_qmc(X1, X2, rho_N)
 
 % Compute Choleski decomposition of covariance matrix
 C = [1, rho_N; rho_N, 1];
-L = chol(C, 'lower');
+[L, n] = covariance_decomp(C);
 
 % Generate QMC points
 N = 100000;
-xi = normal_samples(2, N, true);
+xi = normal_samples(n, N, true);
 
 % Compute the points for correlated Gaussians
 % (and make sure that they have approx. the correct correlation structure)
