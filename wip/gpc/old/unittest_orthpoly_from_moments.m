@@ -19,7 +19,7 @@ function unittest_orthpoly_from_moments
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-assert_set_function( 'orthpoly_from_moments' );
+munit_set_function( 'orthpoly_from_moments' );
 
 
 expect=[

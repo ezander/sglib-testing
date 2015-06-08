@@ -19,6 +19,8 @@ function unittest_nonlinear_solve_picard
 
 munit_set_function( 'nonlinear_solve_picard' );
 
+munit_control_rand('seed' );
+
 % function to solve, find sqrt(p)
 f = @(state,x,p)(x^2-p);
 df = @(state,x,p)(2*x);
@@ -34,7 +36,6 @@ res = @(state,x,p)(state.b - f(state,x,p));
 
 % picard iterations are pretty sensitive so we need to set the random
 % matrix to a specific one
-rand('seed', 1234); 
 n = 5;
 L = rand(5);
 A = 200*L'*L;
