@@ -1,15 +1,9 @@
 %% Init stuff
 
-init_func = @electrical_network_init;
-solve_func = @electrical_network_solve;
-step_func = @electrical_network_picard_iter_step;
-
-init_func = @undamped_spring_init;
+init_func = @()(undamped_spring_init('T', 20, 'd', 0.2));
 solve_func = @undamped_spring_solve;
 step_func = @foobar; %@undamped_spring_solve;
 polysys = 'u';
-init_func = @()(undamped_spring_init('T', 20, 'd', 0.1));
-polysys = 'p';
 
 %% Monte Carlo
 
