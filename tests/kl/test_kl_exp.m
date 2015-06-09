@@ -24,5 +24,13 @@ dx=x(2)-x(1);
 [r_i_k, sigma_k]=kl_solve_1d_exp(x, 1, 0.3*DX, 7);
 plot(x,r_i_k(:,1:3 ))
 
-abs(r_i_k'*binfun(@times,[dx/2; repmat(dx,n-2,1); dx/2], r_i_k))
+clf
+II=abs(r_i_k'*binfun(@times,[dx/2; repmat(dx,n-2,1); dx/2], r_i_k))
+II = randn(20);
+II=exp(II*II');
+spy2(II, 'color_scale', 'log', 'face_color', 'orange')
+II = randn(20);
+II=II*II';
+spy2(II, 'color_scale', 'lin', 'face_color', 'orange')
+
 

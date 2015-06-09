@@ -51,7 +51,8 @@ raw_moments=funcall( raw_moments_func, 0:2*n );
 M=hankel( raw_moments(1:n+1), raw_moments(n+1:end) );
 
 % the following gets us the orthogonal polynomials as column vectors
-p=gram_schmidt( eye(n+1), M );
+% p=gram_schmidt( eye(n+1), M );
+p = inv(chol(M, 'upper'));
 
 % however, we need them as row vectors and in the braindead matlab right to
 % left ordering
