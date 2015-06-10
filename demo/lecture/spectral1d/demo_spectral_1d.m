@@ -9,8 +9,9 @@ hold all;
 n = 3;
 
 % Interpolation
-u = legendre_rule(n);
-V = legendre_eval(n, u);
+u = legendre_rule(n); % interpolation points
+% u = 2*rand(n,1)-1 % this would also do
+V = legendre_eval(n, u); % compute the Vandermonde matrix
 g = V' \ G(X(u));
 
 plot(ui, g' * legendre_eval(n, ui)); legend_add('interpolation');
@@ -35,31 +36,7 @@ g = Delta\rhs;
 
 plot(ui, 0.01+g' * legendre_eval(n, ui)); legend_add('Galerkin'); % shift a little bit because otherwise interpolation and Galerking coincide here
 
-
-
-
-function [x, w] = legendre_rule(n)
-% LEGENDRE_RULE Return nodes and weights for Gauss-Legendre quadrature
-[x, w] = polysys_int_rule('P', n)
-w=w';
-x=x';
-
-function y=legendre_eval(n, x)
-% LEGENDRE_EVAL Evaluate basis of size N of Legendre Polynomials
-V=gpcbasis_create('P', 'm', 1, 'p', n-1);
-y = gpcbasis_evaluate(V, x');
-
-function h=legendre_norm(n)
-% LEGENDRE_NORM Return norm Legendre Polynomials w.r.t. measure induced by U[-1,1]
-V=gpcbasis_create('P', 'm', 1, 'p', n-1);
-h = gpcbasis_norm(V);
-
-function Delta=legendre_triples(n, l)
-% LEGENDRE_TRIPLES Return triples E(P_iP_jP_k) for i,j<n and k<l
-V_Y=gpcbasis_create('P', 'm', 1, 'p', n-1);
-V_X=gpcbasis_create('P', 'm', 1, 'p', l-1);
-Delta = gpcbasis_triples(V_Y, V_Y, V_X);
-
+hold off
 
 function y=G(x)
 % G The original model 
