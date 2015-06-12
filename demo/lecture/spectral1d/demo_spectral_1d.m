@@ -26,8 +26,10 @@ plot(ui, g' * legendre_eval(n, ui)); legend_add('projection');
 plot(u, g' * legendre_eval(n, u), 'bx'); legend_add('integration points');
 
 % Galerkin-projection 
-L = 2;
-xi = [X(0); X(1)-X(0)]; % Poor man's version to get the coefficients of X expanded in the P_i (not good for general code)
+L = 4;
+[u, w] = legendre_rule(5);
+h = legendre_norm(L).^2;
+xi = legendre_eval(L, u) * diag(w) * X(u) ./ h;
 
 triples = legendre_triples(n, L); % triples is a tensor of order 3
 Delta = tensor_multiply(triples, xi, 3, 1); % contract tensor over dim 3 and 1 respectively, giving a matrix
