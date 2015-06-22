@@ -40,6 +40,9 @@ assert_equals(sin_eval(A_k, wp_k, x_i), func(x_i))
 
 
 func = @(x)(exp(-abs(x)));
+[A_k, wp_k, x_i] = myfft(func, -1, 1, 20);
+assert_equals(sin_eval(A_k, wp_k, x_i), func(x_i))
+
 [A_k, wp_k, x_i] = myfft(func, -1, 1, 20, 'symmetry', 'even');
 assert_equals(sin_eval(A_k, wp_k, x_i), func(x_i))
 

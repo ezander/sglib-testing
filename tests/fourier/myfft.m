@@ -40,31 +40,35 @@ l=b-a;
 x_i=linspace(a,b,N+1);
 x_i=x_i(1:end-1);
 c=fft(func(x_i));
-ar = real(c); ai = imag(c);
+ar = real(c)/N; 
+ai = imag(c)/N;
 
 A_k=[];
 w_k=[];
 p_k=[];
 
-% The cosine terms
 m=ceil(N/2);
+omega = 2*pi/l*(0:m)';
+omega_a = a*omega;
+
+% The cosine terms
 if even
     if mod(N,2)==0
-        A_k=[A_k; [ar(1) 2*ar(2:m) ar(m+1)]/N];
-        w_k=[w_k; 2*pi*(0:m)'/l];
-        p_k=[p_k; -2*pi*(0:m)'*a/l+pi/2];
+        A_k=[A_k,  ar(1), 2*ar(2:m), ar(m+1)];
+        w_k=[w_k;  omega];
+        p_k=[p_k; -omega_a+pi/2];
     else
-        A_k=[A_k; [ar(1) 2*ar(2:m)]/N];
-        w_k=[w_k; 2*pi*(0:m-1)'/l];
-        p_k=[p_k; -2*pi*(0:m-1)'*a/l+pi/2];
+        A_k=[A_k,  ar(1), 2*ar(2:m)];
+        w_k=[w_k;  omega(1:end-1)];
+        p_k=[p_k; -omega_a(1:end-1)+pi/2];
     end
 end
 
 % The sine terms
 if odd
-    A_k=[A_k, -2*ai(2:m)/N];
-    w_k=[w_k; 2*pi*(1:m-1)'/l];
-    p_k=[p_k; -2*pi*(1:m-1)'*a/l];
+    A_k=[A_k, -2*ai(2:m)];
+    w_k=[w_k; omega(2:end-1)];
+    p_k=[p_k; -omega_a(2:end-1)];
 end
 
 wp_k = [w_k,p_k];
