@@ -1,5 +1,24 @@
 function test_ft_rf
 
+% a=2; b=3.5;
+a=0; b=1.5;
+func = @(x)(exp(-abs(x)));
+[sigma_k, wp_k] = kd_fourier(func, [a, b], 15);
+
+
+xi = linspace(a,b,100);
+[x1,x2]=meshgrid(xi);
+C_ex=func(x1-x2);
+
+r_k = sin_basis_eval(wp_k, xi)
+u_k = diag(sigma_k) * r_k;
+C = u_k.'*u_k;
+
+surf(x1,x2,C_ex); hold all;
+surf(x1,x2,C); hold off;
+view(135,0)
+
+
 %%
 clf
 func = @(x)(exp(-abs(x)));
