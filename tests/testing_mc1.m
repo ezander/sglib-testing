@@ -7,7 +7,7 @@ N = 1000;
 xi = gpcgerm_sample(V, N);
 plot(xi(1,:), xi(2,:), 'x')
 
-n = state.num_vars;
+n = state.model_info.num_vars;
 u = zeros(n, N);
 for i=1:N
    p = xi(:, i);

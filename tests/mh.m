@@ -3,13 +3,11 @@ function mh
 
 N=10000;
 beta=1;
-x=6;
+x=1;
 X=[];
 for i=1:N
     xn=x+beta*(rand-0.5);
-    a1=exp(-xn^2)/exp(-x^2);
-    a2=1;
-    a=a1*a2;
+    a=exp(-xn^2)/exp(-x^2);
     if a>=1 || rand<a
         x=xn;
     end
