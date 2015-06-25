@@ -35,7 +35,8 @@ q_ex = 1./prod(I+1,2);
 % differ by no more than 1e-10
 ok = (abs(q-q_ex)<1e-10);
 plot_exactness(I(ok,:), I(~ok,:), pt);
-title(sprintf('%s (p=%d)', title_str, p));
+N = length(w);
+title(sprintf('%s (p=%d, N=%d)', title_str, p, N));
 
 function plot_exactness(I1, I2, pt)
 cla;
