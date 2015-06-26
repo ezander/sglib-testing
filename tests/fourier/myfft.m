@@ -39,7 +39,7 @@ end
 l=b-a;
 x_i=linspace(a,b,N+1);
 x_i=x_i(1:end-1);
-c=fft(func(x_i));
+c=fft(funcall(func, x_i));
 
 c=c.*exp(-2*pi*i*a/l*(0:N-1));
 a=0;
