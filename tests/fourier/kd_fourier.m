@@ -1,4 +1,4 @@
-function [sigma_k, wp_k]=kd_fourier(func, I, K, varargin)
+function [sigma_k, wp_k]=kd_fourier(func, pos, varargin)
 % KD_FOURIER Short description of kd_fourier.
 %   KD_FOURIER(VARARGIN) Long description of kd_fourier.
 %
@@ -18,11 +18,19 @@ function [sigma_k, wp_k]=kd_fourier(func, I, K, varargin)
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
 options=varargin2options(varargin, mfilename);
+[K,options]=get_option(options, 'max_funcs', 50);
 [is_spectral,options]=get_option(options, 'is_spectral', false);
 [autoenlarge,options]=get_option(options, 'autoenlarge', true);
 check_unsupported_options(options);
 
-L=I(:,2)-I(:,1);
+d = size(pos,1);
+if size(pos,2)==1
+    L = pos;
+    pos = [];
+else
+    L = max(pos, [], 2) - min(pos, [], 2);
+end
+    
 
 while true
     if is_spectral
@@ -43,6 +51,10 @@ s_k=reshape(s_k,[],1);
 sigma_k=[s_k(1); s_k(2:end); s_k(2:end)];
 wp_k = [wp_k; wp_k(2:end,1), zeros(K,1)];
 
+if ~isempty(pos)
+    r_k = sin_basis_eval(wp_k, pos);
+    u_k = binfun(@times, sigma_k, r_k);
+end
 
 function [S_k, wp_k] = power_spectrum_by_fft(func, L, K)
 M=2*K+1;
