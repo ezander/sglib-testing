@@ -1,18 +1,18 @@
 clf
 
 a=2; b=3.5;
-%K=67;
-%func = @(x)(exp(-abs(x/2)));
-%func = @(x)(exp(-abs(x/1)));
 l_c = 0.2;
-%l_c = 1.5;
-cov_func = @(x)(exp(-abs(x/l_c).^2));
-pow_func = @(w)(l_c*sqrt(pi)*exp(-abs(pi*w*l_c).^2));
 
-cov_func = @(x)(exp(-abs(x/l_c)));
-pow_func = @(w)(2*l_c./(1+(2*pi*w*l_c).^2));
+cov_func = @(x)(gaussian_covariance(x,[],l_c));
+pow_func = @(w)(gaussian_spectral_density(w,l_c,[]));
 
 
+nu = 0.1;
+cov_func = @(x)(matern_covariance(nu, x,[],l_c));
+pow_func = @(w)(matern_spectral_density(nu, w,l_c,[]));
+
+cov_func = @(x)(exponential_covariance(x,[],l_c));
+pow_func = @(w)(exponential_spectral_density(w,l_c,[]));
 
 enlarge=true;
 [sigma_k, wp_k] = kd_fourier(cov_func, [b-a], 'autoenlarge', enlarge);
