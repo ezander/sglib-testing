@@ -20,7 +20,7 @@ enlarge=true;
 
 xi = linspace(a,b,100);
 [x1,x2]=meshgrid(xi);
-C_ex=cov_func(x1-x2);
+C_ex=reshape(cov_func(x1(:)'-x2(:)'), size(x1));
 
 u_k = trig_basis_eval(sigma_k, wp_k, xi);
 C = u_k.'*u_k;

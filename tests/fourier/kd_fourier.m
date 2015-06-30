@@ -63,6 +63,6 @@ M=2*K+1;
 
 function [S_k, wp_k] = power_spectrum_by_density(func, L, K)
 w = (0:K)'/(2*L);
-S_k = funcall(func, w) / (2*L);
+S_k = funcall(func, w')' / (2*L);
 S_k(2:end) = 2*S_k(2:end);
 wp_k = [2*pi*w, repmat(pi/2, size(w))];
