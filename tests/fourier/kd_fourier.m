@@ -52,13 +52,13 @@ sigma_k=[s_k(1); s_k(2:end); s_k(2:end)];
 wp_k = [wp_k; wp_k(2:end,1), zeros(K,1)];
 
 if ~isempty(pos)
-    r_k = sin_basis_eval(wp_k, pos);
+    r_k = trig_basis_eval(wp_k, pos);
     u_k = binfun(@times, sigma_k, r_k);
 end
 
 function [S_k, wp_k] = power_spectrum_by_fft(func, L, K)
 M=2*K+1;
-[S_k, wp_k] = myfft(func, -L(1), L(1), M, 'symmetry', 'even');
+[S_k, wp_k] = fourier_series_expand(func, -L(1), L(1), M, 'symmetry', 'even');
 
 
 function [S_k, wp_k] = power_spectrum_by_density(func, L, K)

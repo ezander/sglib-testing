@@ -3,15 +3,14 @@ function test_ft_rf
 % a=2; b=3.5;
 a=0; b=1.5;
 func = @(x)(exp(-abs(x)));
-[sigma_k, wp_k] = kd_fourier(func, [a, b], 15);
+[sigma_k, wp_k] = kd_fourier(func, [b-a], 'max_funcs', 15);
 
 
 xi = linspace(a,b,100);
 [x1,x2]=meshgrid(xi);
 C_ex=func(x1-x2);
 
-r_k = sin_basis_eval(wp_k, xi)
-u_k = diag(sigma_k) * r_k;
+u_k = trig_basis_eval(sigma_k, wp_k, xi)
 C = u_k.'*u_k;
 
 surf(x1,x2,C_ex); hold all;
@@ -23,13 +22,13 @@ view(135,0)
 clf
 func = @(x)(exp(-abs(x)));
 func = @(x)(exp(-(x/0.2).^2));
-[A_k0, wp_k, x_i] = myfft(func, -1, 1, 35, 'symmetry', 'even');
-%assert_equals(sin_eval(A_k, wp_k, x_i), func(x_i))
+[A_k0, wp_k, x_i] = fourier_series_expand(func, -1, 1, 35, 'symmetry', 'even');
+%assert_equals(trig_eval(A_k, wp_k, x_i), func(x_i))
 
 xi = linspace(0,1,100);
 [x1,x2]=meshgrid(xi);
 C_ex=func(x1-x2);
-C = reshape(sin_eval(A_k0, wp_k, x1(:)'-x2(:)')',size(x1));
+C = reshape(trig_eval(A_k0, wp_k, x1(:)'-x2(:)')',size(x1));
 %C_ex=C;
 surf(x1,x2,C_ex); hold all;
 surf(x1,x2,C); hold off;
@@ -39,8 +38,8 @@ view(135,0)
 %%
 hold on;
 M = 35;
-[~, wp_k] = myfft(func, 0, 2, M);
-r_k = sin_basis_eval(wp_k, xi)
+[~, wp_k] = fourier_series_expand(func, 0, 2, M);
+r_k = trig_basis_eval([], wp_k, xi)
 %r_k = binfun(@minus, r_k, mean(r_k,2));
 M2=floor(M/2);
 k=(1:M2)';
@@ -76,12 +75,13 @@ view(135, 0)
 
 %%
 clf
+warning('off', 'MATLAB:interp1:ppGriddedInterpolant')
 
 rand_seed(101);
 M = 10;
 xx = linspace(0,1,M+1); %xx=xx(1:end-1);
 yy = randn(M,1); yy(end+1)=yy(1);
-pp = interp1(xx,yy,'cubic', 'pp');
+pp = interp1(xx,yy,'pchip', 'pp');
 func=@(x)(ppval(pp,x));
 
 clf
@@ -90,9 +90,9 @@ plot(x,func(x))
 
 hold all;
 
-[A_k, wp_k, x_i] = myfft(func, 0, 1, 1);
-%plot(x_i, func(x_i), x_i, sin_eval(A_k, wp_k, x_i))
-plot(x,sin_eval(A_k, wp_k, x))
+[A_k, wp_k, x_i] = fourier_series_expand(func, 0, 1, 10);
+%plot(x_i, func(x_i), x_i, trig_eval(A_k, wp_k, x_i))
+plot(x,trig_eval(A_k, wp_k, x))
 plot(xx,yy,'xg')
 
 

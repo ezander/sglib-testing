@@ -1,19 +1,13 @@
-function [A_k, wp_k, x_i] = myfft(func, a, b, N, varargin)
-% MYFFT Short description of myfft.
-%   MYFFT(VARARGIN) Long description of myfft.
+function [A_k, wp_k, x_i] = fourier_series_expand(func, a, b, N, varargin)
+% FOURIER_SERIES_EXPAND Short description of fourier_series_expand.
+%   [A_K, WP_K, X_I] = FOURIER_SERIES_EXPAND(FUNC, A, B, N, VARARGIN) Long description of fourier_series_expand.
 %
-% Options
-%
-% References
-%
-% Notes
-%
-% Example (<a href="matlab:run_example myfft">run</a>)
+% Example (<a href="matlab:run_example fourier_series_expand">run</a>)
 %
 % See also
 
 %   Elmar Zander
-%   Copyright 2015, Inst. of Scientific Computing, TU Braunschweig
+%   Copyright 2015, Inst. of Scientific Computing
 %
 %   This program is free software: you can redistribute it and/or modify it
 %   under the terms of the GNU General Public License as published by the

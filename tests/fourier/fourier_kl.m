@@ -70,11 +70,11 @@ A_k=[A_k, -2*ai(2:m)/N];
 w_k=[w_k; 2*pi*(1:m-1)'/(2*s)];
 p_k=[p_k; 2*pi*(1:m-1)'*(-s)/(2*s)];
 
-b2 = sin_eval(A_k, [w_k, p_k], x)
+b2 = trig_eval(A_k, [w_k, p_k], x)
 b2-b1
 
-[A_k, wp_k, x_i]=myfft(func, -s, s, N);
-b3 = sin_eval(A_k, [w_k, p_k], x)
+[A_k, wp_k, x_i]=fourier_series_expand(func, -s, s, N);
+b3 = trig_eval(A_k, wp_k, x)
 b3-b1
 
 

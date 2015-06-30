@@ -1,7 +1,7 @@
 clf
 
 a=2; b=3.5;
-K=67;
+%K=67;
 %func = @(x)(exp(-abs(x/2)));
 %func = @(x)(exp(-abs(x/1)));
 l_c = 0.2;
@@ -15,15 +15,14 @@ pow_func = @(w)(2*l_c./(1+(2*pi*w*l_c).^2));
 
 
 enlarge=true;
-[sigma_k, wp_k] = kd_fourier(cov_func, [b-a], K, 'autoenlarge', enlarge);
-[sigma_k, wp_k] = kd_fourier(pow_func, [b-a], K, 'is_spectral', true, 'autoenlarge', enlarge);
+[sigma_k, wp_k] = kd_fourier(cov_func, [b-a], 'autoenlarge', enlarge);
+[sigma_k, wp_k] = kd_fourier(pow_func, [b-a], 'is_spectral', true, 'autoenlarge', enlarge);
 
 xi = linspace(a,b,100);
 [x1,x2]=meshgrid(xi);
 C_ex=cov_func(x1-x2);
 
-r_k = sin_basis_eval(wp_k, xi);
-u_k = binfun(@times, sigma_k, r_k);
+u_k = trig_basis_eval(sigma_k, wp_k, xi);
 C = u_k.'*u_k;
 
 multiplot_init(2,2);
