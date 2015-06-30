@@ -51,6 +51,11 @@ s_k=real(sqrt(S_k));
 s_k=reshape(s_k,[],1);
 [s_k, wp_k] = sort_spectrum(s_k, wp_k);
 [s_k, wp_k] = limit_spectrum(s_k, wp_k, ratio);
+K0 = K/2^d;
+if length(s_k)>K0
+    s_k = s_k(1:K0);
+    wp_k = wp_k(1:K0,:);
+end
 [sigma_k, wp_k] = add_sines(s_k, wp_k, d);
 
 if ~isempty(pos)
@@ -58,7 +63,7 @@ if ~isempty(pos)
 end
 
 function [s_k, wp_k] = sort_spectrum(s_k, wp_k)
-[s_k(2:end), ind] = sort(s_k(2:end));
+[s_k(2:end), ind] = sort(s_k(2:end), 'descend');
 wp_k(2:end,:) = wp_k(ind+1,:);
 
 function [s_k, wp_k] = limit_spectrum(s_k, wp_k, ratio)
@@ -73,10 +78,12 @@ end
 
 function [s_k, wp_k] = add_sines(s_k, wp_k, d)
 for i=1:d
-    s_k=[s_k(1); s_k(2:end); s_k(2:end)];
     wp_k_s = wp_k(2:end,:);
     wp_k_s(:,2*i)=0;
-    wp_k = [wp_k; wp_k_s];
+    ind=wp_k_s(:,2*i-1)~=0;
+
+    s_k = [s_k; s_k([false; ind])];
+    wp_k = [wp_k; wp_k_s(ind,:)];
 end
 
 
@@ -96,6 +103,17 @@ for i = 1:d
     w_i{i} = (0:K_i)/(2*L(i));
 end
 w = tensor_mesh(w_i, w_i);
+
+
+K_i=20*K_i;
+
+w_i = (0:K_i)/(2*L(i));
+I=multiindex(d,K_i)+1;
+
+ind = prod(I,2)<=K_i;
+I = I(ind,:);
+w = w_i(I)';
+assert(size(I,1)<10000);
 
 S_k = funcall(func, w, d)' / prod(2*L);
 S_k(2:end) = 2^d * S_k(2:end);

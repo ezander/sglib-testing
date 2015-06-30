@@ -4,15 +4,15 @@ a=2; b=3.5;
 l_c = 0.2;
 
 cov_func = @(x)(gaussian_covariance(x,[],l_c));
-pow_func = @(w)(gaussian_spectral_density(w,l_c,[]));
+pow_func = @(w,d)(gaussian_spectral_density(w,l_c,d));
 
 
 nu = 0.1;
 cov_func = @(x)(matern_covariance(nu, x,[],l_c));
-pow_func = @(w)(matern_spectral_density(nu, w,l_c,[]));
+pow_func = @(w,d)(matern_spectral_density(nu, w,l_c,d));
 
 cov_func = @(x)(exponential_covariance(x,[],l_c));
-pow_func = @(w)(exponential_spectral_density(w,l_c,[]));
+pow_func = @(w,d)(exponential_spectral_density(w,l_c,d));
 
 enlarge=true;
 options = {'autoenlarge', enlarge, 'max_funcs', 300, 'ratio', 0.99};
