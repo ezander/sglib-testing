@@ -51,7 +51,7 @@ s_k=real(sqrt(S_k));
 s_k=reshape(s_k,[],1);
 [s_k, wp_k] = sort_spectrum(s_k, wp_k);
 [s_k, wp_k] = limit_spectrum(s_k, wp_k, ratio);
-K0 = K/2^d;
+K0 = floor((K-1)/2^d)+1;
 if length(s_k)>K0
     s_k = s_k(1:K0);
     wp_k = wp_k(1:K0,:);
@@ -95,46 +95,37 @@ end
 assert(d==1, 'd>1 does not work yet');
 [S_k, wp_k] = fourier_series_expand(func, -L, L, M, 'symmetry', 'even');
 
+function [S_k, wp_k] = power_spectrum_by_fft(func, L, K, d)
+M=2*K+1;
+if length(L)==1 && d>1
+    L = L * ones(d,1);
+end
+assert(d==1, 'd>1 does not work yet');
+[S_k, wp_k] = fourier_series_expand(func, -L, L, M, 'symmetry', 'even');
+
 
 function [S_k, wp_k] = power_spectrum_by_density(func, L, K, d)
-K_i = ceil(K ^ (1/d));
-w_i = {};
-for i = 1:d
-    w_i{i} = (0:K_i)/(2*L(i));
-end
-w = tensor_mesh(w_i, w_i);
-
-
-K_i=20*K_i;
-
-w_i = (0:K_i)/(2*L(i));
-I=multiindex(d,K_i)+1;
-
-ind = prod(I,2)<=K_i;
+% Hypersphere: V = pi^(d/2) r^d / gamma(d/2+1)
+% Radius:      r = (V * gamma(d/2+1))^(1/d) / sqrt(pi)
+% K_i = r, V = K * 2^d
+K_i = ceil( 2 * (K * gamma(d/2+1)) ^ (1/d) / sqrt(pi) - 1e-10);
+I=multiindex(d,K_i,'full', true);
+ind = sum(I.^2,2)<=K_i^2;
 I = I(ind,:);
-w = w_i(I)';
+w0 = 1./(2*L);
+w = binfun(@times, I', w0);
 assert(size(I,1)<10000);
 
-S_k = funcall(func, w, d)' / prod(2*L);
+S_k = funcall(func, w, d)' * prod(w0);
+
+if d>=1
+    r2 = sum(w.^2, 1);
+    S_k = S_k .* (nball_surface(d, sqrt(r2))/2^d)';
+    %( (2*pi)^(n/2) / gamma(n/2) * r2 .^ (n/2));
+end
+
+
 S_k(2:end) = 2^d * S_k(2:end);
 wp_k = [2*pi*w', repmat(pi/2, size(w'))];
 wp_k = [wp_k(:, 1:2:end), wp_k(:,2:2:end)];
-
-function tensorize(s_k, wp_k, d)
-K_i = ceil(K0 ^ (1/d));
-S_k = ones(1);
-wp_k = zeros(1,0);
-K = 1;
-for i = 1:d
-    w = (0:K_i)'/(2*L(i));
-    S_k_i = funcall(func, w', d)' / (2*L(i));
-    S_k_i(2:end) = 2*S_k_i(2:end);
-    wp_k_i = [2*pi*w, repmat(pi/2, size(w))];
-
-    I1 = repmat((1:K)', K_i, 1);
-    I2 = repmat((1:K_i), 1, K);
-    S_k = S_k(I1) .* S_k_i(I2);
-    wp_k = [wp_k(I1,:), wp_k_i(I2,:)];
-    K = K_i * K;
-end
 

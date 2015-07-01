@@ -15,7 +15,7 @@ cov_func = @(x)(exponential_covariance(x,[],l_c));
 pow_func = @(w,d)(exponential_spectral_density(w,l_c,d));
 
 enlarge=true;
-options = {'autoenlarge', enlarge, 'max_funcs', 300, 'ratio', 0.99};
+options = {'autoenlarge', enlarge, 'max_funcs', 50, 'ratio', 0.9};
 [sigma_k, wp_k] = kd_fourier(cov_func, [b-a], options);
 [sigma_k, wp_k] = kd_fourier(pow_func, [b-a], 'is_spectral', true, options{:});
 
