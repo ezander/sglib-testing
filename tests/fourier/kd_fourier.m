@@ -95,14 +95,6 @@ end
 assert(d==1, 'd>1 does not work yet');
 [S_k, wp_k] = fourier_series_expand(func, -L, L, M, 'symmetry', 'even');
 
-function [S_k, wp_k] = power_spectrum_by_fft(func, L, K, d)
-M=2*K+1;
-if length(L)==1 && d>1
-    L = L * ones(d,1);
-end
-assert(d==1, 'd>1 does not work yet');
-[S_k, wp_k] = fourier_series_expand(func, -L, L, M, 'symmetry', 'even');
-
 
 function [S_k, wp_k] = power_spectrum_by_density(func, L, K, d)
 % Hypersphere: V = pi^(d/2) r^d / gamma(d/2+1)
@@ -118,7 +110,7 @@ assert(size(I,1)<10000);
 
 S_k = funcall(func, w, d)' * prod(w0);
 
-if d>=1
+if d>=100
     r2 = sum(w.^2, 1);
     S_k = S_k .* (nball_surface(d, sqrt(r2))/2^d)';
     %( (2*pi)^(n/2) / gamma(n/2) * r2 .^ (n/2));

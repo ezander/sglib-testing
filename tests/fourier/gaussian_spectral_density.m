@@ -22,4 +22,4 @@ if nargin<3 || isempty(d)
 end
 
 r2 = sum(xi.^2, 1);
-S = (l_c^2*pi)^(d/2) * exp(-pi^2 * r2 * l_c^2);
+S = (l_c^2*pi)^(d/2) * exp(-pi^2  * l_c^2 * r2);
