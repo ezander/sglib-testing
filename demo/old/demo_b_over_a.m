@@ -26,7 +26,7 @@ x_func=funcreate(@div_func, @funarg, b_func, a_func);
 
 disp( 'show the pdf''s of the three random vars' );
 p=5;
-gam=randn_sorted(10000);
+gam=randn_sorted(10000)';
 subplot(1,1,1);
 kernel_density( funcall( a_func, gam ), [], [], 'b' ); hold on;
 kernel_density( funcall( b_func, gam ), [], [], 'g' );

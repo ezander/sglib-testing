@@ -9,7 +9,7 @@ N=10000;
 h={@exp};
 [pcc,pci]=pce_expand_1d(h,7);
 poc=pcc*hermite(7,true);
-nor=randn(N,1);
+nor=randn(1,N);
 lognor_pc=polyval(poc,nor);
 lognor_ex=funcall(h,nor);
 
