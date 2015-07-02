@@ -2,9 +2,13 @@ function S=nball_surface(n, r)
 % NBALL_SURFACE Short description of nball_surface.
 %   NBALL_SURFACE(VARARGIN) Long description of nball_surface.
 %
+% References
+%   [1] https://en.wikipedia.org/wiki/Ball_(mathematics) 
+%   [2] https://en.wikipedia.org/wiki/Volume_of_an_n-ball
+%
 % Example (<a href="matlab:run_example nball_surface">run</a>)
 %
-% See also
+% See also NBALL_VOLUME, NBALL_RADIUS
 
 %   Elmar Zander
 %   Copyright 2015, Inst. of Scientific Computing

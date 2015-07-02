@@ -40,7 +40,7 @@ while true
         [S_k, wp_k] = power_spectrum_by_fft(func, L, K, d);
     end
     if autoenlarge && sum(S_k)-1>1e-7
-        L(1) = L(1) * 1.5;
+        L = L * 2;
         strvarexpand('Enlarging to $L(1)$');
     else
         break
@@ -63,7 +63,12 @@ if ~isempty(pos)
 end
 
 function [s_k, wp_k] = sort_spectrum(s_k, wp_k)
-[s_k(2:end), ind] = sort(s_k(2:end), 'descend');
+multiplicity = 2.^sum(wp_k(:, 1:2:end)~=0,2);
+S_k = s_k.^2 ./ multiplicity;
+[~, ind]=sort(S_k(2:end), 'descend');
+s_k(2:end) = s_k(ind+1);
+
+%[s_k(2:end), ind] = sort(s_k(2:end), 'descend');
 wp_k(2:end,:) = wp_k(ind+1,:);
 
 function [s_k, wp_k] = limit_spectrum(s_k, wp_k, ratio)
@@ -110,14 +115,9 @@ assert(size(I,1)<10000);
 
 S_k = funcall(func, w, d)' * prod(w0);
 
-if d>=100
-    r2 = sum(w.^2, 1);
-    S_k = S_k .* (nball_surface(d, sqrt(r2))/2^d)';
-    %( (2*pi)^(n/2) / gamma(n/2) * r2 .^ (n/2));
-end
-
-
-S_k(2:end) = 2^d * S_k(2:end);
+multiplicity = 2.^sum(w~=0,1)';
+S_k = multiplicity .* S_k;
+%S_k(2:end) = 2^d * S_k(2:end);
 wp_k = [2*pi*w', repmat(pi/2, size(w'))];
 wp_k = [wp_k(:, 1:2:end), wp_k(:,2:2:end)];
 

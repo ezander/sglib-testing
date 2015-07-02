@@ -1,11 +1,12 @@
 clf
 
 a=2; b=3.5;
-l_c = 0.2;
+l_c = 0.1;
 
 nu = 0.1;
 cov_func = @(x)(matern_covariance(nu, x,[],l_c));
 pow_func = @(w,d)(matern_spectral_density(nu, w,l_c,d));
+
 
 cov_func = @(x)(exponential_covariance(x,[],l_c));
 pow_func = @(w,d)(exponential_spectral_density(w,l_c,d));
@@ -15,9 +16,9 @@ pow_func = @(w,d)(gaussian_spectral_density(w,l_c,d));
 
 
 enlarge=true;
-options = {'autoenlarge', enlarge, 'max_funcs', 50, 'ratio', 0.99};
+options = {'autoenlarge', enlarge, 'max_funcs', 500, 'ratio', 0.99};
 [sigma_k, wp_k] = kd_fourier(cov_func, [b-a], options);
-[sigma_k2, wp_k2] = kd_fourier(pow_func, [b-a], 'is_spectral', true, options{:});
+[sigma_k, wp_k] = kd_fourier(pow_func, [b-a], 'is_spectral', true, options{:});
 
 xi = linspace(a,b,100);
 [x1,x2]=meshgrid(xi);

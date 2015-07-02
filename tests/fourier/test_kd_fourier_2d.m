@@ -1,7 +1,12 @@
 %%
 clf
 
+l_c = 0.2;
 
+nu = 0.5;
+nu = 2.0;
+cov_func = @(x)(matern_covariance(nu, x,[],l_c));
+pow_func = @(w, d)(matern_spectral_density(nu, w, l_c, d));
 
 cov_func = @(x)(gaussian_covariance(x,[],l_c));
 pow_func = @(w,d)(gaussian_spectral_density(w,l_c,d));
@@ -9,18 +14,11 @@ pow_func = @(w,d)(gaussian_spectral_density(w,l_c,d));
 cov_func = @(x)(exponential_covariance(x,[],l_c));
 pow_func = @(w,d)(exponential_spectral_density(w,l_c,d));
 
-
-nu = 0.5;
-%nu = 2.0;
-cov_func = @(x)(matern_covariance(nu, x,[],l_c));
-pow_func = @(w, d)(matern_spectral_density(nu, w, l_c, d));
-
-
 [pos,els]=load_pdetool_geom( 'lshape', 'numrefine', 3 );
 
 
 enlarge=true;
-options = {'autoenlarge', enlarge, 'max_funcs', 2500, 'ratio', 0.81};
+options = {'autoenlarge', enlarge, 'max_funcs', 2700, 'ratio', 0.99};
 %[sigma_k, wp_k] = kd_fourier(cov_func, pos, options);
 [sigma_k, wp_k, u_k] = kd_fourier(pow_func, pos, 'is_spectral', true, options{:});
 
@@ -40,7 +38,7 @@ legend_add('exact');
 for alpha = linspace(0, pi/2, 5)
     y = [cos(alpha); sin(alpha)] * w;
     u_y = trig_basis_eval(sigma_k, wp_k, y);
-    plot(w, u_y' * u_x + alpha*0.03);
+    plot(w, u_y' * u_x + 0*alpha*0.03);
     legend_add(alpha);
 end
 hold off;

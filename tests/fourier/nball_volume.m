@@ -2,9 +2,13 @@ function V=nball_volume(n, r)
 % NBALL_VOLUME Short description of nball_volume.
 %   NBALL_VOLUME(VARARGIN) Long description of nball_volume.
 %
+% References
+%   [1] https://en.wikipedia.org/wiki/Ball_(mathematics) 
+%   [2] https://en.wikipedia.org/wiki/Volume_of_an_n-ball
+%
 % Example (<a href="matlab:run_example nball_volume">run</a>)
 %
-% See also
+% See also NBALL_SURFACE, NBALL_RADIUS
 
 %   Elmar Zander
 %   Copyright 2015, Inst. of Scientific Computing
