@@ -1,4 +1,4 @@
-function [sigma_k, wp_k, r_k]=kd_fourier(func, pos, varargin)
+function [TB, r_k]=kd_fourier(func, pos, varargin)
 % KD_FOURIER Short description of kd_fourier.
 %   KD_FOURIER(VARARGIN) Long description of kd_fourier.
 %
@@ -35,9 +35,9 @@ end
 
 while true
     if is_spectral
-        [S_k, wp_k] = power_spectrum_by_density(func, L, K, d);
+        [S_k, TP] = power_spectrum_by_density(func, L, K, d);
     else
-        [S_k, wp_k] = power_spectrum_by_fft(func, L, K, d);
+        [S_k, TP] = power_spectrum_by_fft(func, L, K, d);
     end
     if autoenlarge && sum(S_k)-1>1e-7
         L = L * 2;
@@ -47,55 +47,66 @@ while true
     end
 end
 
-s_k=real(sqrt(S_k));
+w_k = TP{1};
+p_k = TP{2};
+[S_k, w_k, p_k] = sort_spectrum(S_k, w_k, p_k);
+[S_k, w_k, p_k] = limit_spectrum(S_k, w_k, p_k, ratio);
+assert(all(S_k)>0);
+
+s_k=sqrt(S_k);
 s_k=reshape(s_k,[],1);
-[s_k, wp_k] = sort_spectrum(s_k, wp_k);
-[s_k, wp_k] = limit_spectrum(s_k, wp_k, ratio);
+% Limit the number of functions
 K0 = floor((K-1)/2^d)+1;
 if length(s_k)>K0
     s_k = s_k(1:K0);
-    wp_k = wp_k(1:K0,:);
+    w_k = w_k(1:K0,:);
+    p_k = p_k(1:K0,:);
 end
-[sigma_k, wp_k] = add_sines(s_k, wp_k, d);
+
+[s_k, w_k, p_k] = add_sines(s_k, w_k, p_k, d);
+TB = {w_k, p_k, s_k};
 
 if ~isempty(pos)
-    r_k = trig_basis_eval(sigma_k, wp_k, pos);
+    r_k = trig_basis_eval(TB, pos);
 end
 
-function [s_k, wp_k] = sort_spectrum(s_k, wp_k)
-multiplicity = 2.^sum(wp_k(:, 1:2:end)~=0,2);
-S_k = s_k.^2 ./ multiplicity;
-[~, ind]=sort(S_k(2:end), 'descend');
-s_k(2:end) = s_k(ind+1);
 
-%[s_k(2:end), ind] = sort(s_k(2:end), 'descend');
-wp_k(2:end,:) = wp_k(ind+1,:);
+function [S_k, w_k, p_k] = sort_spectrum(S_k, w_k, p_k)
+% SORT_SPECTRUM Sort the spectral density in descending order
+multiplicity = 2.^sum(w_k~=0,2);
+Sn_k = S_k.^2 ./ multiplicity';
+[~, ind]=sort(Sn_k(2:end), 'descend');
+ind = [1; ind+1];
 
-function [s_k, TP] = limit_spectrum(s_k, TP, ratio)
-r = cumsum(s_k.^2);
+S_k = S_k(ind);
+w_k = w_k(ind,:);
+p_k = p_k(ind,:);
+
+
+function [S_k, w_k, p_k] = limit_spectrum(S_k, w_k, p_k, ratio)
+% LIMIT_SPECTRUM Limit the number of functions such that RATIO percent of
+% the spectrum is covered.
+r = cumsum(S_k);
 max_ind = find(r>=ratio, 1, 'first');
 if isempty(max_ind)
     warning('sglib:kd_fourier', 'Not enough basis functions for given ratio. Increase max_funcs option');
-else
-    s_k = s_k(1:max_ind);
-    TP{1} = TP{1}(1:max_ind,:);
-    TP{2} = TP{2}(1:max_ind,:);
+    max_ind = sum(S_k>0);
 end
+S_k = S_k(1:max_ind);
+w_k = w_k(1:max_ind,:);
+p_k = p_k(1:max_ind,:);
 
-function [s_k, TP] = add_sines(s_k, TP, d)
-w_k = TP{1};
-p_k = TP{2};
+function [s_k, w_k, p_k] = add_sines(s_k, w_k,p_k, d)
 for i=1:d
     ind=w_k(:,i)~=0;
 
     p_k_s = p_k;
     p_k_s(:,i)=0;
 
-    s_k = [s_k; s_k(ind)];
-    w_k = [w_k; w_k(ind,:)];
-    p_k = [p_k; p_k_s(ind,:)];
+    s_k = [s_k; s_k(ind)];     %#ok<AGROW>
+    w_k = [w_k; w_k(ind,:)];   %#ok<AGROW>
+    p_k = [p_k; p_k_s(ind,:)]; %#ok<AGROW>
 end
-TP = {w_k, p_k};
 
 function [S_k, TP] = power_spectrum_by_fft(func, L, K, d)
 M=2*K+1;
