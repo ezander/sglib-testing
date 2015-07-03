@@ -1,4 +1,4 @@
-function [A_k, wp_k, x_i] = fourier_series_expand(func, a, b, N, varargin)
+function [A_k, TB, x_i] = fourier_series_expand(func, a, b, N, varargin)
 % FOURIER_SERIES_EXPAND Short description of fourier_series_expand.
 %   [A_K, WP_K, X_I] = FOURIER_SERIES_EXPAND(FUNC, A, B, N, VARARGIN) Long description of fourier_series_expand.
 %
@@ -35,8 +35,7 @@ x_i=linspace(a,b,N+1);
 x_i=x_i(1:end-1);
 c=fft(funcall(func, x_i));
 
-c=c.*exp(-2*pi*i*a/l*(0:N-1));
-a=0;
+c=c.*exp(-2*pi*1i*a/l*(0:N-1));
 
 ar = real(c)/N; 
 ai = imag(c)/N;
@@ -46,19 +45,18 @@ w_k=[];
 p_k=[];
 
 m=ceil(N/2);
-omega = 2*pi/l*(0:m)';
-omega_a = a*omega;
+omega = 1/l*(0:m)';
 
 % The cosine terms
 if even
     if mod(N,2)==0
-        A_k=[A_k,  ar(1), 2*ar(2:m), ar(m+1)];
-        w_k=[w_k;  omega];
-        p_k=[p_k; -omega_a+pi/2];
+        A_k=[A_k, ar(1), 2*ar(2:m), ar(m+1)];
+        w_k=[w_k; omega];
+        p_k=[p_k; repmat(1/4, m+1, 1)];
     else
-        A_k=[A_k,  ar(1), 2*ar(2:m)];
-        w_k=[w_k;  omega(1:end-1)];
-        p_k=[p_k; -omega_a(1:end-1)+pi/2];
+        A_k=[A_k, ar(1), 2*ar(2:m)];
+        w_k=[w_k; omega(1:m)];
+        p_k=[p_k; repmat(1/4, m, 1)];
     end
 end
 
@@ -66,7 +64,7 @@ end
 if odd
     A_k=[A_k, -2*ai(2:m)];
     w_k=[w_k; omega(2:end-1)];
-    p_k=[p_k; -omega_a(2:end-1)];
+    p_k=[p_k; zeros(m-1, 1)];
 end
 
-wp_k = [w_k,p_k];
+TB = {w_k, p_k};

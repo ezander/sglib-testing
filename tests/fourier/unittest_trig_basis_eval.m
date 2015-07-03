@@ -36,3 +36,6 @@ assert_equals(y_k_i, y_k_i_ex, 'eval');
 
 [y_k_i] = trig_basis_eval(a_k', wp_k_l, x_l_i);
 assert_equals(y_k_i, y_k_i_ex, 'eval');
+
+[y_k_i] = trig_basis_eval({wp_k_l(:,1:2:end)/(2*pi), wp_k_l(:,2:2:end)/(2*pi), a_k} , x_l_i);
+assert_equals(y_k_i, y_k_i_ex, 'eval');

@@ -21,5 +21,11 @@ function [y_j_i] = trig_eval(A_j_k, wp_k_l, x_l_i)
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
-y_k_i = trig_basis_eval([], wp_k_l, x_l_i);
+if iscell(wp_k_l)
+    TB = wp_k_l;
+    y_k_i = trig_basis_eval(TB, x_l_i);
+else
+    y_k_i = trig_basis_eval([], wp_k_l, x_l_i);
+end
+    
 y_j_i = A_j_k * y_k_i;

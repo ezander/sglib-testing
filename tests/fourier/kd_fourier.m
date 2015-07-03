@@ -71,37 +71,42 @@ s_k(2:end) = s_k(ind+1);
 %[s_k(2:end), ind] = sort(s_k(2:end), 'descend');
 wp_k(2:end,:) = wp_k(ind+1,:);
 
-function [s_k, wp_k] = limit_spectrum(s_k, wp_k, ratio)
+function [s_k, TP] = limit_spectrum(s_k, TP, ratio)
 r = cumsum(s_k.^2);
 max_ind = find(r>=ratio, 1, 'first');
 if isempty(max_ind)
     warning('sglib:kd_fourier', 'Not enough basis functions for given ratio. Increase max_funcs option');
 else
     s_k = s_k(1:max_ind);
-    wp_k = wp_k(1:max_ind,:);
+    TP{1} = TP{1}(1:max_ind,:);
+    TP{2} = TP{2}(1:max_ind,:);
 end
 
-function [s_k, wp_k] = add_sines(s_k, wp_k, d)
+function [s_k, TP] = add_sines(s_k, TP, d)
+w_k = TP{1};
+p_k = TP{2};
 for i=1:d
-    wp_k_s = wp_k(2:end,:);
-    wp_k_s(:,2*i)=0;
-    ind=wp_k_s(:,2*i-1)~=0;
+    ind=w_k(:,i)~=0;
 
-    s_k = [s_k; s_k([false; ind])];
-    wp_k = [wp_k; wp_k_s(ind,:)];
+    p_k_s = p_k;
+    p_k_s(:,i)=0;
+
+    s_k = [s_k; s_k(ind)];
+    w_k = [w_k; w_k(ind,:)];
+    p_k = [p_k; p_k_s(ind,:)];
 end
+TP = {w_k, p_k};
 
-
-function [S_k, wp_k] = power_spectrum_by_fft(func, L, K, d)
+function [S_k, TP] = power_spectrum_by_fft(func, L, K, d)
 M=2*K+1;
 if length(L)==1 && d>1
     L = L * ones(d,1);
 end
 assert(d==1, 'd>1 does not work yet');
-[S_k, wp_k] = fourier_series_expand(func, -L, L, M, 'symmetry', 'even');
+[S_k, TP] = fourier_series_expand(func, -L, L, M, 'symmetry', 'even');
 
 
-function [S_k, wp_k] = power_spectrum_by_density(func, L, K, d)
+function [S_k, TP] = power_spectrum_by_density(func, L, K, d)
 % Hypersphere: V = pi^(d/2) r^d / gamma(d/2+1)
 % Radius:      r = (V * gamma(d/2+1))^(1/d) / sqrt(pi)
 % K_i = r, V = K * 2^d
@@ -118,6 +123,7 @@ S_k = funcall(func, w, d)' * prod(w0);
 multiplicity = 2.^sum(w~=0,1)';
 S_k = multiplicity .* S_k;
 %S_k(2:end) = 2^d * S_k(2:end);
-wp_k = [2*pi*w', repmat(pi/2, size(w'))];
-wp_k = [wp_k(:, 1:2:end), wp_k(:,2:2:end)];
+%wp_k = [2*pi*w', repmat(pi/2, size(w'))];
+%wp_k = [wp_k(:, 1:2:end), wp_k(:,2:2:end)];
 
+TP = {w', repmat(1/4, size(w'))};

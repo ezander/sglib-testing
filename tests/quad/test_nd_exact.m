@@ -5,14 +5,16 @@ clf
 % set maximum number of stages for the integration rules
 maxp = 6;
 % set maximum polynomial degree to test the rules with
-pt = 13;
+pt = 33;
 
 for p=1:maxp
     subplot(3,maxp,p)
     test_rule(pt, p, @gauss_legendre_rule, 'smolyak', 'Smolyak/Legendre')
     
     subplot(3,maxp,p+maxp)
-    test_rule(pt, p, @gauss_legendre_rule, 'full_tensor', 'Tensor/Legendre')
+    %test_rule(pt, p, @gauss_legendre_rule, 'full_tensor', 'Tensor/Legendre')
+    %test_rule(pt, p, @(n)(clenshaw_curtis_nested(n,'mode',1)), 'smolyak', 'Fejer1')
+    test_rule(pt, p, @(n)(clenshaw_curtis_nested(n,'mode',2)), 'smolyak', 'Fejer2')
     
     subplot(3,maxp,p+2*maxp)
     test_rule(pt, p, @clenshaw_curtis_nested, 'smolyak', 'Smolyak/CC')
