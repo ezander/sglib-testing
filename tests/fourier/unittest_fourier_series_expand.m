@@ -20,33 +20,33 @@ function unittest_fourier_series_expand(varargin)
 munit_set_function( 'fourier_series_expand' );
 
 func = @(x)(exp(x));
-[A_k, wp_k, x_i] = fourier_series_expand(func, -1, 1, 10);
-assert_equals(trig_eval(A_k, wp_k, x_i), func(x_i))
+[A_k, TB, x_i] = fourier_series_expand(func, -1, 1, 10);
+assert_equals(trig_eval(A_k, TB, x_i), func(x_i))
 
-[A_k, wp_k, x_i] = fourier_series_expand(func, -1, 1, 11);
-assert_equals(trig_eval(A_k, wp_k, x_i), func(x_i))
+[A_k, TB, x_i] = fourier_series_expand(func, -1, 1, 11);
+assert_equals(trig_eval(A_k, TB, x_i), func(x_i))
 
-[A_k, wp_k, x_i] = fourier_series_expand(func, -2, 2, 11);
-assert_equals(trig_eval(A_k, wp_k, x_i), func(x_i))
+[A_k, TB, x_i] = fourier_series_expand(func, -2, 2, 11);
+assert_equals(trig_eval(A_k, TB, x_i), func(x_i))
 
-[A_k, wp_k, x_i] = fourier_series_expand(func, 0, 2, 11);
-assert_equals(trig_eval(A_k, wp_k, x_i), func(x_i))
+[A_k, TB, x_i] = fourier_series_expand(func, 0, 2, 11);
+assert_equals(trig_eval(A_k, TB, x_i), func(x_i))
 
-[A_k, wp_k, x_i] = fourier_series_expand(func, 0.01, 2.5, 141);
-assert_equals(trig_eval(A_k, wp_k, x_i), func(x_i))
-%plot(x_i, func(x_i), x_i, trig_eval(A_k, wp_k, x_i))
+[A_k, TB, x_i] = fourier_series_expand(func, 0.01, 2.5, 141);
+assert_equals(trig_eval(A_k, TB, x_i), func(x_i))
+%plot(x_i, func(x_i), x_i, trig_eval(TB, x_i))
 
 
 
 func = @(x)(exp(-abs(x)));
-[A_k, wp_k, x_i] = fourier_series_expand(func, -1, 1, 20);
-assert_equals(trig_eval(A_k, wp_k, x_i), func(x_i))
+[A_k, TB, x_i] = fourier_series_expand(func, -1, 1, 20);
+assert_equals(trig_eval(A_k, TB, x_i), func(x_i))
 
-[A_k, wp_k, x_i] = fourier_series_expand(func, -1, 1, 20, 'symmetry', 'even');
-assert_equals(trig_eval(A_k, wp_k, x_i), func(x_i))
+[A_k, TB, x_i] = fourier_series_expand(func, -1, 1, 20, 'symmetry', 'even');
+assert_equals(trig_eval(A_k, TB, x_i), func(x_i))
 
 
 func = @(x)(sign(x).*(exp(-abs(x))-1));
-[A_k, wp_k, x_i] = fourier_series_expand(func, -1, 1, 100, 'symmetry', 'odd');
+[A_k, TB, x_i] = fourier_series_expand(func, -1, 1, 100, 'symmetry', 'odd');
 x_i = x_i(2:end);
-assert_equals(trig_eval(A_k, wp_k, x_i), func(x_i))
+assert_equals(trig_eval(A_k, TB, x_i), func(x_i))

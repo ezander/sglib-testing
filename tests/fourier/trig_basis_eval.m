@@ -21,15 +21,32 @@ function [y_k_i] = trig_basis_eval(a_k, wp_k_l, x_l_i)
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
+if nargin>2
+    tau = 2*pi;
+    TB = {wp_k_l(:, 1:2:end)/tau, wp_k_l(:, 2:2:end)/tau, a_k};
+    y_k_i = trig_basis_eval_int(TB, x_l_i);
+else
+    y_k_i = trig_basis_eval_int(a_k, wp_k_l);
+end
+
+function [y_k_i] = trig_basis_eval_int(TB, x_l_i)
+
+w_k_l = TB{1};
+p_k_l = TB{2};
+if length(TB)>=3
+    a_k = TB{3};
+else
+    a_k = [];
+end
+
 if isempty(a_k)
-    y_k_i = ones(size(wp_k_l, 1), size(x_l_i, 2));
+    y_k_i = ones(size(w_k_l, 1), size(x_l_i, 2));
 else
     a_k = a_k(:);
     y_k_i = repmat(a_k, 1, size(x_l_i, 2));
 end
 
+tau = 2*pi;
 for l=1:size(x_l_i,1)
-    w_k=wp_k_l(:,2*l-1);
-    p_k=wp_k_l(:,2*l);
-    y_k_i = y_k_i .* sin(binfun(@plus, w_k*x_l_i(l,:), p_k));
+    y_k_i = y_k_i .* sin(tau * binfun(@plus, w_k_l(:,l)*x_l_i(l,:), p_k_l(:,l)));
 end
