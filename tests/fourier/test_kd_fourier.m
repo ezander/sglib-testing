@@ -1,7 +1,7 @@
 clf
 
 a=2; b=3.5;
-l_c = 0.1;
+l_c = 3.1;
 
 nu = 0.1;
 cov_func = @(x)(matern_covariance(nu, x,[],l_c));
