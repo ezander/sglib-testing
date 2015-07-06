@@ -41,8 +41,6 @@ S2 = abs(S2)/N;
 S2 = fftshift(S2);
 plot(w,S2+0.002); hold all;
 
-[A_k, wp_k, x_i] = fourier_series_expand(cov_func, -L, L, 300, 'symmetry', 'even')
+[A_k, TP, x_i] = fourier_series_expand(cov_func, -L, L, 300, 'symmetry', 'even');
 A_k(2:end) = A_k(2:end)/2;
-plot(wp_k(:,1), A_k+0.003)
-
-
+plot(2*pi*TP{1}, A_k+0.003)

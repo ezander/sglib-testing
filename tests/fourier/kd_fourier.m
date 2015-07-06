@@ -39,13 +39,14 @@ while true
     else
         [S_k, TP] = power_spectrum_by_fft(func, L, K, d);
     end
-    if autoenlarge && sum(S_k)-1>1e-7
+    if autoenlarge && sum(abs(S_k))-1>1e-7
         L = L * 2;
         strvarexpand('Enlarging to $L(1)$');
     else
         break
     end
 end
+S_k = S_k';
 
 w_k = TP{1};
 p_k = TP{2};
@@ -54,7 +55,6 @@ p_k = TP{2};
 assert(all(S_k)>0);
 
 s_k=sqrt(S_k);
-s_k=reshape(s_k,[],1);
 % Limit the number of functions
 K0 = floor((K-1)/2^d)+1;
 if length(s_k)>K0
@@ -74,7 +74,7 @@ end
 function [S_k, w_k, p_k] = sort_spectrum(S_k, w_k, p_k)
 % SORT_SPECTRUM Sort the spectral density in descending order
 multiplicity = 2.^sum(w_k~=0,2);
-Sn_k = S_k.^2 ./ multiplicity';
+Sn_k = S_k.^2 ./ multiplicity;
 [~, ind]=sort(Sn_k(2:end), 'descend');
 ind = [1; ind+1];
 
@@ -121,7 +121,13 @@ function [S_k, TP] = power_spectrum_by_density(func, L, K, d)
 % Hypersphere: V = pi^(d/2) r^d / gamma(d/2+1)
 % Radius:      r = (V * gamma(d/2+1))^(1/d) / sqrt(pi)
 % K_i = r, V = K * 2^d
-K_i = ceil( 2 * (K * gamma(d/2+1)) ^ (1/d) / sqrt(pi) - 1e-10);
+
+%K_i = ceil( 2 * (K / nball_volume(d,1)) ^ (1/d) - 1e-10);
+%assert( nball_volume(d, K_i) / 2^d>=K && nball_volume(d, K_i-1) / 2^d<=K)
+
+K_i = ceil( (K / nball_volume(d,1)) ^ (1/d) - 1e-10);
+assert( nball_volume(d, K_i-1)<=K && K<=nball_volume(d, K_i)+1 )
+
 I=multiindex(d,K_i,'full', true);
 ind = sum(I.^2,2)<=K_i^2;
 I = I(ind,:);
@@ -136,5 +142,5 @@ S_k = multiplicity .* S_k;
 %S_k(2:end) = 2^d * S_k(2:end);
 %wp_k = [2*pi*w', repmat(pi/2, size(w'))];
 %wp_k = [wp_k(:, 1:2:end), wp_k(:,2:2:end)];
-
+S_k = S_k';
 TP = {w', repmat(1/4, size(w'))};
