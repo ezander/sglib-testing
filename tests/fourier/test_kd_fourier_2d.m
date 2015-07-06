@@ -18,7 +18,7 @@ pow_func = @(w,d)(exponential_spectral_density(w,l_c,d));
 
 
 enlarge=true;
-options = {'autoenlarge', enlarge, 'max_funcs', 2700, 'ratio', 0.99};
+options = {'autoenlarge', enlarge, 'max_funcs', 2700, 'ratio', 0.89};
 %[sigma_k, wp_k] = kd_fourier(cov_func, pos, options);
 [TB, u_k] = kd_fourier(pow_func, pos, 'is_spectral', true, options{:});
 
@@ -54,7 +54,7 @@ end
 
 
 h = multiplot;
-for alpha=[linspace(0,pi/2,40), pi/4]
+for alpha=[linspace(0,pi/2,10), pi/4]
     x = [-1;-1] + 1.7 * [cos(alpha); sin(alpha)];
     u_x = trig_basis_eval(TB, x);
     multiplot(h)

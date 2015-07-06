@@ -1,4 +1,4 @@
-function [y_k_i] = trig_basis_eval(a_k, wp_k_l, x_l_i)
+function [y_k_i] = trig_basis_eval(TB, x_l_i)
 % TRIG_BASIS_EVAL Evaluates sequence of trigonometric basis functions.
 %   [Y_K_I] = TRIG_BASIS_EVAL(WP_K_L, X_L_I)  evaluate the trigonometric
 %   basis functions represented by the amplitude array A_K and the
@@ -20,16 +20,6 @@ function [y_k_i] = trig_basis_eval(a_k, wp_k_l, x_l_i)
 %   See the GNU General Public License for more details. You should have
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
-
-if nargin>2
-    tau = 2*pi;
-    TB = {wp_k_l(:, 1:2:end)/tau, wp_k_l(:, 2:2:end)/tau, a_k};
-    y_k_i = trig_basis_eval_int(TB, x_l_i);
-else
-    y_k_i = trig_basis_eval_int(a_k, wp_k_l);
-end
-
-function [y_k_i] = trig_basis_eval_int(TB, x_l_i)
 
 w_k_l = TB{1};
 p_k_l = TB{2};

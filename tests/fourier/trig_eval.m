@@ -1,4 +1,4 @@
-function [y_j_i] = trig_eval(A_j_k, wp_k_l, x_l_i)
+function [y_j_i] = trig_eval(A_j_k, TB, x_l_i)
 % TRIG_EVAL Evaluate the trigonometric expansion of a function.
 %   [Y_J_I] = TRIG_EVAL(A_J_K, WP_K_L, X_L_I) evaluate the function
 %   represented by the amplitude array A_J_K and the frequency/phase array
@@ -21,11 +21,5 @@ function [y_j_i] = trig_eval(A_j_k, wp_k_l, x_l_i)
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
-if iscell(wp_k_l)
-    TB = wp_k_l;
-    y_k_i = trig_basis_eval(TB, x_l_i);
-else
-    y_k_i = trig_basis_eval([], wp_k_l, x_l_i);
-end
-    
+y_k_i = trig_basis_eval(TB, x_l_i);
 y_j_i = A_j_k * y_k_i;
