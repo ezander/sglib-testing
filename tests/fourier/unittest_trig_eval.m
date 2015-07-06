@@ -19,8 +19,10 @@ function unittest_trig_eval(varargin)
 
 munit_set_function( 'trig_eval' );
 
+tau = 2*pi;
 a_j_k = [0.2, 0.3];
-wp_k_l = [2, 3, 4, 5; 8, 9, 10, 11];
+w_k_l = [2, 4; 8, 10] / tau;
+p_k_l = [3, 5; 9, 11] / tau;
 x_l_i = [ 60, 70, 80; 90, 100, 110];
 
 y_k_i_ex = [
@@ -31,5 +33,5 @@ y_k_i_ex = [
     0.2 * sin(2*80+3)*sin(4*110+5) + ...
     0.3 * sin(8*80+9)*sin(10*110+11)
     ];
-[y_k_i] = trig_eval(a_j_k, wp_k_l, x_l_i);
+[y_k_i] = trig_eval(a_j_k, {w_k_l, p_k_l}, x_l_i);
 assert_equals(y_k_i, y_k_i_ex, 'eval');
