@@ -1,3 +1,4 @@
+clear
 clf
 
 a=2; b=3.5;
@@ -17,14 +18,14 @@ pow_func = @(w,d)(gaussian_spectral_density(w,l_c,d));
 
 enlarge=true;
 options = {'autoenlarge', enlarge, 'max_funcs', 500, 'ratio', 0.99};
-[sigma_k, wp_k] = kd_fourier(cov_func, [b-a], options);
-[sigma_k, wp_k] = kd_fourier(pow_func, [b-a], 'is_spectral', true, options{:});
+TB = kd_fourier(cov_func, [b-a], options);
+TB = kd_fourier(pow_func, [b-a], 'is_spectral', true, options{:});
 
 xi = linspace(a,b,100);
 [x1,x2]=meshgrid(xi);
 C_ex=reshape(cov_func(x1(:)'-x2(:)'), size(x1));
 
-u_k = trig_basis_eval(sigma_k, wp_k, xi);
+u_k = trig_basis_eval(TB, xi);
 C = u_k.'*u_k;
 
 multiplot_init(2,2);

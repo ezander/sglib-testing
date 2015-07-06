@@ -1,4 +1,4 @@
-%%
+clear
 clf
 
 l_c = 0.2;
