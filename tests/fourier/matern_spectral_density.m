@@ -1,6 +1,9 @@
 function S=matern_spectral_density(nu, xi, l_c, d)
 % MATERN_SPECTRAL_DENSITY Short description of matern_spectral_density.
-%   MATERN_SPECTRAL_DENSITY(VARARGIN) Long description of matern_spectral_density.
+%   MATERN_SPECTRAL_DENSITY(NU, XI, L_C, D) computes the spectral density
+%   for an isotropic Matern covariance with parameter NU in dimensions.
+%   MATERN_SPECTRAL_DENSITY(NU, XI, L_C, D) computes the spectral density
+%   for the 1D case.
 %
 % References:
 %   [1] C. E. Rasmussen & C. K. I. Williams, Gaussian Processes for Machine
@@ -8,8 +11,19 @@ function S=matern_spectral_density(nu, xi, l_c, d)
 %       http://www.gaussianprocess.org/gpml/chapters/RW4.pdf‎
 %
 % Example (<a href="matlab:run_example matern_spectral_density">run</a>)
-%
-% See also MATERN_COVARIANCE
+%   multiplot_init(2,2)
+%   x = linspace(-3,3,101); xi=linspace(-1,1,101);
+%   for nu = [0.3, 2.3]
+%       h = multiplot;
+%       for l_c = [0.1, 0.2, 0.5, 1.0]
+%           multiplot(h); hold all; title(strvarexpand('Covariance ($nu$)'));
+%           plot(x, matern_covariance(nu, x, [], l_c)); legend_add(l_c)
+%           multiplot; hold all; title(strvarexpand('Spectral density ($nu$)'));
+%           plot(xi, matern_spectral_density(nu, xi, l_c, 1)); legend_add(l_c)
+%       end
+%   end
+%   
+% See also MATERN_COVARIANCE, KD_FOURIER, EXPONENTIAL_SPECTRAL_DENSITY, GAUSSIAN_SPECTRAL_DENSITY
 
 %   Elmar Zander
 %   Copyright 2015, Inst. of Scientific Computing
@@ -22,7 +36,7 @@ function S=matern_spectral_density(nu, xi, l_c, d)
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
-if nargin<3 || isempty(d)
+if nargin<4 || isempty(d)
     d = size(xi,1);
 end
 
