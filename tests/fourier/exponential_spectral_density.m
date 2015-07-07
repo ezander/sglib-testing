@@ -1,10 +1,22 @@
 function S=exponential_spectral_density(xi, l_c, d)
 % EXPONENTIAL_SPECTRAL_DENSITY Computes the spectral density for an exponential covariance.
-%   EXPONENTIAL_SPECTRAL_DENSITY(XI, L_C, D) computes ...
+%   EXPONENTIAL_SPECTRAL_DENSITY(XI, L_C, D) computes the spectral density
+%   for an isotropic exponential covariance of the form EXP(-X/L_C) in D
+%   dimensions.
+%   EXPONENTIAL_SPECTRAL_DENSITY(XI, L_C, D) computes the spectral density
+%   for the 1D case.
 %
 % Example (<a href="matlab:run_example exponential_spectral_density">run</a>)
-%
-% See also
+%   multiplot_init(1,2)
+%   x = linspace(-3,3,101); xi=linspace(-1,1,101);
+%   for l_c = [0.1, 0.2, 0.5, 1.0]
+%       multiplot; hold all; title('Covariance');
+%       plot(x, exponential_covariance(x, [], l_c)); legend_add(l_c)
+%       multiplot; hold all; title('Spectral density');
+%       plot(xi, exponential_spectral_density(xi, l_c, 1)); legend_add(l_c)
+%   end
+%   
+% See also EXPONENTIAL_COVARIANCE, KD_FOURIER, MATERN_SPECTRAL_DENSITY, GAUSSIAN_SPECTRAL_DENSITY
 
 %   Elmar Zander
 %   Copyright 2015, Inst. of Scientific Computing
@@ -25,3 +37,6 @@ r2 = sum(xi.^2, 1);
 alpha = (2*l_c)^d * pi^((d-1)/2) * gamma((d+1)/2);
 
 S = alpha * (1 + 4*pi^2*l_c^2*r2) .^ -((d+1)/2);
+
+return
+
