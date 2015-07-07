@@ -1,15 +1,16 @@
-function test_ft_rf
+clear
+clf
 
 a=2; b=3.5;
 func = @(x)(exp(-abs(x)));
-[sigma_k, wp_k] = kd_fourier(func, [b-a], 'max_funcs', 15);
+TB = kd_fourier(func, [b-a], 'max_funcs', 50);
 
 
 xi = linspace(a,b,100);
 [x1,x2]=meshgrid(xi);
 C_ex=func(x1-x2);
 
-u_k = trig_basis_eval(sigma_k, wp_k, xi);
+u_k = trig_basis_eval(TB, xi);
 C = u_k.'*u_k;
 
 surf(x1,x2,C_ex); hold all;
@@ -34,8 +35,8 @@ view(135,0)
 %%
 hold on;
 M = 35;
-[~, wp_k] = fourier_series_expand(func, 0, 2, M);
-r_k = trig_basis_eval([], wp_k, xi);
+[~, TB] = fourier_series_expand(func, 0, 2, M);
+r_k = trig_basis_eval(TB, xi);
 
 a_k=reshape(sqrt(A_k0),[],1);
 s_k=[a_k(1); a_k(2:end); a_k(2:end)];
