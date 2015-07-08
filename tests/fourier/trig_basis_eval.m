@@ -1,4 +1,4 @@
-function [y_k_i] = trig_basis_eval(TB, x_l_i)
+function [y_k_i] = trig_basis_eval(TB, x_l_i, varargin)
 % TRIG_BASIS_EVAL Evaluates sequence of trigonometric basis functions.
 %   [Y_K_I] = TRIG_BASIS_EVAL(WP_K_L, X_L_I)  evaluate the trigonometric
 %   basis functions represented by the amplitude array A_K and the
@@ -21,6 +21,10 @@ function [y_k_i] = trig_basis_eval(TB, x_l_i)
 %   received a copy of the GNU General Public License along with this
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
+options=varargin2options(varargin, mfilename);
+[make_unique, options]=get_option(options, 'make_unique', true);
+check_unsupported_options(options);
+
 w_k_l = TB{1};
 p_k_l = TB{2};
 if length(TB)>=3
@@ -38,5 +42,14 @@ end
 
 tau = 2*pi;
 for l=1:size(x_l_i,1)
-    y_k_i = y_k_i .* sin(tau * binfun(@plus, w_k_l(:,l)*x_l_i(l,:), p_k_l(:,l)));
+    if make_unique
+        [wp_k, ~, k_ind] = unique([w_k_l(:,l), p_k_l(:,l)], 'rows');
+        arg = binfun(@plus, wp_k(:,1)*x_l_i(l,:), wp_k(:,2));
+        sin_arg = sin(tau * arg);
+        y_k_i = y_k_i .* sin_arg(k_ind,:);
+    else
+        arg = binfun(@plus, w_k_l(:,l)*x_l_i(l,:), p_k_l(:,l));
+        sin_arg = sin(tau * arg);
+        y_k_i = y_k_i .* sin_arg;
+    end
 end
