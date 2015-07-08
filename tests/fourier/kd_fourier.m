@@ -70,7 +70,7 @@ s_k=sqrt(S_k);
 TB = {w_k, p_k, s_k};
 
 % Evaluate at given positions, if necessary
-if ~isempty(pos)
+if nargout>=2
     r_k = trig_basis_eval(TB, pos);
 end
 
