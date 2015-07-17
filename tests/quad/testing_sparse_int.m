@@ -10,7 +10,7 @@ w = xw{2};
 plot(x(1,:), x(2,:), 'x')
 axis square
 
-n = state.num_vars;
+n = state.model_info.num_vars;
 u_mean = zeros(n, 1);
 u_m2 = zeros(n, 1);
 

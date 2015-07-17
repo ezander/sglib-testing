@@ -1,4 +1,5 @@
 function test_kahan
+% TEST_KAHAN Test Kahan's summation algorithm
 
 format long e
 x=[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1];

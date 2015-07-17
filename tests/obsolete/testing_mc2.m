@@ -3,7 +3,7 @@ state = electrical_network_init();
 V = {'pp', multiindex(2, 0)};
 
 N = 1000;
-n = state.num_vars;
+n = state.model_info.num_vars;
 u_mean = [];
 u_var = [];
 for i=1:N
