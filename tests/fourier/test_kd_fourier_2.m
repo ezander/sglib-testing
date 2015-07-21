@@ -1,23 +1,36 @@
 clear
 clf
 
-a=2; b=3.5;
-l_c = 0.2;
+[pos,els]=load_pdetool_geom( 'square', 'numrefine', 3 );
 
-cov_func = @(x)(exponential_covariance(x,[],l_c));
-pow_func = @(w,d)(exponential_spectral_density(w,l_c,d));
+k1 = 3; 
+k2 = 7;
 
-enlarge=true;
-options = {'autoenlarge', enlarge, 'max_funcs', 3000, 'ratio', 0.99};
-TB = kd_fourier(cov_func, [b-a], options);
-%TB = kd_fourier(pow_func, [b-a], 'is_spectral', true, options{:});
+w_k = [
+    k1, k2
+    k1, k2
+    k1, k2
+    k1, k2
+    ]/2;
 
-xi = linspace(a,b,100);
-[x1,x2]=meshgrid(xi);
+p_k = [
+    0, 0
+    1, 1
+    0, 1
+    1, 0
+    ] * 0.25;
 
-u_k = trig_basis_eval(TB, xi);
-C = u_k.'*u_k;
+TB = { w_k, p_k };
 
-clf
+for a=linspace(0,1,41)
+%     u1 = trig_eval([1 -1 0  0], TB, pos);
+%     u0 = trig_eval([0  0 1 -1], TB, pos);
+%     u0 = trig_eval([1 1 0  0], TB, pos);
+%     u0 = trig_eval([0  0 1 1], TB, pos);
 
-plot(xi,C(10,:));
+    u0 = trig_eval([0 -1 0  0], TB, pos);
+    u1 = trig_eval([1  0 0  0], TB, pos);
+    u = (1-a)*u0 + a * u1;
+    plot_field(pos, els, u', 'show_mesh', false)
+    drawnow
+end

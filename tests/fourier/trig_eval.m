@@ -1,13 +1,19 @@
 function [y_j_i] = trig_eval(A_j_k, TB, x_l_i)
 % TRIG_EVAL Evaluate the trigonometric expansion of a function.
 %   [Y_J_I] = TRIG_EVAL(A_J_K, WP_K_L, X_L_I) evaluate the function
-%   represented by the amplitude array A_J_K and the frequency/phase array
-%   WP_K_L at the point X_L_I. The output is given by 
-%      Y_J_I = \sum_K A_J_K * \sum_L sin(WP_K_L(2K-1,L)*X_L_I +
-%      WP_K_L(2K,L))
+%   represented by the amplitude array A_J_K and the trigonometric basis TB
+%   at the point X_L_I. For the meaning of the trig basis TB, please see
+%   the help for TRIG_BASIS_EVAL.
 %
 % Example (<a href="matlab:run_example trig_eval">run</a>)
-%
+%     % Trig. approximation of a rect and a sawtooth function
+%     TB = {[1,2,3,4,5,6,7]', [0,0,0,0,0,0,0]', [1,1,1,1,1,1,1]'};
+%     x = linspace(-0.2,1.2);
+%     rect = [1, 0,   1/3,   0, 1/5,   0, 1/7];
+%     saw  = [1, 1/2, 1/3, 1/4, 1/5, 1/6, 1/7];
+%     y = trig_eval([rect; saw], TB, x);
+%     plot(x,y); grid on;
+%   
 % See also TRIG_BASIS_EVAL, FOURIER_SERIES_EXPAND
 
 %   Elmar Zander

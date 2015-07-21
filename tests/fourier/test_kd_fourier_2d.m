@@ -45,7 +45,7 @@ hold off;
 
 
 multiplot;
-for i=1:min(size(u_k,1),0*20)
+for i=1:min(size(u_k,1),40)
     [i, TB{3}(i), TB{1}(i,:)]
     plot_field(pos, els, u_k(i,:)', 'show_mesh', false)
     drawnow
@@ -54,14 +54,17 @@ end
 
 
 h = multiplot;
-for alpha=[linspace(0,pi/2,10), pi/4]
+for alpha=[linspace(0,pi/2,40), pi/4]
     x = [-1;-1] + 1.7 * [cos(alpha); sin(alpha)];
     u_x = trig_basis_eval(TB, x);
+    
     multiplot(h)
     plot_field(pos, els, u_k' * u_x, 'show_mesh', false)
-    view(3)
+    view(3); zlim([0,1]);
+    
     multiplot
     plot_field(pos, els, u_k' * u_x, 'show_mesh', false)
+    
     drawnow
     pause(0.02);
 end

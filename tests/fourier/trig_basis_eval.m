@@ -1,12 +1,21 @@
 function [y_k_i] = trig_basis_eval(TB, x_l_i, varargin)
 % TRIG_BASIS_EVAL Evaluates sequence of trigonometric basis functions.
-%   [Y_K_I] = TRIG_BASIS_EVAL(WP_K_L, X_L_I)  evaluate the trigonometric
-%   basis functions represented by the amplitude array A_K and the
-%   frequency/phase array WP_K_L at the point X_L_I. The output is given by
-%      Y_K_I = \sum_L A_K(K) sin(WP_K_L(2K-1,L)*X_L_I + WP_K_L(2K,L))
-%   If the A_K is empty, it is assumed the amplitudes are 1.
+%   [Y_K_I] = TRIG_BASIS_EVAL(TB, X_L_I)  evaluate the trigonometric
+%   basis functions represented by the cell array TB at the points X_L_I.
+%   The trigonometric basis TB is a cell array consisting of the a matrix
+%   W_K_L describing the frequency, a matrix P_K_L describing the phase and
+%   optionally a vector A_K describing the amplitude. The output is given by
+%      Y_K_I = \sum_L A_K(K) sin(2*PI*(W_K_L(K,L)*X_L_I + P_K_L(K,L)))
+%   If the A_K is empty, it is assumed the amplitudes are 1. The frequency
+%   and phase are given in turns, where 1 turn is 2*pi or 1*tau.
 %
 % Example (<a href="matlab:run_example trig_basis_eval">run</a>)
+%     % Some scaled sines and cosines with different frequencies
+%     TB = {[0,1,1,3]', 1/4 * [1,0,1,0]', [1,1,1,2]'};
+%     x = linspace(0,1);
+%     y = trig_basis_eval(TB, x);
+%     plot(x,y); grid on;
+%     legend('1', 'sin(2\pi x)', 'cos(2\pi x)', '2 sin(6\pi x)');
 %
 % See also TRIG_EVAL
 
