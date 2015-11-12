@@ -6,7 +6,7 @@ error_dist=gendist_create('normal', {0, 0.1});
 [~,sig2]=gendist_moments(prior_dist);
 prop_dist = gendist_create('uniform', {-sqrt(sig2), sqrt(sig2)});
 
-N=10000;
+N=100000;
 y_m=1;
 x0 = gendist_moments(prior_dist);
 %func=@(x)(gendist_pdf(x, prior_dist));
@@ -23,10 +23,15 @@ multiplot_init(1,1)
 multiplot;
 hold off;
 plot_density(X); hold all; grid on;
-legend_add('metropolis');
+legend_add('metropolis posterior');
 plot_density(prior_dist);
-legend_add('exact dist');
+legend_add('prior dist');
 
+
+x = linspace(-3, 3);
+evidence = integral(@(x)(func(x)), -3, 3);
+plot( x, funcall(func, x)/evidence);
+legend_add('exact posterior');
 
 function X=mh_sample(N, x0, func, prop_dist)
 % MH_SAMPLE Basic version of the Metropolis-Hastings sampler
