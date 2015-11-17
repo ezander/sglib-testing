@@ -18,13 +18,35 @@ function unittest_LaguerrePolynomials
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
 munit_set_function( 'LaguerrePolynomials' );
+
 %% Initialization
-L=LaguerrePolynomials(3);
-assert_equals(L.deg,3,'initialization');
+L=LaguerrePolynomials();
+
 %% Recur_coeff
-r=L.recur_coeff();
+r=L.recur_coeff(3);
 assert_equals(r,[1 -1 0;1.5 -0.5 0.5;5/3 -1/3 2/3],'recur_coeff');
+
 %% evaluate
 xi=[1,2,3,4];
-y=L.evaluate(xi);
+y=L.evaluate(2, xi);
 assert_equals(y,[1 0 -0.5;1 -1 -1;1 -2 -0.5;1 -3 1],'evaluate');
+
+%% norm
+n = [0 1; 3 5];
+h = [1 1; 1 1];
+assert_equals(L.sqnorm(n), h, 'nrm_arr');
+assert_equals(L.sqnorm(n(:)), h(:), 'nrm_col');
+assert_equals(L.sqnorm(n(:)'), h(:)', 'nrm_row');
+
+%% normalized
+assert_true(isa(L.normalized(), class(L)), 'Laguerre.normalized should return the same object', 'same');
+
+%% consistency with weighting function
+poly = LaguerrePolynomials();
+N=4;
+
+dist = poly.weighting_dist();
+dom=dist.invcdf([0,1]);
+fun = @(x)( poly.evaluate(N,x)'*poly.evaluate(N,x)*dist.pdf(x));
+Q = integral(fun, dom(1), dom(2), 'ArrayValued', true, 'RelTol', 1e-6, 'AbsTol', 1e-6);
+assert_equals(Q, diag(poly.sqnorm(0:N)), 'weighting_consistent');

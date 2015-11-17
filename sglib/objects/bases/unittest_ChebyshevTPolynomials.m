@@ -6,7 +6,7 @@ function unittest_ChebyshevTPolynomials
 %
 % See also CHEBYSHEVTPOLYNOMIALS, MUNIT_RUN_TESTSUITE 
 
-%   Aidin Nojavan
+%   Aidin Nojavan slightly modified by Noemi Friedman
 %   Copyright 2014, Inst. of Scientific Computing, TU Braunschweig
 %
 %   This program is free software: you can redistribute it and/or modify it
@@ -18,14 +18,32 @@ function unittest_ChebyshevTPolynomials
 %   program.  If not, see <http://www.gnu.org/licenses/>.
 
 munit_set_function( 'ChebyshevTPolynomials' );
+
 %% Initialization
-C=ChebyshevTPolynomials(4);
-assert_equals(C.deg,4,'initialization');
+T=ChebyshevTPolynomials();
+
 %% Recur_coeff
-r=C.recur_coeff();
+r=T.recur_coeff(4);
 assert_equals(r,[[0,1,1];[0,2,1];[0,2,1];[0,2,1]],'recur_coeff');
 
 %% evaluate
 xi=[1,2,3,4];
-y=C.evaluate(xi);
+y=T.evaluate(3, xi);
 assert_equals(y,[1 1 1 1;1 2 7 26 ;1 3 17 99;1 4 31 244],'evaluate');
+
+%% norm
+n = [0 1; 3 5];
+h = [1 0.5; 0.5 0.5];
+assert_equals(T.sqnorm(n), h, 'nrm_arr');
+assert_equals(T.sqnorm(n(:)), h(:), 'nrm_col');
+assert_equals(T.sqnorm(n(:)'), h(:)', 'nrm_row');
+
+%% consistency with weighting function
+poly = ChebyshevTPolynomials();
+N=4;
+
+dist = poly.weighting_dist();
+dom=dist.invcdf([0,1]);
+fun = @(x)( poly.evaluate(N,x)'*poly.evaluate(N,x)*dist.pdf(x));
+Q = integral(fun, dom(1), dom(2), 'ArrayValued', true, 'RelTol', 1e-6, 'AbsTol', 1e-6);
+assert_equals(Q, diag(poly.sqnorm(0:N)), 'weighting_consistent');

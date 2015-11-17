@@ -66,20 +66,6 @@ classdef BetaDistribution < Distribution
             [mean,var,skew,kurt]=deal(m{:});
         end
         
-        function xi=sample(dist,n)
-            %   Draw random samples from Beta distribution.
-            %   XI=SAMPLE(DIST,N) draws N random samples from the random
-            %   distribution DIST. If N is a scalar value XI is a column vector of
-            %   random samples of size [N,1]. If N is a vector XI is a matrix (or
-            %   tensor) of size [N(1), N(2), ...].
-            if isscalar(n)
-                yi = rand(n,1);
-            else
-                yi = rand(n);
-            end
-            xi = dist.invcdf(yi);
-        end
-        
         function str=tostring(dist)
             % Displays the distribution type: 'Beta(a, b)'
             str=sprintf('Beta(%.3f,  %.3f)', dist.a, dist.b);
@@ -117,5 +103,27 @@ classdef BetaDistribution < Distribution
             polys=JacobiPolynomials(dist.a-1, dist.b-1, is_normalized);
         end
         
+        
+    end
+    methods(Static)
+        function dist_germ=get_base_dist(dist)
+            % Get base distribution (corresponding to standard distribution
+            % in the gpc, for which the default polynomial system is orthogonal)
+            dist_germ=fix_bounds(BetaDistribution(dist.a, dist.b), -1, 1);
+        end
+        
+        function x=base2dist(y)
+            % Get mapping from base distribution (corresponding to standard distribution
+            % in the gpc, for which the default polynomial system is
+            % orthogonal) to the actual distribution
+            x=(y+1)/2;
+        end
+        
+        function y=dist2base(x)
+            % Get mapping from base distribution (corresponding to standard distribution
+            % in the gpc, for which the default polynomial system is
+            % orthogonal) to the actual distribution
+            y=x*2-1;
+        end
     end
 end
