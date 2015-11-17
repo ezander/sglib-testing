@@ -1,6 +1,6 @@
-function [x,w]=polysys_int_rule(sys, n, varargin)
+function [x,w]=polysys_int_rule(sys, n,  varargin)
 % POLYSYS_INT_RULE Compute the integration rule for a given system of polynomials.
-%   [X,W]=POLYSYS_INT_RULE(SYS, N, VARARGIN) computes the integration rule
+%   [X,W]=POLYSYS_INT_RULE(SYS, N, DUST_PARMA, VARARGIN) computes the integration rule
 %   with N points for the given system of orthogonal polynomials specified
 %   in SYS and the related probability measure.
 %

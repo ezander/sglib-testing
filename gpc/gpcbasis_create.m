@@ -79,6 +79,8 @@ else
     % check that I and m and polysys are compatible
 end
 V = {polysys, I};
+end
 
 function b=isdefault(p)
 b=isequal(p,@isdefault);
+end

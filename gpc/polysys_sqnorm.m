@@ -15,7 +15,7 @@ function nrm2 = polysys_sqnorm(sys, n, method)
 %
 % See also GPCBASIS_NORM
 
-%   Elmar Zander
+%   Elmar Zander  (Jacobi polynomials added by Noemi Friedman)
 %   Copyright 2012, Inst. of Scientific Computing, TU Braunschweig
 %
 %   This program is free software: you can redistribute it and/or modify it
@@ -48,21 +48,29 @@ if nargin>=3
     end
 end
 
-switch sys
-    case 'H'
-        nrm2 = factorial(n);
-    case 'P'
-        % Note: the U(-1,1) measure is used here, not the Lebesgue measure
-        nrm2 = 1 ./ (2*n + 1);
-    case 'T'
-        nrm2 = 0.5*((n==0) + 1);
-    case {'M', 'm'}
-        error('sglib:polysys_sqrnorm', 'There is no measure associated with the monomials');
-    case {'h', 'p', 't', 'u', 'U', 'l', 'L'}
-        nrm2 = ones(size(n));
-    otherwise
-        %nrm2 = polysys_sqnorm_by_quad(sys, n);
-        nrm2 = polysys_sqnorm_by_rc(sys, n);
+% switch sys
+%     case 'H'
+%         nrm2 = factorial(n);
+%     case 'P'
+%         % Note: the U(-1,1) measure is used here, not the Lebesgue measure
+%         nrm2 = 1 ./ (2*n + 1);
+%     case 'T'
+%         nrm2 = 0.5*((n==0) + 1);
+%     case {'M', 'm'}
+%         error('sglib:polysys_sqrnorm', 'There is no measure associated with the monomials');
+%     case {'h', 'p', 't', 'u', 'U', 'l', 'L'}
+%         nrm2 = ones(size(n));
+%     case 'J'
+%         alpha=dist_params{1};
+%         beta=dist_params{2};
+%         nrm2=2^(alpha+beta+1)*gamma(n+alpha+1).*gamma(n+beta+1)./(  (2*n+alpha+beta+1) .*gamma(n+alpha+beta+1).*factorial(n) );
+%     otherwise
+%         %nrm2 = polysys_sqnorm_by_quad(sys, n);
+%         nrm2 = polysys_sqnorm_by_rc(sys, n);
+% end
+
+[~, ~, poly]=gpc_register_polysys(sys);
+nrm2 =poly.sqnorm(n);
 end
 
 function nrm2 = polysys_sqnorm_by_quad(sys, I)
@@ -72,6 +80,7 @@ n = max(I(:));
 y = gpc_evaluate(eye(n+1), {sys, (0:n)'}, x);
 nrm2 = (y.*y)*w;
 nrm2 = reshape(nrm2(I+1), size(I));
+end
 
 function nrm2 = polysys_sqnorm_by_rc(sys, I)
 % POLYSYS_NORM_BY_RC Compute the square norm via the recurrence coefficients.
@@ -91,7 +100,7 @@ h = b(1) ./ b(2:end);
 c = r(2:end,3);
 nrm2 = [1; h(:) .* cumprod(c(:))];
 nrm2 = reshape(nrm2(I+1), size(I));
-
+end
 
 function nrm2 = polysys_sqnorm_by_mc(sys, I)
 % POLYSYS_NORM_BY_MC Approximate the square norm by MC quadrature.
@@ -101,3 +110,4 @@ x = polysys_sample_rv(sys, 1, N);
 y = gpc_evaluate(eye(n+1), {sys, (0:n)'}, x);
 nrm2 = sum(y.*y,2)/N;
 nrm2 = reshape(nrm2(I+1), size(I));
+end
