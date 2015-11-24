@@ -1,6 +1,20 @@
 function [V, ind_phi1, ind_phi2, ind_xi1, ind_xi2]=gpcbasis_combine(V1, V2, mode)
-% GPCBASIS_COMBINE Short description of gpcbasis_combine.
-%   GPCBASIS_COMBINE Long description of gpcbasis_combine.
+% GPCBASIS_COMBINE Combines two GPC spaces into a new space.
+%   [V, IND_PHI1, IND_PHI2, IND_XI1, IND_XI2]=GPCBASIS_COMBINE(V1, V2,
+%   MODE) combines the GPC spaces V1 and V2 into a new space V, according
+%   to the mode given. MODE can take on the following values:
+%     'inner_sum': The spaces V1 are assumed to be subspaces of one larger
+%       space (i.e. V1, V2 \subspace V) and all sums of vectors of V1 and
+%       V2 can be represented in the returned space. The indices of the
+%       original multiindices is returned in IND_PHI1 and IND_PHI2.
+%     'outer_sum': The spaces V1 and V2 are assumed to be distinct (except
+%       for the null vector, and the returned space is the 
+%       Cartesian product V = V1 x V2. The original spaces can be thought
+%       to be embedded into the new space by V1 x {0} and {0} x V2. Every
+%       sum of vectors of V1 and V2 can then be represented in V.
+%     'inner_product': If the spaces V1 and V2 are algebras (which they are
+%       in this case here), also products of vectors can be considered. The
+%       space V, contains 
 %
 % Options
 %
@@ -11,7 +25,10 @@ function [V, ind_phi1, ind_phi2, ind_xi1, ind_xi2]=gpcbasis_combine(V1, V2, mode
 %    are distinct and independent. Omega1 x Omega2 is returned.
 %    'inner' means that Omega1 and Omega2 are the same. That is the germs
 %    are identical.
-%    'direct_sum' means 
+%    'sum' means all sums of vectors can of the original spaces can be
+%    represented in the returned space.
+%    'product' means all products of vectors, which are also elements of an
+%    algebra (the gpc algebra) can be represented.
 %
 % Example (<a href="matlab:run_example gpcbasis_combine">run</a>)
 %
@@ -36,12 +53,14 @@ switch mode
         V = gpcbasis_create(gpcgerm_combine(V1, V2), 'I', I);
     case 'inner_sum'
         [I, ind_phi1, ind_phi2] = multiindex_inner_direct_sum(I1, I2);
+        ind_xi1 = 1:size(I1,2); ind_xi2 = 1:size(I1,2);
         V = gpcbasis_create(V1, 'I', I);
     case 'outer_product'
         [I, ind_phi1, ind_phi2, ind_xi1, ind_xi2] = multiindex_outer_direct_product(I1, I2);
         V = gpcbasis_create(gpcgerm_combine(V1, V2), 'I', I);
     case 'inner_product'
         [I, ind_phi1, ind_phi2] = multiindex_inner_direct_product(I1, I2);
+        ind_xi1 = 1:size(I1,2); ind_xi2 = 1:size(I1,2);
         V = gpcbasis_create(V1, 'I', I);
     otherwise
         error('sglib:gpcbasis_combine', 'unknown combination mode: %s', mode);
