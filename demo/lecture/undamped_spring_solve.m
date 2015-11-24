@@ -31,48 +31,39 @@ solve_info = struct();
 d = state.d;
 switch state.solver
     case 'direct'
-        u=undamped_spring_solve_direct(u0, k, m, d, T);
+        u=undamped_spring_solve_direct(u0, m, k, d, T);
     case 'numerical'
-        u=undamped_spring_solve_ode(u0, k, m, d, T);
+        [u, t, ut]=undamped_spring_solve_ode(u0, m, k, d, T);
+        solve_info.t = t';
+        solve_info.ut = ut';
     otherwise
         error('foo:bar', 'Unknown solver: %s', solver);
 end
 
-function u=undamped_spring_solve_ode(u0, k, m, d, T)
-[t,u] = ode45(@undamped_spring_ode, [0, T], u0, [], k, m, d);
-assert(t(end)==T)
-u = u(end,:)';
-
-function u=undamped_spring_solve_direct(u0, k, m, d, T)
+function u=undamped_spring_solve_direct(u0, m, k, d, T)
 x0 = u0(1);
 v0 = u0(2);
 assert(k>0 && m>0 && 0*d>=0);
 alpha = d/m;
 D = k/m-(d/m)^2;
-if true && D>0
-    omega = sqrt(D);
-    xt = exp(-alpha*T) * (x0 * cos(omega*T) + (v0 + alpha*x0) / omega * sin(omega*T));
-    vt = exp(-alpha*T) * (v0 * cos(omega*T) - ((alpha*v0 + alpha^2*x0) / omega + x0 * omega) * sin(omega*T));
-elseif D<0
-    omega = sqrt(-D);
-    xt = exp(-alpha*T) * (x0 * cosh(omega*T) + (v0 + alpha*x0) / omega * sinh(omega*T));
-    vt = exp(-alpha*T) * (v0 * cosh(omega*T) - ((alpha*v0 + alpha^2*x0) / omega - x0 * omega) * sinh(omega*T));
-else
-    error('not covered yet');
-end
+omega = sqrt(D);
+[m, k, d, D]
+xt = exp(-alpha*T) * (x0 * cos(omega*T) + (v0 + alpha*x0) / omega * sin(omega*T));
+vt = exp(-alpha*T) * (v0 * cos(omega*T) - ((alpha*v0 + alpha^2*x0) / omega + x0 * omega) * sin(omega*T));
 
 if xt>1 && d>=0
     keyboard
 end
 u = [xt; vt];
-% xt = x0 * cos(omega*T) + v0 / omega * sin(omega*T);
-% vt = v0 * cos(omega*T) - x0 * omega * sin(omega*T);
-%log10(abs(u))'
 
 
-function [dudt] = undamped_spring_ode(t, u, k, m, d)
+function [u, t, ut]=undamped_spring_solve_ode(u0, m, k, d, T)
+[t,ut] = ode45(@undamped_spring_ode, [0, T], u0, [], m, k, d);
+assert(t(end)==T)
+u = ut(end,:)';
+
+function [dudt] = undamped_spring_ode(t, u, m, k, d)
 x = u(1);
 v = u(2);
 a = -(2*d*v+k*x)/m;
 dudt = [v; a];
-

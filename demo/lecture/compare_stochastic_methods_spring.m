@@ -1,9 +1,11 @@
 %% Init stuff
 
-init_func = @()(undamped_spring_init('T', 20, 'd', 0.2));
+init_func = @undamped_spring_init;
 solve_func = @undamped_spring_solve;
 step_func = @foobar; %@undamped_spring_solve;
-polysys = 'u';
+polysys = 'ut';
+init_func = @()(undamped_spring_init('T', 20, 'd', 0.1));
+%polysys = 'p';
 
 %% Monte Carlo
 
@@ -55,29 +57,54 @@ u=gpc_evaluate(u_i_alpha, V_u, x);
 hold on; plot3(x(1,:), x(2,:), u(1,:), 'rx'); hold off;
 
 %% Projection with sparse grid
-mh = multiplot_init(3,3)
-for p_u = 1:9
+init_func = @()(undamped_spring_init('T', 20, 'd', -0.0, 'solver', 'direct'));
+% init_func = @electrical_network_init;
+% solve_func = @electrical_network_solve;
+% step_func = @electrical_network_picard_iter_step;
+mh = multiplot_init(4,5)
+for p_u = 1:10
     multiplot;
     p_int = p_u+1;
     
-    
-    V_u = gpcbasis_create(polysys, 'm', 2, 'p', p_u);
-    [u_i_alpha, x, w] = compute_response_surface_projection(init_func, solve_func, V_u, p_int, 'grid', 'full_tensor');
-    
+    V_u = gpcbasis_create(polysys, 'm', 2, 'p', p_u, 'full_tensor', true);
+    [u_i_alpha, x] = compute_response_surface_tensor_interpolate(init_func, solve_func, V_u, p_u);
+
     [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
     show_mean_var('Projection (L_2, response surface, sparse)', u_mean, u_var);
     
     
     % Plot the response surface
     hold off;
-    plot_response_surface(u_i_alpha(1,:), V_u, 'delta', 0.01);
+    plot_response_surface(u_i_alpha(1,:), V_u, 'delta', 0.01, 'N', 40);
     
     u=gpc_evaluate(u_i_alpha, V_u, x);
-    hold on; plot3(x(1,:), x(2,:), u(1,:), 'rx'); hold off;
+    %hold on; plot3(x(1,:), x(2,:), u(1,:), 'rx'); hold off;
+    title(strvarexpand('interp: $p_u$'))
+    drawnow;
+    u_proj_i_alpha = u_i_alpha;
+
+
+    multiplot;
+    p_int = p_u+1;
+    
+    V_u = gpcbasis_create(polysys, 'm', 2, 'p', p_u);
+    [u_i_alpha, x, w] = compute_response_surface_projection(init_func, solve_func, V_u, p_int, 'grid', 'full_tensor');
+
+    [u_mean, u_var] = gpc_moments(u_i_alpha, V_u);
+    show_mean_var('Projection (L_2, response surface, sparse)', u_mean, u_var);
+    
+    
+    % Plot the response surface
+    hold off;
+    plot_response_surface(u_i_alpha(1,:), V_u, 'delta', 0.01, 'N', 40);
+    
+    u=gpc_evaluate(u_i_alpha, V_u, x);
+    %hold on; plot3(x(1,:), x(2,:), u(1,:), 'rx'); hold off;
+    title(strvarexpand('proj: $p_u$'))
     drawnow;
     u_proj_i_alpha = u_i_alpha;
 end
-same_scaling(mh, 'z', 'range', [-2, 2]);
+same_scaling(mh, 'z'); %, 'range', [-2, 2]);
 same_scaling(mh, 'c');
 %plot_response_surface(u_i_alpha(1,:), V_u, 'delta', 0.01, 'surf_color', 'pdf', 'pdf_plane', 'none');
 %plot_response_surface(u_i_alpha(1,:), V_u, 'delta', 0.01, 'surf_color', 'pdf');hold on

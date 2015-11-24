@@ -51,13 +51,16 @@ mw = 4;
 mv = 4;
 
 % Now define some random models for them
-V_x = gpcbasis_create('H', 'm', mx, 'p', 1);
+V_x = gpcbasis_create('P', 'm', mx, 'p', 1);
 x_i_alpha = gpc_rand_coeffs(V_x, nx);
+x_i_alpha(:,2:6)=eye(5);
+x_i_alpha(:,7:end)=0;
+plot_density(gpc_sample(x_i_alpha, V_x, 100000)','type', 'kernel')
 
-V_w = gpcbasis_create('H', 'm', mw, 'p', 1);
+V_w = gpcbasis_create('P', 'm', mw, 'p', 1);
 w_i_beta = gpc_rand_coeffs(V_w, nx, 'zero_mean', true);
 
-V_v = gpcbasis_create('H', 'm', mv, 'p', 1);
+V_v = gpcbasis_create('P', 'm', mv, 'p', 1);
 v_j_gamma = gpc_rand_coeffs(V_v, nz, 'zero_mean', true);
 
 % Recover the covariance matrices from here
@@ -129,11 +132,14 @@ p_phi=1;
 p_int_mmse=2;
 p_xn=1;
 p_int_proj=2;
-[xn_i_beta, V_xn]=mmse_update_gpc(xnp_func, y_func, V_xnp, z, v_func, V_v, p_phi, p_int_mmse, p_xn, p_int_proj);
+[xn_i_beta, V_xn]=mmse_update_gpc(xnp_i_gamma, y_func, V_xnp, z, v_func, V_v, p_phi, p_int_mmse, p_xn, p_int_proj);
 
 % Final check of Kalman estimate and covariance update
 assert_equals( gpc_moments(xn_i_beta, V_xn), xn, 'updated state estimate xn');
 assert_equals( gpc_covariance(xn_i_beta, V_xn), Pn, 'updated covariance estimate Pn');
+
+plot_density(gpc_sample(xn_i_beta, V_xn, 100000)','type', 'kernel', 'kde_sig', 0.001)
+
 
 % ... and you see that the classical Kalman filter is exactly reproduced.
 % The MMSE is completely independent of degree and in the limit case of all
