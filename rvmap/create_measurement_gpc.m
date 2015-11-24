@@ -35,3 +35,16 @@ for i=1:m
     [yi_beta, V_yi] = gpc_param_expand(dists{i}, polysys{i});
     [ym_beta, V_ym] = gpc_combine_inputs(ym_beta, V_ym, yi_beta, V_yi);
 end
+
+rvs_to_params = @(xi)(basic_rv_to_param(dists, V_ym, xi));
+params_to_rvs = @(xi)(basic_rv_to_param(dists, V_ym, xi));
+
+
+function p=basic_rv_to_param(dists, V, xi)
+y = gpcgerm_cdf(V, xi);
+p(1) = gendist_invcdf(y(1), dists{1});
+p(2) = gendist_moments(dists{2})
+p(3) = gendist_invcdf(y(2), dists{3});
+
+
+
