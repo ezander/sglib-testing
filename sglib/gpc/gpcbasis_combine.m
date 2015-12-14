@@ -81,7 +81,7 @@ ind_phi2 = multiindex_find(I2, I);
 
 function [I, ind_phi1, ind_phi2, Q1, Q2]=multiindex_outer_direct_product(I1, I2)
 Q1 = 1:size(I1,2);
-Q2 = (1:size(I2,2)) + Q1;
+Q2 = (1:size(I2,2)) + Q1(end);
 [I11, I12] = multiindex_combine({I1, I2});
 [I, ind_phi1, ind_phi2] = multiindex_inner_direct_product(I11, I12);
 
