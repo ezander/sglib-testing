@@ -33,7 +33,7 @@ plot_response_surface(u_i_alpha(1,:), V_u);
 % model = surr_model
 
 %% Generate the error model
-sigma_eps = 0.2;
+sigma_eps = 0.02;
 E = SimParamSet();
 for i=1:length(y_m)
     param_name=strvarexpand('E_y$i$');
@@ -42,7 +42,6 @@ end
 % Get error function and gpc germ
 E_func = @(xi)(E.germ2params(xi));
 V_e = E.get_germ();
-
 
 
 %% Generate original parameter GPC and update with the MMSE
