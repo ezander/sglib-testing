@@ -49,9 +49,9 @@ m_f=get_base_param( 'm_f', 0*5 );
 l_f=get_base_param( 'l_f', 40 );
 
 % define the distribution
-dist_f=get_base_param( 'dist_f', {'beta', {4,2}, 1, 1.0 } );
+dist_f=get_base_param( 'dist_f', gendist_create('beta', {4,2}, 'shift', 1) );
 mean_f_func=get_base_param( 'mean_f_func', [] );
-stdnor_f={@gendist_stdnor, dist_f};
+stdnor_f=funcreate(@gendist_stdnor, @funarg, dist_f);
 
 % define the covariance of the field
 lc_f=get_base_param( 'lc_f', 0.03 );
@@ -71,9 +71,9 @@ l_g=get_base_param( 'l_g', 2 );
 eps_g=get_base_param( 'eps_g', 0 );
 
 % define the distribution
-dist_g=get_base_param( 'dist_g', {'normal', {0,3}, 0, 1.0 } );
+dist_g=get_base_param( 'dist_g', gendist_create('normal', {0,3}) );
 mean_g_func=get_base_param( 'mean_g_func', [] );
-stdnor_g={@gendist_stdnor, dist_g};
+stdnor_g=funcreate(@gendist_stdnor, @funarg, dist_g);
 
 % define the covariance of the field
 lc_g=get_base_param( 'lc_g', 10 );
