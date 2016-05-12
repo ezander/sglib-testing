@@ -6,30 +6,27 @@ classdef SimParamSet < SglibHandleObject
     %
     %Example 1 (<a href="matlab:run_example SimParamSet 1">run</a>)
     % %Define SimParameters
-    %       param1=SimParameter('p1', UniformDistribution(2,3));
-    %       param2=SimParameter('p2', NormalDistribution(1,0.1)) ;
-    %       param3=SimParameter('p3', BetaDistribution(3,3));
-    %       param4=SimParameter('p4', UniformDistribution(1,2));
-    %
-    % % Define SimParamSet MYPARAMS and
-    % % add to it the SimParams PARAM1, PARAM2, PARAM3 and PARAM4
-    %       myparams=SimParamSet(param1, param2);
-    %       myparams.add_parameter(param3, param4);
-    %
+    %       
+    %       Q=SimParamSet()
+    %       Q.add(SimParameter('p1', LogNormalDistribution(0,1)));
+    %       Q.add(SimParameter('p2', NormalDistribution(1,0.5))) ;
+    %       Q.add(SimParameter('p3', BetaDistribution(3,3)));
+    %       Q.add(SimParameter('p4', UniformDistribution(1,2)));
     % % Fix and release SimParams in MYPARAMS:
-    % % Fix PARAM3 (with name 'P2') to the value 1.5 and
-    % % PARAM4 (with name 'P4') to the value 2
+    % % Fix 'p2' to the mean value
+    % % 'P4' to the value 2
     % % and then,
-    % % release PARAM 4 to be not fixed
-    %       myparams.set_fixed({'p3', param4}, [1.5, 2])
-    %       myparams.set_not_fixed('p3')
+    % % release 'P4' to be not fixed
+    %       Q.set_to_mean('p2')
+    %       Q.set_fixed('p3', 1.5)
+    %       Q.set_not_fixed('p3')
     %
-    % % Sample from MYPARAMS and plot sample points
-    %   xi=myparams.sample(10000);
-    %   scatter3(xi(:,1), xi(:,2), xi(:,3));
-    %   xlabel(myparams.param_names{1});
-    %   ylabel(myparams.param_names{2});
-    %   zlabel(myparams.param_names{3});
+    % % Sample from Q and plot sample points
+    %   q=Q.sample(10000);
+    %   scatter3(q(1,:), q(3,:), q(4,:));
+    %   xlabel(Q.param_names{1});
+    %   ylabel(Q.param_names{3});
+    %   zlabel(Q.param_names{4});
     %
     % Example 2 (<a href="matlab:run_example SimParamSet 2">run</a>)
     %         beta=SimParameter('beta',UniformDistribution(-10,-6.5), '\beta');
