@@ -9,6 +9,6 @@ b = 4;
 
 % Setup the covariance function
 l_c=1.3;
-%base_cov_func = @exponential_covariance;
-base_cov_func = @gaussian_covariance;
+base_cov_func = @exponential_covariance;
+%base_cov_func = @gaussian_covariance;
 cov_func = funcreate(base_cov_func, funarg, funarg, l_c);

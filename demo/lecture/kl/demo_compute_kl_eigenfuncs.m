@@ -23,7 +23,7 @@ lambda = lambda(ind);
 % Select and normalise the KL eigenfunctions
 R = V(:,ind);
 R_norm = sqrt(diag(R'*G*R)');
-R = binfun(@times, R, 1./R_norm)
+R = binfun(@times, R, 1./R_norm);
 
 % Compute the sigma's
 sigma = sqrt(lambda);
@@ -42,7 +42,7 @@ plot(x, R(:,1:5))
 
 % Compute the KL eigenvalues and functions analytically
 N = length(sigma);
-[R2, sigma2] = kl_solve_1d_exp(x, 1, l_c, N)
+[R2, sigma2] = kl_solve_1d_exp(x, 1, l_c, N);
 % Uncomment the next line to have the comparison KL computed numerically by
 % the standard sglib function
 % [R2, sigma2] = kl_solve_evp(C, G, N)
