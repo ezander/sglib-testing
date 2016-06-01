@@ -29,21 +29,21 @@ classdef SimParamSet < SglibHandleObject
     %   zlabel(Q.param_names{4});
     %
     % Example 2 (<a href="matlab:run_example SimParamSet 2">run</a>)
-    %         beta=SimParameter('beta',UniformDistribution(-10,-6.5), '\beta');
-    %         beta_t=SimParameter('beta_T',UniformDistribution(-1,0.1), '\beta_T');
-    %         c_t=SimParameter('c_t',UniformDistribution(0,0.2));
-    %         c_eh=SimParameter('c_eh',UniformDistribution(0,0.3), 'c_{\epsilon^h}');
-    %         c_wd=SimParameter('c_wd',UniformDistribution(2,30),  'c_{wd}');
-    %         c_dp=SimParameter('c_dp',UniformDistribution(0,0.395),  'c_{d,p}');
+    %         Q1=SimParamSet()
+    %         Q1.add(SimParameter('beta',UniformDistribution(-10,-6.5)));
+    %         Q1.add(SimParameter('beta_T',UniformDistribution(-1,0.1)));
+    %         Q1.add(SimParameter('c_t',UniformDistribution(0,0.2)));
+    %         Q1.add(SimParameter('c_eh',UniformDistribution(0,0.3)));
+    %         Q1.add(SimParameter('c_wd',UniformDistribution(2,30)));
+    %         Q1.add(SimParameter('c_dp',UniformDistribution(0,0.395)));
     %
-    %         PSet=SimParamSet(beta, beta_t, c_t, c_eh, c_wd, c_dp);
-    %         PSet.set_fixed({'beta', 'c_wd'})
+    %         Q1.set_to_mean('beta')
     %
-    %         x_MC=PSet.sample(1000);
-    %         x_QMC=PSet.sample(1000, 'mode', 'qmc');
-    %         x_LHS=PSet.sample(1000, 'mode', 'lhs');
-    %         [x_int,w_int]=PSet.generate_integration_points( 5, 'grid', 'smolyak');
-    
+    %         q_MC=Q1.sample(1000);
+    %         q_QMC=Q1.sample(1000, 'mode', 'qmc');
+    %         q_LHS=Q1.sample(1000, 'mode', 'lhs');
+    %         [x_int,w_int]=Q1.get_integration_points(5, 'grid', 'smolyak')
+    %
     % See also SIMPARAMETER DISTRIBUTION
     
     %   Noemi Friedman and Elmar Zander
