@@ -77,7 +77,11 @@ switch surf_color
     case 'pdf'
         c = repmat(c_p, Nu, 1);
     otherwise
-        error('sglib:plot', 'Unknown surf_color value "%s"', surf_color);
+        if isnumeric(surf_color)
+            c = repmat(surf_color, Nu, N*N);
+        else
+            error('sglib:plot', 'Unknown surf_color value "%s"', surf_color);
+        end
 end
 
 % remember whether hold was on
