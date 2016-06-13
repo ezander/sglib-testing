@@ -67,7 +67,8 @@ assert(all(S_k)>0);
 % terms
 s_k=sqrt(S_k);
 [s_k, w_k, p_k] = add_sines(s_k, w_k, p_k, d);
-TB = {w_k, p_k, s_k};
+[~, ind]=sort(s_k, 'descend');
+TB = {w_k(ind), p_k(ind), s_k(ind)};
 
 % Evaluate at given positions, if necessary
 if nargout>=2
