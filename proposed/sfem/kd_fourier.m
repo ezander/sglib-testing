@@ -22,6 +22,7 @@ options=varargin2options(varargin, mfilename);
 [ratio,options]=get_option(options, 'ratio', 0.99);
 [is_spectral,options]=get_option(options, 'is_spectral', false);
 [autoenlarge,options]=get_option(options, 'autoenlarge', true);
+[verbosity,options]=get_option(options, 'verbosity', 0);
 check_unsupported_options(options);
 
 % Determine dimension and length scale
@@ -48,7 +49,9 @@ while true
     end
     if autoenlarge && sum(abs(S_k))-1>1e-7
         L = L * 2;
-        strvarexpand('Enlarging to $L(1)$');
+        if verbosity>0
+            strvarexpand('Enlarging to $L(1)$');
+        end
     else
         break
     end
