@@ -40,24 +40,24 @@ c=c.*exp(-2*pi*1i*a/l*(0:N-1));
 ar = real(c)/N; 
 ai = imag(c)/N;
 
-A_k=[];
-w_k=[];
-p_k=[];
-
 m=ceil(N/2);
 omega = 1/l*(0:m)';
 
 % The cosine terms
 if even
     if mod(N,2)==0
-        A_k=[A_k, ar(1), 2*ar(2:m), ar(m+1)];
-        w_k=[w_k; omega];
-        p_k=[p_k; repmat(1/4, m+1, 1)];
+        A_k=[ar(1), 2*ar(2:m), ar(m+1)];
+        w_k=[omega];
+        p_k=[repmat(1/4, m+1, 1)];
     else
-        A_k=[A_k, ar(1), 2*ar(2:m)];
-        w_k=[w_k; omega(1:m)];
-        p_k=[p_k; repmat(1/4, m, 1)];
+        A_k=[ar(1), 2*ar(2:m)];
+        w_k=[omega(1:m)];
+        p_k=[repmat(1/4, m, 1)];
     end
+else
+    A_k=[];
+    w_k=[];
+    p_k=[];
 end
 
 % The sine terms
@@ -65,6 +65,9 @@ if odd
     A_k=[A_k, -2*ai(2:m)];
     w_k=[w_k; omega(2:end-1)];
     p_k=[p_k; zeros(m-1, 1)];
+    % A_k=interleave(A_k, -2*ai(2:m), 2);
+    % w_k=interleave(w_k, omega(2:end-1), 1);
+    % p_k=interleave(p_k, zeros(m-1, 1), 1);
 end
 
 TB = {w_k, p_k};

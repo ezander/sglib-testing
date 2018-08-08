@@ -136,8 +136,11 @@ M=2*K+1;
 if length(L)==1 && d>1
     L = L * ones(d,1);
 end
-assert(d==1, 'd>1 does not work yet');
-[S_k, TP] = fourier_series_expand(func, -L, L, M, 'symmetry', 'even');
+if d>1
+    assert(d==1, 'd>1 does not work yet');
+else
+    [S_k, TP] = fourier_series_expand(func, -L, L, M, 'symmetry', 'even');
+end
 
 
 function [S_k, TP] = power_spectrum_by_density(func, L, K, d)
