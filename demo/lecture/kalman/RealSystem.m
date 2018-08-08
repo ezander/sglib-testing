@@ -18,7 +18,7 @@ classdef RealSystem < handle
         end
         
         function y = get_observation(sys)
-            y = [sys.x; sys.y] + randn(2)*sys.sigma_r;
+            y = [sys.x; sys.y] + multi_normal_sample(1, 0, sys.get_observation_noise_matrix());
         end
         
         function R = get_observation_noise_matrix(sys)
